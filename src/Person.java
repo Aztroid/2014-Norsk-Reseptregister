@@ -7,5 +7,6 @@ Lege og Pasient
 */
 
 public class Person{
-    private String fornavn, etternavn
+    private String fornavn, etternavn;
+    
 }
