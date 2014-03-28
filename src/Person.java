@@ -9,4 +9,23 @@ Lege og Pasient
 public class Person{
     private String fornavn, etternavn;
     
+    public Person(String f, String e){
+        fornavn = f;
+        etternavn = e;
+    }
+    
+    public String getEtternavn(){
+        //Metode som gir personens etternavn
+        return etternavn;
+    }
+    
+    public String getFornavn(){
+        //Metode som gir personens fornavn
+        return fornavn;
+    }
+    
+    public String toString(){
+        //Metode som gir f.eks "Hansen, Ola"
+        return etternavn + ", " + fornavn;
+    }
 }
