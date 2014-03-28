@@ -6,6 +6,7 @@
 
 public class Pasient extends Person{
     String fødselsnr;
+    //LISTE
     
     public Pasient(String f, String e, String n){
         super(f, e);
@@ -14,5 +15,9 @@ public class Pasient extends Person{
     
     public String getFødselsnr(){
         return fødselsnr;
+    }
+    
+    public String toString(){
+        return super.toString() + ", Fnr: " + fødselsnr;
     }
 }
