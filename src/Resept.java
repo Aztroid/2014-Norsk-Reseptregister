@@ -12,7 +12,7 @@ public class Resept {
     private Calendar dato;
     private String fødselsnr;
     private String autorisasjonsnr;
-    private String medisin;
+    private String medisinnr; //ATC-nr
     private double mengde;
     private double DDD;
     private char kategori;
@@ -21,11 +21,23 @@ public class Resept {
     public Resept(String f, String a, String med, double m, double d, char k, String an){
         fødselsnr = f;
         autorisasjonsnr = a;
-        medisin = med;
+        medisinnr = med;
         mengde = m;
         DDD = d;
         anvisning = an;
         kategori = k; 
         dato = Calendar.getInstance();
+    }
+    
+    public String getLege(){
+        return autorisasjonsnr;
+    }
+    
+    public String getPasient(){
+        return fødselsnr;
+    }
+    
+    public String getMedisin(){
+        return medisin;
     }
 }
