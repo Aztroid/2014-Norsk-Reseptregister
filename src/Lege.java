@@ -7,14 +7,14 @@
 public class Lege extends Person{
     String autorisasjonsnr;
     String arbeidssted;//ADR om mulig
-    String bevilgning;
+    String reseptbevilgning;
     //LISTE
     
     public Lege(String f, String e, String a, String ar, String b){
         super(f,e);
         autorisasjonsnr = a;
         arbeidssted = ar;
-        bevilgning = b;
+        reseptbevilgning = b;
     }
     
     public String getArbeidssted(){
@@ -27,6 +27,6 @@ public class Lege extends Person{
     
     public String toString(){
         return super.toString() + ", Arbeidssted: " + arbeidssted
-                + ", Reseptbevilkning: " + bevilgning;
+                + ", Reseptbevilkning: " + reseptbevilgning;
     }
 }

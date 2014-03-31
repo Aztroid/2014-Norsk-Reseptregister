@@ -12,7 +12,7 @@ public class Resept {
     private Calendar dato;
     private String fødselsnr;
     private String autorisasjonsnr;
-    private String medisinnr; //ATC-nr
+    private String medisinnr; //ATC-nr (Unikt nummer for norske medisiner)
     private double mengde;
     private double DDD; //Definert Døgndose
     private String kategori;
@@ -33,26 +33,32 @@ public class Resept {
     }
     
     public String getLege(){
+        //Metode som returnerer autorisasjonsnummeret til legen
         return autorisasjonsnr;
     }
     
     public String getPasient(){
+        //Metode som returnerer personnummeret til pasienten
         return fødselsnr;
     }
     
     public String getMedisin(){
+        //Metode som returnerer ACT-nr
         return medisinnr;
     }
     
     public double getDDD(){
+        //Metode som returnerer Definert Døgndose
         return DDD;
     }
     
     public char getReseptgruppe(){
+        //Metode som returnerer reseptgruppen (A,B eller C)
         return reseptgruppe;
     }
     
     public String toString(){
+        //Metode som returnerer all informasjon om den aktuelle resepten
         return "Dato utksrevet: " + dato + "\nFødselsnr. Pasient: " + fødselsnr
                 + "\nAutorisasjonsnr: " + autorisasjonsnr + "\nATC-nr: " 
                 + medisinnr + "\nMengde: " + mengde + "/nDefinert Døgndose: "
