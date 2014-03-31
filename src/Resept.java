@@ -14,19 +14,22 @@ public class Resept {
     private String autorisasjonsnr;
     private String medisinnr; //ATC-nr
     private double mengde;
-    private double DDD;
-    private char kategori;
+    private double DDD; //Definert Døgndose
+    private String kategori;
+    private char reseptgruppe;
     private String anvisning;
     
-    public Resept(String f, String a, String med, double m, double d, char k, String an){
+    public Resept(String f, String a, String med, double m, double d, 
+            String k, char r, String an){
         fødselsnr = f;
         autorisasjonsnr = a;
         medisinnr = med;
         mengde = m;
         DDD = d;
         anvisning = an;
-        kategori = k; 
-        dato = Calendar.getInstance();
+        kategori = k;
+        reseptgruppe = r;
+        dato = Calendar.getInstance(); //Formatet lagres i klasse som kaller på
     }
     
     public String getLege(){
@@ -38,6 +41,22 @@ public class Resept {
     }
     
     public String getMedisin(){
-        return medisin;
+        return medisinnr;
+    }
+    
+    public double getDDD(){
+        return DDD;
+    }
+    
+    public char getReseptgruppe(){
+        return reseptgruppe;
+    }
+    
+    public String toString(){
+        return "Dato utksrevet: " + dato + "\nFødselsnr. Pasient: " + fødselsnr
+                + "\nAutorisasjonsnr: " + autorisasjonsnr + "\nATC-nr: " 
+                + medisinnr + "\nMengde: " + mengde + "/nDefinert Døgndose: "
+                + DDD + "\nKategori: " + kategori + "Reseptgruppe: "
+                + reseptgruppe + "\nAnvisning: " + anvisning;
     }
 }
