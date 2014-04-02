@@ -12,17 +12,18 @@ public class TestGUI extends JFrame {
     private JTextField/*Pasient*/fornavnpasient, etternavnpasient, fødselsnr,
             
             /*Lege*/fornavnlege, etternavnlege, autorisasjonsnummer, 
-            reseptbevilgning,
+            reseptbevilgning, arbeidssted,
     
             /*Resept*/fødselsnrresept, autnrresept, medisinnøkkel, mengde,
-            defdøgndosering, kategori, reseptgruppe;
+            defdøgndosering, kategori, reseptgruppe,søkefelt;
     
     private JTextArea infosjerm;
     private JTextArea anvisning;
-    private JButton regpasient, reglege, regresept, søk;
+    private JButton regpasient, reglege, regresept, søkperson, søklege, 
+            søkresept;
     private TreeMap<String,Person> pasientliste = new TreeMap<>();
-    private TreeMap<String, Person> legeliste  = new TreeMap<>();
-    private TreeMap<String, Resept> reseptlisteliste  = new TreeMap<>();
+    private TreeMap<String,Person> legeliste = new TreeMap<>();
+    private TreeMap<Integer,Resept> reseptliste = new TreeMap<>();
     private Kommandolytter lytteren;
 
     public TestGUI() {
@@ -74,6 +75,11 @@ public class TestGUI extends JFrame {
         reseptbevilgning.addActionListener(lytteren);
         c.add(reseptbevilgning);
         
+        c.add(new JLabel("Arbeidssted: "));
+        arbeidssted = new JTextField(30);
+        arbeidssted.addActionListener(lytteren);
+        c.add(arbeidssted);
+        
         reglege = new JButton("Register Lege");
         reglege.addActionListener(lytteren);
         c.add(reglege);
@@ -120,7 +126,7 @@ public class TestGUI extends JFrame {
         
         c.add(new JLabel("Legens anv:"));
         anvisning = new JTextArea(10, 30);
-        anvisning.setEditable(false);
+        anvisning.setEditable(true);
         c.add(new JScrollPane(anvisning));
         
         regresept = new JButton("Register Resept");
@@ -132,9 +138,22 @@ public class TestGUI extends JFrame {
         infosjerm.setEditable(false);
         c.add(new JScrollPane(infosjerm));
         
-        søk = new JButton("SØK");
-        søk.addActionListener(lytteren);
-        c.add(søk);
+        søkperson = new JButton("Søk person");
+        søkperson.addActionListener(lytteren);
+        c.add(søkperson);
+        
+        søklege = new JButton("Søk lege");
+        søklege.addActionListener(lytteren);
+        c.add(søklege);
+        
+        søkresept = new JButton("Søk resept");
+        søkresept.addActionListener(lytteren);
+        c.add(søkresept);
+        
+        c.add(new JLabel("nr: "));
+        søkefelt = new JTextField(2);
+        søkefelt.addActionListener(lytteren);
+        c.add(søkefelt);
         
         setSize(475, 950);
         setVisible(true);
@@ -151,7 +170,8 @@ public class TestGUI extends JFrame {
         //Sjekker for blanke felter ved registrering av lege
         return (fornavnlege.getText().matches("")||etternavnlege.getText().
                 matches("")||autorisasjonsnummer.getText().matches("")||
-                reseptbevilgning.getText().matches(""));
+                reseptbevilgning.getText().matches("")||autorisasjonsnummer.
+                getText().matches(""));
     }
     
     private boolean blankeReseptfelter(){
@@ -173,6 +193,7 @@ public class TestGUI extends JFrame {
         etternavnlege.setText("");
         autorisasjonsnummer.setText("");
         reseptbevilgning.setText("");
+        arbeidssted.setText("");
         
         fødselsnrresept.setText("");
         autnrresept.setText("");
@@ -181,25 +202,35 @@ public class TestGUI extends JFrame {
         defdøgndosering.setText("");
         kategori.setText("");
         reseptgruppe.setText("");
+        anvisning.setText("");
     }
     
     private void RegPasient(){
-        String fnrregex = "\\d{11}";
-        String pasientnøkkel = fødselsnr.getText();
-        String fornavn = fornavnpasient.getText();
-        String etternavn = etternavnpasient.getText();
+        /*Metoden registerer en ny pasient om pasientnøkkel er gyldig, alle 
+        felter er fylt ut og om pasienten ikke eksisterer fra før*/
         if(blankePersonfelter()){
             infosjerm.setText("Et eller fler av feltene er tomme");
             return;
         }
-        else if(!pasientnøkkel.matches(fnrregex)){
+        String fødselsnrrregex = "\\d{11}";
+        String pasientnøkkel = fødselsnr.getText();
+        String fornavn = fornavnpasient.getText();
+        String etternavn = etternavnpasient.getText();
+        if(!pasientnøkkel.matches(fødselsnrrregex)){
             infosjerm.setText("Fødselsnummeret du har skrevet inn er ikke et "
                     + "gyldig fødselsnummer");
             return;
         }
-        
-        Pasient ny = new Pasient(fornavn, etternavn, pasientnøkkel);
-        pasientliste.put(pasientnøkkel,ny);
+        else if(pasientliste.get(pasientnøkkel)==null){
+            Pasient ny = new Pasient(fornavn, etternavn, pasientnøkkel);
+            pasientliste.put(pasientnøkkel,ny);
+            infosjerm.setText("Person registrert.");
+            return;
+        }
+        else{
+            infosjerm.setText("Pasienten finnes i registeret fra før");
+        }
+        return;
     }
     
     private void finnPerson(){
@@ -207,6 +238,114 @@ public class TestGUI extends JFrame {
         Person finnes = pasientliste.get(pasientnøkkel);
         if(finnes==null){
             infosjerm.setText("Personen finnes ikke");
+            return;
+        }
+        else{
+            infosjerm.setText(finnes.toString());
+        }
+    }
+    
+    private void RegLege(){
+        if(blankeLegefelter()){
+            infosjerm.setText("Et eller fler av feltene er tomme");
+            return;
+        }
+        String autorisasjonsnrrregex = "\\d{9}";
+        String legenøkkel = autorisasjonsnummer.getText();
+        String fornavn = fornavnlege.getText();
+        String etternavn = etternavnlege.getText();
+        String reseptbev = reseptbevilgning.getText();
+        String adresse = arbeidssted.getText();
+        
+        if(!legenøkkel.matches(autorisasjonsnrrregex)){
+            infosjerm.setText("Autorisasjonsnummeret du har skrevet inn er "
+                    + "ikke gyldig");
+            return;
+        }
+        else if(legeliste.get(legenøkkel)==null){
+            Lege ny = new Lege(fornavn, etternavn, legenøkkel, adresse, 
+                    reseptbev);
+            legeliste.put(legenøkkel,ny);
+            infosjerm.setText("Lege registrert.");
+            return;
+        }
+        else{
+            infosjerm.setText("Legen finnes i registeret fra før");
+        }
+        return;
+    }
+    
+    private void finnLege(){
+        String legenøkkel = autorisasjonsnummer.getText();
+        Person finnes = legeliste.get(legenøkkel);
+        if(finnes==null){
+            infosjerm.setText("Legen finnes ikke");
+            return;
+        }
+        else{
+            infosjerm.setText(finnes.toString());
+        }
+    }
+    
+    private void RegResept(){
+        /*Resept fødselsnrresept, autnrresept, medisinnøkkel, mengde,
+        defdøgndosering, kategori, reseptgruppe;*/
+        if(blankeReseptfelter()){
+            infosjerm.setText("Et eller fler av feltene er tomme");
+            return;
+        }
+        String fødselsnrrregex = "\\d{11}";
+        String autorisasjonsnrrregex = "\\d{9}";
+        //String medisinnrrregex = "\\d{9}";
+        //String mengdenrrregex = "\\d{9}";
+        //String DDDregex = "\\d{9}";
+        //String reseptgruppe = "\\d{9}";
+        String pasientnøkkel = fødselsnrresept.getText();
+        String legenøkkel = autnrresept.getText();
+        String medisinnr = medisinnøkkel.getText();
+        String medisinmengde = mengde.getText();
+        String DDD = defdøgndosering.getText();
+        String medisinkategori = kategori.getText();
+        String reseptgruppen = reseptgruppe.getText();
+        String legensanvisning = anvisning.getText();
+        if(!pasientnøkkel.matches(fødselsnrrregex)){
+            infosjerm.setText("Fødselsnummeret du har skrevet inn er ikke et "
+                    + "gyldig fødselsnummer");
+            return;
+        }
+        else if(!legenøkkel.matches(autorisasjonsnrrregex)){
+            infosjerm.setText("Autorisasjonsnummeret du har skrevet inn er "
+                    + "ikke gyldig");
+            return;
+        }
+        /*else if(!medisinnr.matches(medisinnrrregex)){
+            infosjerm.setText("ACT-nr til medisinen du har skrevet inn er "
+                    + "ikke gyldig");
+            return;
+        }LEGG INN FLERE HER SENERE*/
+        else if(pasientliste.get(pasientnøkkel)==null){
+            infosjerm.setText("Pasienten er ikke registrert");
+            return;
+        }
+        else if(legeliste.get(legenøkkel)==null){
+            infosjerm.setText("Legen er ikke registrert");
+            return;
+        }
+        else{
+            Resept ny = new Resept(pasientnøkkel,legenøkkel,medisinnr,
+                    medisinmengde,DDD,medisinkategori,reseptgruppen,
+                    legensanvisning);
+            reseptliste.put(ny.getReseptnr(),ny);
+            infosjerm.setText("Resept registrert.");
+            return;
+        }
+    }
+    
+    private void finnResept(){
+        Integer nr = Integer.parseInt(søkefelt.getText());
+        Resept finnes = reseptliste.get(nr);
+        if(finnes==null){
+            infosjerm.setText("Resepten finnes ikke");
             return;
         }
         else{
@@ -221,8 +360,24 @@ public class TestGUI extends JFrame {
                 RegPasient();
                 blankUtfelter();
             }
-            else if(e.getSource() == søk){
+            else if(e.getSource() == reglege) {
+                RegLege();
+                blankUtfelter();
+            }
+            else if(e.getSource() == regresept) {
+                RegResept();
+                blankUtfelter();
+            }
+            else if(e.getSource() == søkperson){
                 finnPerson();
+                blankUtfelter();
+            }
+            else if(e.getSource() == søklege){
+                finnLege();
+                blankUtfelter();
+            }
+            else if(e.getSource() == søkresept){
+                finnResept();
                 blankUtfelter();
             }
         }
