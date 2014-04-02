@@ -1,4 +1,5 @@
 
+import java.text.*;
 import java.util.Calendar;
 /*Hovedprosjekt Dats-1600
  William B. Wold, s183670, HIINGDATA13H1AA
@@ -10,17 +11,19 @@ public class Resept {
     /*Merk! DDD = Definert døgndose, dette datafeltet er tatt med for å kunne 
     produisere mer reliabel statistikk*/
     private Calendar dato;
+    private static Integer reseptnr = 0;
     private String fødselsnr;
     private String autorisasjonsnr;
     private String medisinnr; //ATC-nr (Unikt nummer for norske medisiner)
-    private double mengde;
-    private double DDD; //Definert Døgndose
+    private String mengde;
+    private String DDD; //Definert Døgndose
     private String kategori;
-    private char reseptgruppe;
+    private String reseptgruppe;
     private String anvisning;
     
-    public Resept(String f, String a, String med, double m, double d, 
-            String k, char r, String an){
+    public Resept(String f, String a, String med, String m, String d, 
+            String k, String rg, String an){
+        reseptnr++;
         fødselsnr = f;
         autorisasjonsnr = a;
         medisinnr = med;
@@ -28,8 +31,13 @@ public class Resept {
         DDD = d;
         anvisning = an;
         kategori = k;
-        reseptgruppe = r;
+        reseptgruppe = rg;
         dato = Calendar.getInstance(); //Formatet lagres i klasse som kaller på
+    }
+    
+    public Integer getReseptnr(){
+        //Metode som returnerer autorisasjonsnummeret til legen
+        return reseptnr;
     }
     
     public String getLege(){
@@ -47,22 +55,24 @@ public class Resept {
         return medisinnr;
     }
     
-    public double getDDD(){
+    public String getDDD(){
         //Metode som returnerer Definert Døgndose
         return DDD;
     }
     
-    public char getReseptgruppe(){
+    public String getReseptgruppe(){
         //Metode som returnerer reseptgruppen (A,B eller C)
         return reseptgruppe;
     }
     
     public String toString(){
         //Metode som returnerer all informasjon om den aktuelle resepten
-        return "Dato utksrevet: " + dato + "\nFødselsnr. Pasient: " + fødselsnr
+        DateFormat df = new SimpleDateFormat("MM/dd/yyyy HH:mm");
+        return "Dato utksrevet: " + df.format(dato.getTime()) + "\nReseptnr: " + reseptnr
+                +"\nFødselsnr. Pasient: " + fødselsnr
                 + "\nAutorisasjonsnr: " + autorisasjonsnr + "\nATC-nr: " 
-                + medisinnr + "\nMengde: " + mengde + "/nDefinert Døgndose: "
-                + DDD + "\nKategori: " + kategori + "Reseptgruppe: "
+                + medisinnr + "\nMengde: " + mengde + "\nDefinert Døgndose: "
+                + DDD + "\nKategori: " + kategori + "\nReseptgruppe: "
                 + reseptgruppe + "\nAnvisning: " + anvisning;
     }
 }
