@@ -9,7 +9,9 @@ import java.util.*;
 
 public class TestGUI extends JFrame {
 
-    private JTextField/*Pasient*/fornavnpasient, etternavnpasient, fødselsnr,
+    private JTextField
+            
+            /*Pasient*/fornavnpasient, etternavnpasient, fødselsnr,
             
             /*Lege*/fornavnlege, etternavnlege, autorisasjonsnummer, 
             reseptbevilgning, arbeidssted,
@@ -24,7 +26,12 @@ public class TestGUI extends JFrame {
     private TreeMap<String,Person> pasientliste = new TreeMap<>();
     private TreeMap<String,Person> legeliste = new TreeMap<>();
     private TreeMap<Integer,Resept> reseptliste = new TreeMap<>();
+    String reseptbev;
+    private JCheckBox Abox;
+    private JCheckBox Bbox;
+    private JCheckBox Cbox;
     private Kommandolytter lytteren;
+    private Tegnlytter tegnlytteren;
 
     public TestGUI() {
         super("ReseptTestvindu");
@@ -70,10 +77,19 @@ public class TestGUI extends JFrame {
         etternavnlege.addActionListener(lytteren);
         c.add(etternavnlege);
         
-        c.add(new JLabel("Reseptbevilkning: "));
-        reseptbevilgning = new JTextField(30);
-        reseptbevilgning.addActionListener(lytteren);
-        c.add(reseptbevilgning);
+        c.add(new JLabel("Godkjent Reseptbevilkning:"));
+        Abox = new JCheckBox("Gruppe A");
+        Abox.addActionListener(lytteren);
+        Abox.setSelected(true);
+        c.add(Abox);
+        Bbox = new JCheckBox("Gruppe B");
+        Bbox.addActionListener(lytteren);
+        Bbox.setSelected(true);
+        c.add(Bbox);
+        Cbox = new JCheckBox("Gruppe C");
+        Cbox.addActionListener(lytteren);
+        Cbox.setSelected(true);
+        c.add(Cbox);
         
         c.add(new JLabel("Arbeidssted: "));
         arbeidssted = new JTextField(30);
@@ -157,6 +173,7 @@ public class TestGUI extends JFrame {
         
         setSize(475, 950);
         setVisible(true);
+        reseptbev = "";
         
     }
     
@@ -192,7 +209,6 @@ public class TestGUI extends JFrame {
         fornavnlege.setText("");
         etternavnlege.setText("");
         autorisasjonsnummer.setText("");
-        reseptbevilgning.setText("");
         arbeidssted.setText("");
         
         fødselsnrresept.setText("");
@@ -234,15 +250,20 @@ public class TestGUI extends JFrame {
     }
     
     private void finnPerson(){
-        String pasientnøkkel = fødselsnr.getText();
-        Person finnes = pasientliste.get(pasientnøkkel);
-        if(finnes==null){
-            infosjerm.setText("Personen finnes ikke");
-            return;
+    /*Metoden finner en pasient med den inntastede nøkkelenr*/
+        String fødselsnrrregex = "\\d{11}";
+        String søkebegrepet = fødselsnr.getText();
+        if(!søkebegrepet.matches(fødselsnrrregex)){
+            Person finnes = pasientliste.get(søkebegrepet);
+            if(finnes==null){
+                infosjerm.setText("Personen finnes ikke");
+                return;
+            }
+            else{
+                infosjerm.setText(finnes.toString());
+            }
         }
-        else{
-            infosjerm.setText(finnes.toString());
-        }
+        //LAGE NOE SOM TESTER MER PÅ SØKEBEGREPTER!
     }
     
     private void RegLege(){
@@ -254,7 +275,6 @@ public class TestGUI extends JFrame {
         String legenøkkel = autorisasjonsnummer.getText();
         String fornavn = fornavnlege.getText();
         String etternavn = etternavnlege.getText();
-        String reseptbev = reseptbevilgning.getText();
         String adresse = arbeidssted.getText();
         
         if(!legenøkkel.matches(autorisasjonsnrrregex)){
@@ -263,6 +283,15 @@ public class TestGUI extends JFrame {
             return;
         }
         else if(legeliste.get(legenøkkel)==null){
+            if(Abox.isSelected()){
+                reseptbev+="A";
+            }
+            if(Abox.isSelected()){
+                reseptbev+="B";
+            }
+            if(Abox.isSelected()){
+                reseptbev+="C";
+            }
             Lege ny = new Lege(fornavn, etternavn, legenøkkel, adresse, 
                     reseptbev);
             legeliste.put(legenøkkel,ny);
