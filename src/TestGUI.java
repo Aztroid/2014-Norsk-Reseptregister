@@ -17,29 +17,36 @@ public class TestGUI extends JFrame {
             reseptbevilgning, arbeidssted,
     
             /*Resept*/fødselsnrresept, autnrresept, medisinnøkkel, mengde,
-            defdøgndosering, kategori, reseptgruppe,søkefelt;
+            defdøgndosering, kategori,søkefelt;
     
     private JTextArea infosjerm;
     private JTextArea anvisning;
     private JButton regpasient, reglege, regresept, søkperson, søklege, 
             søkresept;
     private TreeMap<String,Person> pasientliste = new TreeMap<>();
-    private TreeMap<String,Person> legeliste = new TreeMap<>();
+    private TreeMap<String,Lege> legeliste = new TreeMap<>();
     private TreeMap<Integer,Resept> reseptliste = new TreeMap<>();
-    String reseptbev;
+    private boolean gruppeA;
+    private boolean gruppeB;
+    private boolean gruppeC;
     private JCheckBox Abox;
     private JCheckBox Bbox;
     private JCheckBox Cbox;
     private Kommandolytter lytteren;
     private Tegnlytter tegnlytteren;
+    private String regreseptbev;
+    private ButtonGroup resteptgruppealt;
+    private JRadioButton gra, grb, grc;
 
     public TestGUI() {
         super("ReseptTestvindu");
         lytteren = new Kommandolytter();
+        tegnlytteren = new Tegnlytter();
 
         Container c = getContentPane();
         c.setLayout(new FlowLayout());
-
+        
+        /*Pasientfelter*/
         c.add(new JLabel("Personnr: "));
         fødselsnr = new JTextField(30);
         fødselsnr.addActionListener(lytteren);
@@ -61,6 +68,7 @@ public class TestGUI extends JFrame {
         
         c.add(new JLabel("**************************************************"
                 + "********************************************"));
+        /*Legefelter*/
         
         c.add(new JLabel("Autorisasjonsnr: "));
         autorisasjonsnummer = new JTextField(30);
@@ -79,16 +87,13 @@ public class TestGUI extends JFrame {
         
         c.add(new JLabel("Godkjent Reseptbevilkning:"));
         Abox = new JCheckBox("Gruppe A");
-        Abox.addActionListener(lytteren);
-        Abox.setSelected(true);
+        Abox.addItemListener(tegnlytteren);
         c.add(Abox);
         Bbox = new JCheckBox("Gruppe B");
-        Bbox.addActionListener(lytteren);
-        Bbox.setSelected(true);
+        Bbox.addItemListener(tegnlytteren);
         c.add(Bbox);
         Cbox = new JCheckBox("Gruppe C");
-        Cbox.addActionListener(lytteren);
-        Cbox.setSelected(true);
+        Cbox.addItemListener(tegnlytteren);
         c.add(Cbox);
         
         c.add(new JLabel("Arbeidssted: "));
@@ -102,8 +107,7 @@ public class TestGUI extends JFrame {
 
         c.add(new JLabel("**************************************************"
                 + "********************************************"));
-        /*Resept fødselsnrresept, autnrresept, medisinnøkkel, mengde,
-            defdøgndosering, kategori, reseptgruppe, anvisning*/
+        /*Resteptfelter*/
         
         c.add(new JLabel("Pasient(Fnr): "));
         fødselsnrresept = new JTextField(30);
@@ -134,11 +138,21 @@ public class TestGUI extends JFrame {
         kategori = new JTextField(30);
         kategori.addActionListener(lytteren);
         c.add(kategori);
-
-        c.add(new JLabel("Reseptgruppe: "));
-        reseptgruppe = new JTextField(30);
-        reseptgruppe.addActionListener(lytteren);
-        c.add(reseptgruppe);
+        
+        c.add(new JLabel("Reseptgruppe(felleskatalogen): "));
+        resteptgruppealt = new ButtonGroup();
+        gra = new JRadioButton("Gruppe A", false);
+        gra.addActionListener(lytteren);
+        grb = new JRadioButton("Gruppe B", false);
+        grb.addActionListener(lytteren);
+        grc = new JRadioButton("Gruppe C", true);
+        grc.addActionListener(lytteren);
+        resteptgruppealt.add(gra);
+        resteptgruppealt.add(grb);
+        resteptgruppealt.add(grc);
+        c.add(gra);
+        c.add(grb);
+        c.add(grc);
         
         c.add(new JLabel("Legens anv:"));
         anvisning = new JTextArea(10, 30);
@@ -173,8 +187,7 @@ public class TestGUI extends JFrame {
         
         setSize(475, 950);
         setVisible(true);
-        reseptbev = "";
-        
+        regreseptbev = "[ABC]|AB|BC|AC|ABC";
     }
     
     private boolean blankePersonfelter(){
@@ -187,8 +200,7 @@ public class TestGUI extends JFrame {
         //Sjekker for blanke felter ved registrering av lege
         return (fornavnlege.getText().matches("")||etternavnlege.getText().
                 matches("")||autorisasjonsnummer.getText().matches("")||
-                reseptbevilgning.getText().matches("")||autorisasjonsnummer.
-                getText().matches(""));
+                autorisasjonsnummer.getText().matches(""));
     }
     
     private boolean blankeReseptfelter(){
@@ -196,7 +208,7 @@ public class TestGUI extends JFrame {
         return (fødselsnrresept.getText().matches("")||autnrresept.getText().
                 matches("")||medisinnøkkel.getText().matches("")||
                 mengde.getText().matches("")||defdøgndosering.getText().
-                matches("")||kategori.getText().matches("")||reseptgruppe.
+                matches("")||kategori.
                 getText().matches(""));
     }
     
@@ -217,7 +229,6 @@ public class TestGUI extends JFrame {
         mengde.setText("");
         defdøgndosering.setText("");
         kategori.setText("");
-        reseptgruppe.setText("");
         anvisning.setText("");
     }
     
@@ -276,21 +287,21 @@ public class TestGUI extends JFrame {
         String fornavn = fornavnlege.getText();
         String etternavn = etternavnlege.getText();
         String adresse = arbeidssted.getText();
-        
+        String reseptbev = "";
         if(!legenøkkel.matches(autorisasjonsnrrregex)){
             infosjerm.setText("Autorisasjonsnummeret du har skrevet inn er "
                     + "ikke gyldig");
             return;
         }
         else if(legeliste.get(legenøkkel)==null){
-            if(Abox.isSelected()){
-                reseptbev+="A";
+            if(gruppeA){
+                reseptbev += "A";
             }
-            if(Abox.isSelected()){
-                reseptbev+="B";
+            if(gruppeB){
+                reseptbev += "B";
             }
-            if(Abox.isSelected()){
-                reseptbev+="C";
+            if(gruppeC){
+                reseptbev += "C";
             }
             Lege ny = new Lege(fornavn, etternavn, legenøkkel, adresse, 
                     reseptbev);
@@ -306,25 +317,34 @@ public class TestGUI extends JFrame {
     
     private void finnLege(){
         String legenøkkel = autorisasjonsnummer.getText();
-        Person finnes = legeliste.get(legenøkkel);
+        Lege finnes = legeliste.get(legenøkkel);
         if(finnes==null){
             infosjerm.setText("Legen finnes ikke");
             return;
         }
         else{
             infosjerm.setText(finnes.toString());
+            if(finnes.getBevilgning().matches(regreseptbev)){
+                infosjerm.append("\nLegen har bevilgning");
+                return;
+            }
+            else{
+                infosjerm.append("\nLEGEN KAN IKKE SKRIVE UT RESEPTER");
+                return;
+            }
         }
     }
     
     private void RegResept(){
-        /*Resept fødselsnrresept, autnrresept, medisinnøkkel, mengde,
-        defdøgndosering, kategori, reseptgruppe;*/
+        /*Metoden registerer en resept gitt at alle parametere er riktig
+        utfyllt*/
         if(blankeReseptfelter()){
             infosjerm.setText("Et eller fler av feltene er tomme");
             return;
         }
         String fødselsnrrregex = "\\d{11}";
         String autorisasjonsnrrregex = "\\d{9}";
+        //String actkoderegex = "^([A-C])";
         //String medisinnrrregex = "\\d{9}";
         //String mengdenrrregex = "\\d{9}";
         //String DDDregex = "\\d{9}";
@@ -335,7 +355,7 @@ public class TestGUI extends JFrame {
         String medisinmengde = mengde.getText();
         String DDD = defdøgndosering.getText();
         String medisinkategori = kategori.getText();
-        String reseptgruppen = reseptgruppe.getText();
+        String reseptgruppen = "";
         String legensanvisning = anvisning.getText();
         if(!pasientnøkkel.matches(fødselsnrrregex)){
             infosjerm.setText("Fødselsnummeret du har skrevet inn er ikke et "
@@ -409,6 +429,14 @@ public class TestGUI extends JFrame {
                 finnResept();
                 blankUtfelter();
             }
+        }
+    }
+    
+    private class Tegnlytter implements ItemListener{
+        public void itemStateChanged(ItemEvent e){
+            gruppeA = Abox.isSelected();
+            gruppeB = Bbox.isSelected();
+            gruppeC = Cbox.isSelected();
         }
     }
 }

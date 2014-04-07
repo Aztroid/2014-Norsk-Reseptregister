@@ -21,8 +21,13 @@ public class Lege extends Person{
         return arbeidssted;
     }
     
-    public String getbevilgning(){
-        return arbeidssted;
+    public String getBevilgning(){
+        return reseptbevilgning;
+    }
+    
+    public void setBevilgning(String s){
+        reseptbevilgning = s;
+        return;
     }
     
     public String toString(){
