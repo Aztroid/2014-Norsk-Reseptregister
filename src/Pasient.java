@@ -18,6 +18,6 @@ public class Pasient extends Person{
     }
     
     public String toString(){
-        return super.toString() + ", Fnr: " + fødselsnr;
+        return super.toString() + "Fnr: " + fødselsnr;
     }
 }

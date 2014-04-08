@@ -26,6 +26,6 @@ public class Person{
     
     public String toString(){
         //Metode som gir f.eks "Hansen, Ola
-        return etternavn + ", " + fornavn;
+        return "Navn: " + etternavn + ", " + fornavn + "\n";
     }
 }

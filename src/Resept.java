@@ -18,11 +18,11 @@ public class Resept {
     private String mengde;
     private String DDD; //Definert Døgndose
     private String kategori;
-    private String reseptgruppe;
+    private char reseptgruppe;
     private String anvisning;
     
     public Resept(String f, String a, String med, String m, String d, 
-            String k, String rg, String an){
+            String k, char rg, String an){
         reseptnr++;
         fødselsnr = f;
         autorisasjonsnr = a;
@@ -60,7 +60,7 @@ public class Resept {
         return DDD;
     }
     
-    public String getReseptgruppe(){
+    public char getReseptgruppe(){
         //Metode som returnerer reseptgruppen (A,B eller C)
         return reseptgruppe;
     }
