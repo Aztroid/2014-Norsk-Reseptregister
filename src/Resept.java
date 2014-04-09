@@ -11,7 +11,7 @@ public class Resept {
     /*Merk! DDD = Definert døgndose, dette datafeltet er tatt med for å kunne 
     produisere mer reliabel statistikk*/
     private Calendar dato;
-    private static Integer reseptnr = 0;
+    private Integer reseptnr = 0;
     private String fødselsnr;
     private String autorisasjonsnr;
     private String medisinnr; //ATC-nr (Unikt nummer for norske medisiner)
@@ -21,9 +21,9 @@ public class Resept {
     private char reseptgruppe;
     private String anvisning;
     
-    public Resept(String f, String a, String med, String m, String d, 
+    public Resept(Integer n, String f, String a, String med, String m, String d, 
             String k, char rg, String an){
-        reseptnr++;
+        reseptnr = n;
         fødselsnr = f;
         autorisasjonsnr = a;
         medisinnr = med;

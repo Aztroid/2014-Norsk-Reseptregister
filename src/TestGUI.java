@@ -22,8 +22,9 @@ public class TestGUI extends JFrame {
     private JTextArea infosjerm;
     private JTextArea anvisning;
     private JButton regpasient, reglege, regresept, søkperson, søklege, 
-            søkresept;
-    private TreeMap<String,Person> pasientliste = new TreeMap<>();
+            søkresept, søkmedisinlege, søkmedisinpasient,navnalleleger,
+            endreresept;
+    private TreeMap<String,Pasient> pasientliste = new TreeMap<>();
     private TreeMap<String,Lege> legeliste = new TreeMap<>();
     private TreeMap<Integer,Resept> reseptliste = new TreeMap<>();
     private boolean gruppeA;
@@ -38,6 +39,7 @@ public class TestGUI extends JFrame {
     private ButtonGroup resteptgruppealt;
     private JRadioButton gra, grb, grc;
     private char reseptensgruppe = 'C';
+    private static Integer reseptnøkkel;
 
     public TestGUI() {
         super("ReseptTestvindu");
@@ -185,10 +187,27 @@ public class TestGUI extends JFrame {
         søkefelt = new JTextField(2);
         søkefelt.addActionListener(lytteren);
         c.add(søkefelt);
+ 
+        søkmedisinlege = new JButton("Søk: lege medisin");
+        søkmedisinlege.addActionListener(lytteren);
+        c.add(søkmedisinlege);
         
-        setSize(475, 950);
+        søkmedisinpasient = new JButton("Søk: Pasient medisin");
+        søkmedisinpasient.addActionListener(lytteren);
+        c.add(søkmedisinpasient);
+        
+        navnalleleger = new JButton("Søk:Alle legenavn");
+        navnalleleger.addActionListener(lytteren);
+        c.add(navnalleleger);
+        
+        endreresept = new JButton("Endre Resept");
+        endreresept.addActionListener(lytteren);
+        c.add(endreresept);
+        
+        setSize(475, 1000);
         setVisible(true);
         regreseptbev = "[ABC]|AB|BC|AC|ABC";
+        reseptnøkkel = 1;
     }
     
     private boolean blankePersonfelter(){
@@ -261,24 +280,38 @@ public class TestGUI extends JFrame {
         return;
     }
     
-    private void finnPerson(){
+    private void finnPasient(){
     /*Metoden finner en pasient med den inntastede nøkkelenr*/
-        String fødselsnrrregex = "\\d{11}";
-        String søkebegrepet = fødselsnr.getText();
-        if(søkebegrepet.matches(fødselsnrrregex)){
-            Person finnes = pasientliste.get(søkebegrepet);
-            if(finnes==null){
-                infosjerm.setText("Personen finnes ikke");
+        Pasient løper;
+        if(fornavnpasient.getText().matches("")&&etternavnpasient.getText().
+                matches("")&&fødselsnr.getText().matches("")){
+            infosjerm.setText("Pasienter i registeret:\n\n");
+            for(Map.Entry<String,Pasient> entry:pasientliste.entrySet()){
+                løper = entry.getValue();
+                infosjerm.append(løper.toString()+"\n\n");
+            }
+        }
+        else if(!fødselsnr.getText().matches("")){
+            String personnøkkel = fødselsnr.getText();
+            løper = pasientliste.get(personnøkkel);
+            if(løper!=null){
+                infosjerm.setText("Treff på Autorisasjonsnr!\n\n");
+                infosjerm.append(løper.toString());
                 return;
             }
-            else{
-                infosjerm.setText(finnes.toString());
+        }
+        else if(!fornavnpasient.getText().matches("")&&!etternavnpasient.getText().matches("")){
+            String fornavn = fornavnpasient.getText();
+            String etternavn = etternavnpasient.getText();
+            infosjerm.setText("Treff på Fornavn og Etternavn:\n\n");
+            for(Map.Entry<String,Pasient> entry:pasientliste.entrySet()){
+                løper = entry.getValue();
+                if(løper.getFornavn().equalsIgnoreCase(fornavn)&&
+                        løper.getEtternavn().equalsIgnoreCase(etternavn)){
+                    infosjerm.append(løper.toString()+"\n\n");
+                }
             }
         }
-        else{
-            infosjerm.setText("Ugyldig fødselsnr");
-        }
-        //LAGE NOE SOM TESTER MER PÅ SØKEBEGREPTER!
     }
     
     private void RegLege(){
@@ -417,7 +450,7 @@ public class TestGUI extends JFrame {
                 return;
             }
             else{
-                Resept ny = new Resept(pasientnøkkel,legenøkkel,medisinnr,
+                Resept ny = new Resept(reseptnøkkel++, pasientnøkkel,legenøkkel,medisinnr,
                     medisinmengde,DDD,medisinkategori,reseptensgruppe,
                     legensanvisning);
                 reseptliste.put(ny.getReseptnr(),ny);
@@ -428,14 +461,133 @@ public class TestGUI extends JFrame {
     }
     
     private void finnResept(){
-        Integer nr = Integer.parseInt(søkefelt.getText());
-        Resept finnes = reseptliste.get(nr);
-        if(finnes==null){
-            infosjerm.setText("Resepten finnes ikke");
+        Resept løper;
+        if(!søkefelt.getText().matches("")){
+            infosjerm.setText("Treff på Resept i reseptregistert:\n\n");
+            Integer nøkkelen = Integer.parseInt(søkefelt.getText());
+            løper = reseptliste.get(nøkkelen);
+            infosjerm.append(løper.toString()+"\n\n");
+            return;
+        }
+        else if(fødselsnrresept.getText().matches("")&&autnrresept.
+                getText().matches("")){
+            infosjerm.setText("Resepter i registeret:\n\n");
+            for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+                løper = entry.getValue();
+                infosjerm.append(løper.toString()+"\n\n");
+            }
+            return;
+        }
+        else if(!fødselsnrresept.getText().matches("")){
+            String personnøkkelen = fødselsnrresept.getText();
+            infosjerm.setText("Treff på Personnr i reseptregister:\n\n");
+            for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+                løper = entry.getValue();
+                if(fødselsnrresept.getText().equalsIgnoreCase(løper.getPasient())){
+                    infosjerm.append(løper.toString()+"\n\n");
+                }
+            }
+            return;
+        }
+        else if(!autnrresept.getText().matches("")){
+            infosjerm.setText("Treff på Autnr i reseptregister:\n\n");
+            for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+                løper = entry.getValue();
+                if(autnrresept.getText().equalsIgnoreCase(løper.getLege())){
+                    infosjerm.append(løper.toString()+"\n\n");
+                }
+            }
+            return;
+        }
+        else if(!autnrresept.getText().matches("")){
+            infosjerm.setText("Treff på Autnr i reseptregister:\n\n");
+            for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+                løper = entry.getValue();
+                if(autnrresept.getText().equalsIgnoreCase(løper.getLege())){
+                    infosjerm.append(løper.toString()+"\n\n");
+                }
+            }
+            return;
+        }
+    }
+    
+    private void finnMedisinPasient(){
+        Pasient pasienter;
+        Resept løper;
+        if(medisinnøkkel.getText().matches("")){
+            infosjerm.setText("Medesinnøkkelen er tom");
             return;
         }
         else{
-            infosjerm.setText(finnes.toString());
+            infosjerm.setText("Treff på Resept i Pasientregister:\n\n");
+            String medisinen = medisinnøkkel.getText();
+            for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+                løper = entry.getValue();
+                if(løper.getMedisin().equalsIgnoreCase(medisinen)){
+                    String pasientnøkkelen = løper.getPasient();
+                    pasienter = pasientliste.get(pasientnøkkelen);
+                    infosjerm.append(pasienter.toString()+"\n\n");
+                }
+            }
+            return;
+        }
+    }
+    
+    private void finnMedisinLege(){
+        Lege leger;
+        Resept løper;
+        if(medisinnøkkel.getText().matches("")){
+            infosjerm.setText("Medesinnøkkelen er tom");
+            return;
+        }
+        else{
+            infosjerm.setText("Treff på Resept i Legeregisteret:\n\n");
+            String medisinen = medisinnøkkel.getText();
+            for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+                løper = entry.getValue();
+                if(løper.getMedisin().equalsIgnoreCase(medisinen)){
+                    String legenøkkelen = løper.getLege();
+                    leger = legeliste.get(legenøkkelen);
+                    infosjerm.append(leger.toString()+"\n\n");
+                }
+            }
+            return;
+        }
+    }
+    
+    private void visallelegenavn(){
+        Lege løper;
+        infosjerm.append("Alle legenavn\n\n");
+        for(Map.Entry<String,Lege> entry:legeliste.entrySet()){
+            løper = entry.getValue();
+            infosjerm.append(løper.getFornavn()+" "+
+                    løper.getEtternavn()+"\n\n");
+        }
+    }
+    
+    private void endreResepter(){
+        Lege bevilgningsendring;
+        if((autorisasjonsnummer.getText().matches(""))||(!gruppeA&&!gruppeB&&!gruppeC)){
+            infosjerm.setText("Skriv inn autorisasjonsnr/Merk av Reseptendring");
+        }
+        else if(legeliste.get(autorisasjonsnummer.getText())==null){
+            infosjerm.setText("Legen finnes ikke i registeret");
+        }
+        else{
+            bevilgningsendring = legeliste.get(autorisasjonsnummer.getText());
+            String reseptbev = "";
+            if(gruppeA){
+                reseptbev += "A";
+            }
+            if(gruppeB){
+                reseptbev += "B";
+            }
+            if(gruppeC){
+                reseptbev += "C";
+            }
+            bevilgningsendring.setBevilgning(reseptbev);
+            infosjerm.setText("Endret Bevilgning for \n\n" + 
+                    bevilgningsendring.toString());
         }
     }
 
@@ -455,7 +607,7 @@ public class TestGUI extends JFrame {
                 blankUtfelter();
             }
             else if(e.getSource() == søkperson){
-                finnPerson();
+                finnPasient();
                 blankUtfelter();
             }
             else if(e.getSource() == søklege){
@@ -464,6 +616,22 @@ public class TestGUI extends JFrame {
             }
             else if(e.getSource() == søkresept){
                 finnResept();
+                blankUtfelter();
+            }
+            else if(e.getSource() == søkmedisinlege){
+                finnMedisinLege();
+                blankUtfelter();
+            }//søkmedisinpasient
+            else if(e.getSource() == søkmedisinpasient){
+                finnMedisinPasient();
+                blankUtfelter();
+            }
+            else if(e.getSource() == navnalleleger){
+                visallelegenavn();
+                blankUtfelter();
+            }
+            else if(e.getSource() == endreresept){
+                endreResepter();
                 blankUtfelter();
             }
             else if(gra.isSelected()){
