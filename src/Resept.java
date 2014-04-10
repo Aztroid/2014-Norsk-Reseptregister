@@ -19,7 +19,7 @@ public class Resept {
     private String DDD; //Definert Døgndose
     private String kategori;
     private char reseptgruppe;
-    private String anvisning;
+    private String anvisning;//Dukker opp i eget vindu over tabell??
     
     public Resept(Integer n, String f, String a, String med, String m, String d, 
             String k, char rg, String an){
@@ -38,6 +38,11 @@ public class Resept {
     public Integer getReseptnr(){
         //Metode som returnerer autorisasjonsnummeret til legen
         return reseptnr;
+    }
+    
+    public String getDato(){
+        DateFormat df = new SimpleDateFormat("dd.MM.yyyy");
+        return df.format(dato.getTime());
     }
     
     public String getLege(){
@@ -60,9 +65,29 @@ public class Resept {
         return DDD;
     }
     
+    public String getMengde(){
+        //Metode som returnerer Definert Døgndose
+        return mengde;
+    }
+
+    public String getKategori(){
+        //Metode som returnerer Definert Døgndose
+        return kategori;
+    } 
+   
     public char getReseptgruppe(){
         //Metode som returnerer reseptgruppen (A,B eller C)
         return reseptgruppe;
+    }
+    
+    public Object[] getTabelllinje(){
+    /*"Dato", "Reseptnr.", "Personnr.", "Lege(Autnr.)", 
+    "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", "Reseptgruppe"*/
+        Object [] linjen = {
+            getDato(), reseptnr, fødselsnr, autorisasjonsnr, medisinnr, mengde, 
+            DDD, kategori, reseptgruppe
+        };
+        return linjen;
     }
     
     public String toString(){

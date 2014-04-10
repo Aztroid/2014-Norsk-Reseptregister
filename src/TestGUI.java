@@ -590,6 +590,28 @@ public class TestGUI extends JFrame {
                     bevilgningsendring.toString());
         }
     }
+    
+    private void tabellVindu(){
+        Resept løper;
+        Object[][] tabellen = new Object[reseptliste.size()][9];
+        Object[] linjen;
+        for(int i = 0; i<reseptliste.size(); i++){
+            for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+                løper = entry.getValue();
+                linjen = løper.getTabelllinje();
+                tabellen[i][0]=linjen[0];
+                tabellen[i][1]=linjen[1];
+                tabellen[i][2]=linjen[2];
+                tabellen[i][3]=linjen[3];
+                tabellen[i][4]=linjen[4];
+                tabellen[i][5]=linjen[5];
+                tabellen[i][6]=linjen[6];
+                tabellen[i][7]=linjen[7];
+                tabellen[i][8]=linjen[8];
+            }
+        }
+        //TabellVindu vindu = new TabellVindu();
+    }
 
     private class Kommandolytter implements ActionListener {
 
