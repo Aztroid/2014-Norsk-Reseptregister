@@ -23,7 +23,7 @@ public class TestGUI extends JFrame {
     private JTextArea anvisning;
     private JButton regpasient, reglege, regresept, søkperson, søklege, 
             søkresept, søkmedisinlege, søkmedisinpasient,navnalleleger,
-            endreresept;
+            endreresept, vistabellen;
     private TreeMap<String,Pasient> pasientliste = new TreeMap<>();
     private TreeMap<String,Lege> legeliste = new TreeMap<>();
     private TreeMap<Integer,Resept> reseptliste = new TreeMap<>();
@@ -203,6 +203,11 @@ public class TestGUI extends JFrame {
         endreresept = new JButton("Endre Resept");
         endreresept.addActionListener(lytteren);
         c.add(endreresept);
+        //vistabellen
+        
+        vistabellen = new JButton("Vis Tabellen");
+        vistabellen.addActionListener(lytteren);
+        c.add(vistabellen);
         
         setSize(475, 1000);
         setVisible(true);
@@ -595,6 +600,8 @@ public class TestGUI extends JFrame {
         Resept løper;
         Object[][] tabellen = new Object[reseptliste.size()][9];
         Object[] linjen;
+        String[] kolonnenavn = {"Dato", "Reseptnr.", "Personnr.", "Lege(Autnr.)", 
+            "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", "Reseptgruppe"};
         for(int i = 0; i<reseptliste.size(); i++){
             for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
                 løper = entry.getValue();
@@ -610,7 +617,15 @@ public class TestGUI extends JFrame {
                 tabellen[i][8]=linjen[8];
             }
         }
-        //TabellVindu vindu = new TabellVindu();
+        TabellVindu nyttvindu = new TabellVindu(tabellen, kolonnenavn);
+        JFrame ramme = new JFrame("Testtabell");
+        ramme.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        nyttvindu.setOpaque(true);
+        ramme.setContentPane(nyttvindu);
+ 
+        //Display the window.
+        ramme.pack();
+        ramme.setVisible(true);
     }
 
     private class Kommandolytter implements ActionListener {
@@ -626,7 +641,6 @@ public class TestGUI extends JFrame {
             }
             else if(e.getSource() == regresept) {
                 RegResept();
-                blankUtfelter();
             }
             else if(e.getSource() == søkperson){
                 finnPasient();
@@ -654,6 +668,10 @@ public class TestGUI extends JFrame {
             }
             else if(e.getSource() == endreresept){
                 endreResepter();
+                blankUtfelter();
+            }
+            else if(e.getSource() == vistabellen){
+                tabellVindu();
                 blankUtfelter();
             }
             else if(gra.isSelected()){
