@@ -4,6 +4,7 @@
  Vegar Nygård, s193362, HIINGDATA13H1AA*/
 
 import java.awt.*;
+import java.awt.event.*;
 import java.net.*;
 import javax.swing.*;
 
@@ -18,8 +19,8 @@ public class Hovedramme extends JFrame{
         
         /*Setter rammens bredde og høyde, lar plattformen velge plassering av
           rammen*/
-        setSize(bredde/2,høyde/2); //Fullskjerm/2
-        setLocationByPlatform(true);//Plassering etter oprativsystemets regler
+        setSize(bredde/6,høyde/3); //Fullskjerm/2
+        setLocationRelativeTo(null);//Midstiling
         
         //Legger til logoen i venstre hjørnet
         String bildefil = "bildefiler/ModelS.gif";
@@ -30,5 +31,7 @@ public class Hovedramme extends JFrame{
             setIconImage(ikon);
         }
         setTitle("Norsk Reseptregister");
+        FørsteVindu første = new FørsteVindu();
+        add(første);
     }
 }
