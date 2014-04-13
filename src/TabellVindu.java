@@ -1,14 +1,17 @@
 /*Hovedprosjekt Dats-1600
  William B. Wold, s183670, HIINGDATA13H1AA
- Tom-Andre Tostrup, s193083, HIINGDATA13H1AA*/
+ Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
+ Vegar Nygård, s193362, HIINGDATA13H1AA*/
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
 public class TabellVindu extends JPanel{
     private boolean DEBUG;
-    Object [][] tabelldata;
-    String[] kolonnenavn;
+    private Object [][] tabelldata;
+    private String[] kolonnenavn;
+    private JButton kapp;
     
     public TabellVindu(Object [][] t, String[] k){
         super(new GridLayout(1,0));
@@ -19,20 +22,21 @@ public class TabellVindu extends JPanel{
         tabellen.setPreferredScrollableViewportSize(new Dimension(500, 70));
         tabellen.setFillsViewportHeight(true);
         
-        if (DEBUG) {
+        /*if (DEBUG) {
             tabellen.addMouseListener(new MouseAdapter() {
                 public void mouseClicked(MouseEvent e) {
                     skrivUtDebugdata(tabellen);
                 }
             });
-        }
+        }*/
         
         JScrollPane skrollefeltet = new JScrollPane(tabellen);
-        
+        kapp = new JButton("Vis Tabellen");
+        add(kapp);
         add(skrollefeltet);
     }
     
-    private void skrivUtDebugdata(JTable t){
+    /*private void skrivUtDebugdata(JTable t){
         int antrader = t.getRowCount();
         int antkolonner = t.getColumnCount();
         javax.swing.table.TableModel modell = t.getModel();
@@ -46,5 +50,5 @@ public class TabellVindu extends JPanel{
             System.out.println();
         }
         System.out.println("--------------------------");
-    }
+    }*/
 }

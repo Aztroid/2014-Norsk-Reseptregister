@@ -1,6 +1,8 @@
 /*Hovedprosjekt Dats-1600
  William B. Wold, s183670, HIINGDATA13H1AA
- Tom-Andre Tostrup, s193083, HIINGDATA13H1AA*/
+ Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
+ Vegar Nygård, s193362, HIINGDATA13H1AA*/
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -209,7 +211,7 @@ public class TestGUI extends JFrame {
         vistabellen.addActionListener(lytteren);
         c.add(vistabellen);
         
-        setSize(475, 1000);
+        setSize(1500, 1000);
         setVisible(true);
         regreseptbev = "[ABC]|AB|BC|AC|ABC";
         reseptnøkkel = 1;
