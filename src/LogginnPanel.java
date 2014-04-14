@@ -10,13 +10,17 @@ Vegar Nygård, s193362, HIINGDATA13H1AA
 import java.awt.event.*;
 import java.awt.*;
 import javax.swing.*;
+import javax.swing.border.Border;
 
-public class FørsteVindu extends JPanel implements ActionListener{
+public class LogginnPanel extends JPanel implements ActionListener{
     private JButton lege, kontrollør;
+    private Border border;
     
-    public FørsteVindu(){
-        //Setter layouten på panelet
-        super(new GridLayout(2,2,10,10));
+    public LogginnPanel(){
+        //Setter layouten på hovedpanelet
+        super(new GridLayout(2,1,5,5));
+        border = BorderFactory.createTitledBorder("Logg inn");
+        setBorder(border);
         
         //Legger til knappene med ikoner på
         Icon legeikon = new ImageIcon(getClass().getResource( "bildefiler/ModelS.gif" ));
@@ -35,22 +39,12 @@ public class FørsteVindu extends JPanel implements ActionListener{
         add(kontrollør);
     }
     
-    public void ValgLege(){
-    }
-    
     public void actionPerformed(ActionEvent e){
         if(e.getSource() == lege){
             //Legeloggin
-            super.setLayout(new FlowLayout());
-            super.remove(lege);
-            super.invalidate();
-            super.validate();
         }
         else{
             //Kontrollør Logginn
-            super.remove(kontrollør);
-            super.invalidate();
-            super.validate();
         }
     }
 }
