@@ -16,6 +16,7 @@ public class Hovedramme extends JFrame{
         Dimension skjermdimensjon = verktøykasse.getScreenSize();
         int bredde = skjermdimensjon.width;
         int høyde = skjermdimensjon.height;
+        Container hovedcontainer = this.getContentPane();
         
         /*Setter rammens bredde og høyde, lar plattformen velge plassering av
           rammen*/
@@ -32,6 +33,6 @@ public class Hovedramme extends JFrame{
         }
         setTitle("Norsk Reseptregister");
         FørsteVindu første = new FørsteVindu();
-        add(første);
+        hovedcontainer.add(første);
     }
 }

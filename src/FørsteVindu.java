@@ -35,12 +35,22 @@ public class FørsteVindu extends JPanel implements ActionListener{
         add(kontrollør);
     }
     
+    public void ValgLege(){
+    }
+    
     public void actionPerformed(ActionEvent e){
         if(e.getSource() == lege){
-            //LegeGUI
+            //Legeloggin
+            super.setLayout(new FlowLayout());
+            super.remove(lege);
+            super.invalidate();
+            super.validate();
         }
         else{
-            //Kontrollørgui
+            //Kontrollør Logginn
+            super.remove(kontrollør);
+            super.invalidate();
+            super.validate();
         }
     }
 }
