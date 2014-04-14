@@ -15,6 +15,7 @@ import javax.swing.border.Border;
 public class LogginnPanel extends JPanel implements ActionListener{
     private JButton lege, kontrollør;
     private Border border;
+    private RegistreringsPanel registervindu;
     
     public LogginnPanel(){
         //Setter layouten på hovedpanelet
@@ -37,14 +38,21 @@ public class LogginnPanel extends JPanel implements ActionListener{
         
         add(lege);
         add(kontrollør);
+        
+        //Initialiserer Undervinduer
+        registervindu = new RegistreringsPanel();
     }
     
     public void actionPerformed(ActionEvent e){
         if(e.getSource() == lege){
             //Legeloggin
+            remove(lege);
+            remove(kontrollør);
+            add(registervindu);
         }
         else{
             //Kontrollør Logginn
+            
         }
     }
 }

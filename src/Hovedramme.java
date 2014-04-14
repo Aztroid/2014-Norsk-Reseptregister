@@ -21,7 +21,7 @@ public class Hovedramme extends JFrame{
     private JButton logginn, skriftbruker;
     
     //CENTER Panel
-    private LogginnPanel første;
+    private LogginnPanel logginnvindu;
     
     public Hovedramme(){
         
@@ -74,7 +74,7 @@ public class Hovedramme extends JFrame{
         sidepanel.add(sidepanelinfofelt);
         
         //Initialiserer Paleler som blir lagt til
-        første = new LogginnPanel();
+        logginnvindu = new LogginnPanel();
         
         //Legger til SidePanelet i hovedrammen
         hovedcontainer.add(sidepanel, BorderLayout.LINE_START);
@@ -82,7 +82,7 @@ public class Hovedramme extends JFrame{
     }
     
     public void LeggTilLoggInn(){
-        hovedcontainer.add(første, BorderLayout.CENTER);
+        hovedcontainer.add(logginnvindu, BorderLayout.CENTER);
         logginn.setVisible(false);
         skriftbruker.setVisible(true);
         sidepanelinfofelt.setText("Velg hva du ønsker\nlogge inn som");
