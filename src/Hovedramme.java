@@ -16,12 +16,22 @@ public class Hovedramme extends JFrame{
     //Sidepanelets datafelter
     private JPanel sidepanel;
     private SidePanelLytteren sidelytter;
-    private Border sidepanelborder,infoborder;
+    private Border sidepanelgrense;
     private JTextArea sidepanelinfofelt;
-    private JButton logginn, skriftbruker;
+    private JButton logginn, skriftbruker,visdatakont;
     
-    //CENTER Panel
-    private LogginnPanel logginnvindu;
+    //Logginn Panel
+    private JPanel logginnvindu;
+    private LogginnLytter logglytter;
+    private JButton lege, kontrollør;
+    private Border logginngrense;
+    private RegistreringsPanel registervindu;
+    
+    //DataPanel
+    private JPanel data;
+    
+    //RegisterPanel
+    private JPanel reg;
     
     public Hovedramme(){
         
@@ -55,8 +65,8 @@ public class Hovedramme extends JFrame{
           TIL DEN STØRSTE KNAPPEN*/
         
         sidepanel = new JPanel(new GridLayout(20,1,5,5));
-        sidepanelborder = BorderFactory.createTitledBorder("Navigering");
-        sidepanel.setBorder(sidepanelborder);
+        sidepanelgrense = BorderFactory.createTitledBorder("Navigering");
+        sidepanel.setBorder(sidepanelgrense);
         sidelytter = new SidePanelLytteren();
         
         logginn = new JButton("Logg inn");
@@ -68,13 +78,41 @@ public class Hovedramme extends JFrame{
         skriftbruker.setVisible(false);
         sidepanel.add(skriftbruker);
         
+        visdatakont = new JButton("Reseptoversikt");
+        visdatakont.addActionListener(sidelytter);
+        visdatakont.setVisible(false);
+        sidepanel.add(visdatakont);
+        
         sidepanel.add(new JLabel("Informasjon"));
         sidepanelinfofelt = new JTextArea(20,12);
         sidepanelinfofelt.setEditable(false);
         sidepanel.add(sidepanelinfofelt);
         
-        //Initialiserer Paleler som blir lagt til
-        logginnvindu = new LogginnPanel();
+        //Initialiserer Logginnpanelet
+        logginnvindu = new JPanel();
+        logginnvindu.setLayout(new GridLayout(2,1,5,5));
+        logginngrense = BorderFactory.createTitledBorder("Logg inn");
+        logginnvindu.setBorder(logginngrense);
+        logglytter = new LogginnLytter();
+        
+        //Legger til knappene med ikoner på
+        Icon legeikon = new ImageIcon(getClass().getResource( "bildefiler/ModelS.gif" ));
+        lege = new JButton("Lege", legeikon);
+        lege.setVerticalTextPosition( AbstractButton.BOTTOM );
+        lege.setHorizontalTextPosition( AbstractButton.CENTER );
+        lege.addActionListener(logglytter);
+        
+        Icon kontrollørikon = new ImageIcon(getClass().getResource( "bildefiler/ModelS.gif" ));
+        kontrollør = new JButton("Kontrollør", kontrollørikon);
+        kontrollør.setVerticalTextPosition( AbstractButton.BOTTOM );
+        kontrollør.setHorizontalTextPosition( AbstractButton.CENTER );
+        kontrollør.addActionListener(logglytter);
+        
+        logginnvindu.add(lege);
+        logginnvindu.add(kontrollør);
+        
+        //Initialiserer register og visdata panel
+        reg = new JPanel();
         
         //Legger til SidePanelet i hovedrammen
         hovedcontainer.add(sidepanel, BorderLayout.LINE_START);
@@ -90,11 +128,38 @@ public class Hovedramme extends JFrame{
         validate();
     }
     
+    public void visDataPanel(){
+        //Kun Lege har tilgang til dette vinduet fra hovedrammen
+    }
+    
+    public void visRegistreringsPanel(){
+        //Kontrolløren kommer rett inn hit
+        hovedcontainer.add(reg, BorderLayout.CENTER);
+        visdatakont.setVisible(true);
+        invalidate();
+        validate();
+    }
+    
     private class SidePanelLytteren implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == logginn||e.getSource() ==skriftbruker) {
+            if (e.getSource() == logginn){
                 LeggTilLoggInn();
+            }
+            else if(e.getSource() == skriftbruker){
+                
+            }
+        }
+    }
+    
+    private class LogginnLytter implements ActionListener{
+        
+        public void actionPerformed(ActionEvent e) {
+            if (e.getSource() == lege) {
+                visDataPanel();
+            }
+            else{
+                visRegistreringsPanel();
             }
         }
     }
