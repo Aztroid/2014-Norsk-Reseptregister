@@ -11,15 +11,14 @@ import javax.swing.border.*;
 
 public class Hovedramme extends JFrame{
     //Hovedrammens datafelter
-    private Container hovedcontainer;
-    private BorderLayout layout;
+    private JPanel hovedpanel;
     
     //Sidepanelets datafelter
     private JPanel sidepanel;
     private SidePanelLytteren sidelytter;
     private Border sidepanelgrense;
     private JTextArea sidepanelinfofelt;
-    private JButton logginn, skriftbruker,visdatakont;
+    private JButton skriftbruker,visdatakont;
     
     //Logginn Panel
     private JPanel logginnvindu;
@@ -43,14 +42,12 @@ public class Hovedramme extends JFrame{
         double skjermhøyde = skjermdimensjon.height/1.3;
         int bredde = (int)skjermbredde;
         int høyde = (int)skjermhøyde;
-        hovedcontainer = this.getContentPane();
+        hovedpanel = new JPanel(new BorderLayout());
        
         /*Setter rammens bredde og høyde, lar plattformen velge plassering av
           rammen*/
         setSize(bredde,høyde); //Fullskjerm/2
         setLocationRelativeTo(null);//Midstiling
-        layout = new BorderLayout();
-        hovedcontainer.setLayout(layout);
         
         //Legger til logoen i venstre hjørnet
         String bildefil = "bildefiler/logo.gif";
@@ -71,10 +68,6 @@ public class Hovedramme extends JFrame{
         sidepanel.setBorder(sidepanelgrense);
         sidelytter = new SidePanelLytteren();
         
-        logginn = new JButton("Logg inn");
-        logginn.addActionListener(sidelytter);
-        sidepanel.add(logginn);
-        
         skriftbruker = new JButton("Skrift Bruker");
         skriftbruker.addActionListener(sidelytter);
         skriftbruker.setVisible(false);
@@ -93,18 +86,18 @@ public class Hovedramme extends JFrame{
         //Initialiserer Logginnpanelet
         logginnvindu = new JPanel();
         logginnvindu.setLayout(new GridLayout(2,1,5,5));
-        logginngrense = BorderFactory.createTitledBorder("Logg inn");
+        logginngrense = BorderFactory.createTitledBorder("");
         logginnvindu.setBorder(logginngrense);
         logglytter = new LogginnLytter();
         
         //Legger til knappene med ikoner på
-        Icon legeikon = new ImageIcon(getClass().getResource("bildefiler/knapp1_lege.gif" ));
+        Icon legeikon = new ImageIcon(getClass().getResource("bildefiler/knapp1_lege.gif"));
         lege = new JButton("Lege", legeikon);
         lege.setVerticalTextPosition( AbstractButton.BOTTOM );
         lege.setHorizontalTextPosition( AbstractButton.CENTER );
         lege.addActionListener(logglytter);
         
-        Icon kontrollørikon = new ImageIcon(getClass().getResource("bildefiler/knapp2_kontrolloer.gif" ));
+        Icon kontrollørikon = new ImageIcon(getClass().getResource("bildefiler/knapp2_kontrolloer.gif"));
         kontrollør = new JButton("Kontrollør", kontrollørikon);
         kontrollør.setVerticalTextPosition( AbstractButton.BOTTOM );
         kontrollør.setHorizontalTextPosition( AbstractButton.CENTER );
@@ -117,21 +110,18 @@ public class Hovedramme extends JFrame{
         reg = new RegistreringsPanel();
         
         //Legger til SidePanelet i hovedrammen
-        hovedcontainer.add(sidepanel, BorderLayout.LINE_START);
-        sidepanelinfofelt.setText("Klikk Logg inn for å\nstarte");
+        hovedpanel.add(sidepanel, BorderLayout.LINE_START);
+        sidepanelinfofelt.setText("Venligst Logg inn");
+        hovedpanel.add(logginnvindu, BorderLayout.CENTER);
+        super.add(hovedpanel);
+    }
+    public JPanel getCenter(){
+        return (JPanel)((BorderLayout)getLayout()).getLayoutComponent
+        (BorderLayout.CENTER);
     }
     
-    public void LeggTilLoggInn(){
-        visdatakont.setVisible(false);
-        validate();
-        hovedcontainer.add(logginnvindu, BorderLayout.CENTER);
-        validate();
-        logginn.setVisible(false);
-        validate();
-        skriftbruker.setVisible(true);
-        validate();
-        sidepanelinfofelt.setText("Velg hva du ønsker\nlogge inn som");
-        validate();
+    public void skiftBruker(){
+        
     }
     
     public void visDataPanel(){
@@ -140,26 +130,18 @@ public class Hovedramme extends JFrame{
     
     public void visRegistreringsPanel(){
         //Kontrolløren kommer rett inn hit
-        hovedcontainer.remove(layout.getLayoutComponent(BorderLayout.CENTER));
-        validate();
-        hovedcontainer.remove(logginnvindu);
-        validate();
-        hovedcontainer.add(reg, BorderLayout.CENTER);
-        validate();
+        hovedpanel.add(reg, BorderLayout.CENTER);
+        skriftbruker.setVisible(true);
         visdatakont.setVisible(true);
-        validate();
+        hovedpanel.invalidate();
+        hovedpanel.validate();
     }
     
     private class SidePanelLytteren implements ActionListener {
 
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource() == logginn){
-                LeggTilLoggInn();
-            }
-            else if(e.getSource() == skriftbruker){
-                hovedcontainer.remove(layout.getLayoutComponent(BorderLayout.CENTER));
-                validate();
-                LeggTilLoggInn();
+            if (e.getSource() == skriftbruker){
+                skiftBruker();
             }
         }
     }
@@ -170,7 +152,7 @@ public class Hovedramme extends JFrame{
             if (e.getSource() == lege) {
                 visDataPanel();
             }
-            else{
+            else if(e.getSource() == kontrollør){
                 visRegistreringsPanel();
             }
         }
