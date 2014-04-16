@@ -12,6 +12,7 @@ import javax.swing.border.*;
 public class Hovedramme extends JFrame{
     //Hovedrammens datafelter
     private Container hovedcontainer;
+    private BorderLayout layout;
     
     //Sidepanelets datafelter
     private JPanel sidepanel;
@@ -27,11 +28,11 @@ public class Hovedramme extends JFrame{
     private Border logginngrense;
     private RegistreringsPanel registervindu;
     
-    //DataPanel
+    //DataPanelr
     private JPanel data;
     
     //RegisterPanel
-    private JPanel reg;
+    private RegistreringsPanel reg;
     
     public Hovedramme(){
         
@@ -48,10 +49,11 @@ public class Hovedramme extends JFrame{
           rammen*/
         setSize(bredde,høyde); //Fullskjerm/2
         setLocationRelativeTo(null);//Midstiling
-        hovedcontainer.setLayout(new BorderLayout());
+        layout = new BorderLayout();
+        hovedcontainer.setLayout(layout);
         
         //Legger til logoen i venstre hjørnet
-        String bildefil = "bildefiler/ModelS.gif";
+        String bildefil = "bildefiler/logo.gif";
         URL kilde = Hovedramme.class.getResource(bildefil);
         if(kilde != null){
             ImageIcon bilde = new ImageIcon(kilde);
@@ -96,13 +98,13 @@ public class Hovedramme extends JFrame{
         logglytter = new LogginnLytter();
         
         //Legger til knappene med ikoner på
-        Icon legeikon = new ImageIcon(getClass().getResource( "bildefiler/ModelS.gif" ));
+        Icon legeikon = new ImageIcon(getClass().getResource("bildefiler/knapp1_lege.gif" ));
         lege = new JButton("Lege", legeikon);
         lege.setVerticalTextPosition( AbstractButton.BOTTOM );
         lege.setHorizontalTextPosition( AbstractButton.CENTER );
         lege.addActionListener(logglytter);
         
-        Icon kontrollørikon = new ImageIcon(getClass().getResource( "bildefiler/ModelS.gif" ));
+        Icon kontrollørikon = new ImageIcon(getClass().getResource("bildefiler/knapp2_kontrolloer.gif" ));
         kontrollør = new JButton("Kontrollør", kontrollørikon);
         kontrollør.setVerticalTextPosition( AbstractButton.BOTTOM );
         kontrollør.setHorizontalTextPosition( AbstractButton.CENTER );
@@ -112,7 +114,7 @@ public class Hovedramme extends JFrame{
         logginnvindu.add(kontrollør);
         
         //Initialiserer register og visdata panel
-        reg = new JPanel();
+        reg = new RegistreringsPanel();
         
         //Legger til SidePanelet i hovedrammen
         hovedcontainer.add(sidepanel, BorderLayout.LINE_START);
@@ -120,11 +122,15 @@ public class Hovedramme extends JFrame{
     }
     
     public void LeggTilLoggInn(){
+        visdatakont.setVisible(false);
+        validate();
         hovedcontainer.add(logginnvindu, BorderLayout.CENTER);
+        validate();
         logginn.setVisible(false);
+        validate();
         skriftbruker.setVisible(true);
+        validate();
         sidepanelinfofelt.setText("Velg hva du ønsker\nlogge inn som");
-        invalidate();
         validate();
     }
     
@@ -134,9 +140,13 @@ public class Hovedramme extends JFrame{
     
     public void visRegistreringsPanel(){
         //Kontrolløren kommer rett inn hit
+        hovedcontainer.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+        validate();
+        hovedcontainer.remove(logginnvindu);
+        validate();
         hovedcontainer.add(reg, BorderLayout.CENTER);
+        validate();
         visdatakont.setVisible(true);
-        invalidate();
         validate();
     }
     
@@ -147,7 +157,9 @@ public class Hovedramme extends JFrame{
                 LeggTilLoggInn();
             }
             else if(e.getSource() == skriftbruker){
-                
+                hovedcontainer.remove(layout.getLayoutComponent(BorderLayout.CENTER));
+                validate();
+                LeggTilLoggInn();
             }
         }
     }
