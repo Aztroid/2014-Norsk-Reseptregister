@@ -86,7 +86,7 @@ public class Hovedramme extends JFrame{
         //Initialiserer Logginnpanelet
         logginnvindu = new JPanel();
         logginnvindu.setLayout(new GridLayout(2,1,5,5));
-        logginngrense = BorderFactory.createTitledBorder("");
+        logginngrense = BorderFactory.createTitledBorder("Logg inn");
         logginnvindu.setBorder(logginngrense);
         logglytter = new LogginnLytter();
         
@@ -111,17 +111,19 @@ public class Hovedramme extends JFrame{
         
         //Legger til SidePanelet i hovedrammen
         hovedpanel.add(sidepanel, BorderLayout.LINE_START);
-        sidepanelinfofelt.setText("Venligst Logg inn");
+        hovedpanel.add(reg, BorderLayout.CENTER);
+        reg.setVisible(false);
         hovedpanel.add(logginnvindu, BorderLayout.CENTER);
+        sidepanelinfofelt.setText("Venligst Logg inn");
         super.add(hovedpanel);
     }
-    public JPanel getCenter(){
-        return (JPanel)((BorderLayout)getLayout()).getLayoutComponent
-        (BorderLayout.CENTER);
+    public void getCenter(){
+        //return hovedpanel.(BorderLayout());
+        return;
     }
     
     public void skiftBruker(){
-        
+        logginnvindu.setVisible(true);
     }
     
     public void visDataPanel(){
@@ -129,12 +131,13 @@ public class Hovedramme extends JFrame{
     }
     
     public void visRegistreringsPanel(){
-        //Kontrolløren kommer rett inn hit
-        hovedpanel.add(reg, BorderLayout.CENTER);
-        skriftbruker.setVisible(true);
-        visdatakont.setVisible(true);
+        //Kontrolløren kommer rett inn hitrr
+        logginnvindu.setVisible(false);
         hovedpanel.invalidate();
         hovedpanel.validate();
+        reg.setVisible(true);
+        skriftbruker.setVisible(true);
+        visdatakont.setVisible(true);
     }
     
     private class SidePanelLytteren implements ActionListener {
