@@ -8,20 +8,11 @@ import javax.swing.*;
 
 public class MainDriver{
     public static void main(String []args){
-        /*final TestGUI vindu = new TestGUI();
-        vindu.addWindowListener(
-  			new WindowAdapter() {
-  				public void windowClosing( WindowEvent e )
-  				{
-  					System.exit( 0 );
-  				}
-  			} );*/
-    
+        //OPPRETT LISTENE HER OG SEND DE INN I ALT
         EventQueue.invokeLater(new Runnable(){
             public void run(){
                 Hovedramme ramme = new Hovedramme();
                 ramme.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                ramme.setVisible(true);
             }
         });
     }
