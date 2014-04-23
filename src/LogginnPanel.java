@@ -13,8 +13,7 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class LogginnPanel extends JPanel{
-    
-    private LegePanel legepanelet;
+    private final String LEGE_DATA = "1";
     private Lytter lytteren;
     
     //Sidepanel datafelter
@@ -32,19 +31,21 @@ public class LogginnPanel extends JPanel{
         super(new BorderLayout());
         lytteren = new Lytter();
         
-        //SIDEPANEL
+        //SIDEPANEL ramme
         sidepanel = new JPanel();
-        sidepanel.setLayout(new BorderLayout());
+        sidepanel.setLayout(new GridLayout(8,1,3,3));
         sidepanelgrense = BorderFactory.createTitledBorder("Navigering");
         sidepanel.setBorder(sidepanelgrense);
-        infofelt = new JTextArea(6,20);
+        
+        //SIDEPANEL infofelt
+        infofelt = new JTextArea(4,18);
         infoscroll = new JScrollPane(infofelt);
         infofelt.setText("Venligs velg rolle");
         
         infofelt.setEditable(false);
-        sidepanel.add(infoscroll, BorderLayout.PAGE_START);
+        sidepanel.add(infoscroll);
         
-        //SENTERPANEL
+        //SENTERPANEL ramme
         senterpanel = new JPanel();
         senterpanel.setLayout(new GridLayout(2,1,5,5));
         senterpanelgrense = BorderFactory.createTitledBorder("Logg inn");
@@ -71,17 +72,27 @@ public class LogginnPanel extends JPanel{
     }
     
     public void visLegeVindu(){
-        JFrame topFrame = (JFrame) SwingUtilities.getWindowAncestor(this);
-        topFrame.add(new LegePanel());
-        super.setVisible(true);
-        revalidate();
+        JFrame hovedrammen = (JFrame) SwingUtilities.getWindowAncestor(this);
+        hovedrammen.add(new LegePanel(),LEGE_DATA);
+        CardLayout c = (CardLayout)hovedrammen.getContentPane().getLayout();
+        c.show(hovedrammen.getContentPane(),LEGE_DATA);
+    }
+    
+    public void visKontrollørLogginn(){
+        JFrame hovedrammen = (JFrame) SwingUtilities.getWindowAncestor(this);
+        hovedrammen.add(new LegePanel(),LEGE_DATA);
+        CardLayout c = (CardLayout)hovedrammen.getContentPane().getLayout();
+        c.show(hovedrammen.getContentPane(),LEGE_DATA);
     }
     
     private class Lytter implements ActionListener{
 
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource()==lege){
+            if(e.getSource()==lege){
                 visLegeVindu();
+            }
+            else{
+                visKontrollørLogginn();
             }
         }
     }

@@ -1,17 +1,18 @@
 /*Hovedprosjekt Dats-1600
  William B. Wold, s183670, HIINGDATA13H1AA
- Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
- Vegar Nygård, s193362, HIINGDATA13H1AA
+ Tom-Andre Tostrup, s193083, HIINGDATA13H1AAVegar 
+ Nygård, s193362, HIINGDATA13H1AA
  */
 
-//Dette panelet er vinduet hvor legen får se oversikt over sine pasienter
+//Dette vinduet er vinduet hvor kontrolløren velger mellom 
+//registering og datavisning
 
 import java.awt.*;
 import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
-public class LegePanel extends JPanel{
+public class KontrollørLogginnPanel extends JPanel{
     private final String LOGG_INN = "0";
     private Lytter lytteren;
     
@@ -24,50 +25,58 @@ public class LegePanel extends JPanel{
     
     //Senterpanel datafelter
     private JPanel senterpanel;
-    private TabellVindu tabellen;
     private Border senterpanelgrense;
-    private JButton søkpasient;
+    private JButton regpasient, reglege, regresept;
     
-    public LegePanel(){
+    public KontrollørLogginnPanel(){
         super.setLayout(new BorderLayout());
-        lytteren = new Lytter();
         
-        //SIDEPANEL ramme
+        //SIDEPANEL
         sidepanel = new JPanel();
-        sidepanel.setLayout(new GridLayout(8,1,3,3));
+        sidepanel.setLayout(new BorderLayout());
         sidepanelgrense = BorderFactory.createTitledBorder("Navigering");
         sidepanel.setBorder(sidepanelgrense);
-        
-        //SIDEPANEL infofelt
-        infofelt = new JTextArea(4,18);
+        infofelt = new JTextArea(6,20);
         infoscroll = new JScrollPane(infofelt);
         infofelt.setText("Oversikt over dine resepter");
         
         infofelt.setEditable(false);
-        sidepanel.add(infoscroll);
+        sidepanel.add(infoscroll, BorderLayout.PAGE_START);
         
-        //SIDEPANEL knapper
+        //SIDEPANELSKNAPPER
         skiftbruker = new JButton("Skift Bruker");
+        skiftbruker.setVerticalTextPosition( AbstractButton.BOTTOM );
+        skiftbruker.setHorizontalTextPosition( AbstractButton.CENTER );
         skiftbruker.addActionListener(lytteren);
         sidepanel.add(skiftbruker);
         
-        //SENTERPANEL ramme
+        //SENTERPANEL
         senterpanel = new JPanel();
         senterpanel.setLayout(new BorderLayout());
-        senterpanelgrense = BorderFactory.createTitledBorder("Reseptoversikt");
+        senterpanelgrense = BorderFactory.createTitledBorder("Logg inn2");
         senterpanel.setBorder(senterpanelgrense);
         
         //SENTERPANEL knapper:
+        Icon legeikon = new ImageIcon(getClass().getResource("bildefiler/knapp1_lege.gif"));
+        regpasient = new JButton("Ny Pasient", legeikon);
+        regpasient.setVerticalTextPosition( AbstractButton.BOTTOM );
+        regpasient.setHorizontalTextPosition( AbstractButton.CENTER );
+        regpasient.addActionListener(lytteren);
+        senterpanel.add(regpasient);
+        
         Icon kontrollørikon = new ImageIcon(getClass().getResource
             ("bildefiler/knapp2_kontrolloer.gif"));
-        søkpasient = new JButton("Kontrollør", kontrollørikon);
-        søkpasient.setVerticalTextPosition( AbstractButton.BOTTOM );
-        søkpasient.setHorizontalTextPosition( AbstractButton.CENTER );
-        søkpasient.addActionListener(lytteren);
-        senterpanel.add(søkpasient);
-
-        //SENTERPANEL tabell
+        reglege = new JButton("Ny Lege", kontrollørikon);
+        reglege.setVerticalTextPosition( AbstractButton.BOTTOM );
+        reglege.setHorizontalTextPosition( AbstractButton.CENTER );
+        reglege.addActionListener(lytteren);
+        senterpanel.add(reglege);
         
+        regresept = new JButton("Ny Resept", kontrollørikon);
+        regresept.setVerticalTextPosition( AbstractButton.BOTTOM );
+        regresept.setHorizontalTextPosition( AbstractButton.CENTER );
+        regresept.addActionListener(lytteren);
+        senterpanel.add(regresept);
         
         super.add(sidepanel, BorderLayout.LINE_START);
         super.add(senterpanel, BorderLayout.CENTER);

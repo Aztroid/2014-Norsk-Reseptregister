@@ -11,12 +11,14 @@ import javax.swing.border.*;
 
 public class Hovedramme extends JFrame{
     //Hovedrammens datafelter
-    public static final String LOGG_INN = "1";
+    private final String LOGG_INN = "0";
+    private JPanel containerpanel;
     private double skjermbredde;
     private double skjermhøyde;
     private int bredde;
     private int høyde;
    
+    
     public Hovedramme(){
         
         //Oppretter Toolkit for å kunne justere programmet autmatisk
@@ -41,7 +43,10 @@ public class Hovedramme extends JFrame{
             setIconImage(ikon);
         }
         setTitle("Norsk Reseptregister");
-        super.add(new LogginnPanel());
+        super.getContentPane().setLayout(new CardLayout());
+        super.add(new LogginnPanel(),LOGG_INN);
+        CardLayout cl = (CardLayout)super.getContentPane().getLayout();
+        cl.show(super.getContentPane(),LOGG_INN);
         setVisible(true);
     }
 }
