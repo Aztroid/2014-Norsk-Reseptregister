@@ -9,12 +9,18 @@ by default
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
 public class LogginnPanel extends JPanel{
     private final String LEGE_DATA = "1";
     private Lytter lytteren;
+    private Hovedramme hovedrammekopi;
+    private String legeautnr;
+    private TreeMap<String,Pasient> pasientliste;
+    private TreeMap<String,Lege> legeliste;
+    private TreeMap<Integer,Resept> reseptliste;
     
     //Sidepanel datafelter
     private JPanel sidepanel;
@@ -26,10 +32,17 @@ public class LogginnPanel extends JPanel{
     private JPanel senterpanel;
     private Border senterpanelgrense;
     private JButton lege, kontrollør;
+    private JTextField legebrukernavn;
     
-    public LogginnPanel(){
+    public LogginnPanel(TreeMap<String,Pasient> pasientliste,
+            TreeMap<String,Lege> legeliste,
+            TreeMap<Integer,Resept> reseptliste){
         super(new BorderLayout());
         lytteren = new Lytter();
+        
+        this.pasientliste = pasientliste;
+        this.legeliste = legeliste;
+        this.reseptliste = reseptliste;
         
         //SIDEPANEL ramme
         sidepanel = new JPanel();
@@ -47,11 +60,15 @@ public class LogginnPanel extends JPanel{
         
         //SENTERPANEL ramme
         senterpanel = new JPanel();
-        senterpanel.setLayout(new GridLayout(2,1,5,5));
+        senterpanel.setLayout(new GridLayout(0,1));
         senterpanelgrense = BorderFactory.createTitledBorder("Logg inn");
         senterpanel.setBorder(senterpanelgrense);
         
-        //SENTERPANEL knapper:
+        //SENTERPANEL content:
+        legebrukernavn = new JTextField(15);
+        senterpanel.add(new JLabel("Søk Pasient"));
+        senterpanel.add(legebrukernavn);
+        
         Icon legeikon = new ImageIcon(getClass().getResource("bildefiler/knapp1_lege.gif"));
         lege = new JButton("Lege", legeikon);
         lege.setVerticalTextPosition( AbstractButton.BOTTOM );
@@ -72,17 +89,17 @@ public class LogginnPanel extends JPanel{
     }
     
     public void visLegeVindu(){
-        JFrame hovedrammen = (JFrame) SwingUtilities.getWindowAncestor(this);
-        hovedrammen.add(new LegePanel(),LEGE_DATA);
-        CardLayout c = (CardLayout)hovedrammen.getContentPane().getLayout();
-        c.show(hovedrammen.getContentPane(),LEGE_DATA);
+        hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
+        legeautnr = legebrukernavn.getText();
+        hovedrammekopi.add(new LegePanel(legeautnr,reseptliste),LEGE_DATA);
+        hovedrammekopi.visPanel(LEGE_DATA);
     }
     
     public void visKontrollørLogginn(){
-        JFrame hovedrammen = (JFrame) SwingUtilities.getWindowAncestor(this);
-        hovedrammen.add(new LegePanel(),LEGE_DATA);
-        CardLayout c = (CardLayout)hovedrammen.getContentPane().getLayout();
-        c.show(hovedrammen.getContentPane(),LEGE_DATA);
+        hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
+        legeautnr = legebrukernavn.getText();
+        hovedrammekopi.add(new LegePanel(legeautnr,reseptliste),LEGE_DATA);
+        hovedrammekopi.visPanel(LEGE_DATA);
     }
     
     private class Lytter implements ActionListener{

@@ -9,12 +9,17 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
 public class KontrollørLogginnPanel extends JPanel{
     private final String LOGG_INN = "0";
     private Lytter lytteren;
+    private Hovedramme hovedrammekopi;
+    private TreeMap<String,Pasient> pasientliste;
+    private TreeMap<String,Lege> legeliste;
+    private TreeMap<Integer,Resept> reseptliste;
     
     //Sidepanel datafelter
     private JPanel sidepanel;
@@ -83,10 +88,7 @@ public class KontrollørLogginnPanel extends JPanel{
     }
     
     public void skiftbruker(){
-        JFrame hovedrammen = (JFrame) SwingUtilities.getWindowAncestor(this);
-        hovedrammen.add(new LogginnPanel(),LOGG_INN);
-        CardLayout c = (CardLayout)hovedrammen.getContentPane().getLayout();
-        c.show(hovedrammen.getContentPane(),LOGG_INN);
+        hovedrammekopi.visFørste();
     }
     
     private class Lytter implements ActionListener{

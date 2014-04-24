@@ -4,9 +4,11 @@
  Vegar Nygård, s193362, HIINGDATA13H1AA*/
 
 import java.awt.*;
+import java.util.TreeMap;
 import javax.swing.*;
 
 public class MainDriver{
+    
     public static void main(String []args){
         //OPPRETT LISTENE HER OG SEND DE INN I ALT
         EventQueue.invokeLater(new Runnable(){

@@ -6,18 +6,23 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.net.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
 public class Hovedramme extends JFrame{
     //Hovedrammens datafelter
     private final String LOGG_INN = "0";
+    private final String LEGE_DATA = "1";
+    private final String KONT_LOGG_INN = "2";
     private JPanel containerpanel;
     private double skjermbredde;
     private double skjermhøyde;
     private int bredde;
     private int høyde;
-   
+    private TreeMap<String,Pasient> pasientliste;
+    private TreeMap<String,Lege> legeliste;
+    private TreeMap<Integer,Resept> reseptliste;
     
     public Hovedramme(){
         
@@ -42,11 +47,36 @@ public class Hovedramme extends JFrame{
             Image ikon = bilde.getImage();
             setIconImage(ikon);
         }
+        pasientliste = new TreeMap<>();
+        legeliste = new TreeMap<>();
+        reseptliste = new TreeMap<>();
         setTitle("Norsk Reseptregister");
         super.getContentPane().setLayout(new CardLayout());
-        super.add(new LogginnPanel(),LOGG_INN);
-        CardLayout cl = (CardLayout)super.getContentPane().getLayout();
-        cl.show(super.getContentPane(),LOGG_INN);
+        super.add(new LogginnPanel(pasientliste, legeliste,reseptliste),
+                LOGG_INN);
+        visPanel(LOGG_INN);
         setVisible(true);
+    }
+    public void visPanel(String panelid){
+        CardLayout c = (CardLayout)super.getContentPane().getLayout();
+        c.show(super.getContentPane(),panelid);
+        System.out.println(c.toString());
+    }
+    
+    public void visFørste(){
+        CardLayout c = (CardLayout)super.getContentPane().getLayout();
+        c.first(super.getContentPane());
+    }
+    
+    public TreeMap<String,Pasient> getPasientliste(){
+        return pasientliste;
+    }
+    
+    public TreeMap<String,Lege> getLegeliste(){
+        return legeliste;
+    }
+    
+    public TreeMap<Integer,Resept> getReseptliste(){
+        return reseptliste;
     }
 }

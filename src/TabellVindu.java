@@ -14,7 +14,7 @@ public class TabellVindu extends JPanel{
     private JButton kapp;
     
     public TabellVindu(Object [][] t, String[] k){
-        super(new GridLayout(1,0));
+        super(new GridLayout(0,1));
         tabelldata = t;
         kolonnenavn = k;
     
@@ -31,8 +31,6 @@ public class TabellVindu extends JPanel{
         }*/
         
         JScrollPane skrollefeltet = new JScrollPane(tabellen);
-        kapp = new JButton("Vis Tabellen");
-        add(kapp);
         add(skrollefeltet);
     }
     
