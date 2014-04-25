@@ -13,8 +13,6 @@ import javax.swing.border.*;
 public class Hovedramme extends JFrame{
     //Hovedrammens datafelter
     private final String LOGG_INN = "0";
-    private final String LEGE_DATA = "1";
-    private final String KONT_LOGG_INN = "2";
     private JPanel containerpanel;
     private double skjermbredde;
     private double skjermhøyde;

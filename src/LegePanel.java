@@ -8,38 +8,42 @@
 
 import java.awt.*;
 import java.awt.event.*;
-import java.util.Map;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.border.*;
+import javax.swing.border.Border;
 
 public class LegePanel extends JPanel{
-    private final String LOGG_INN = "0";
+    private final String VISDATA = "0";
+    private final String NY_LEGE = "0";
     private Lytter lytteren;
-    private Hovedramme hovedrammekopi;
     private TreeMap<Integer,Resept> reseptliste;
     private TreeMap<Integer,Resept> spesifikkreseptliste;
+    private TreeMap<String,Pasient> pasientliste;
     private String legensautnr;
+    private Hovedramme hovedrammekopi;
     
     //Sidepanel datafelter
     private JPanel sidepanel;
     private JTextArea infofelt;
     private Border sidepanelgrense;
     private JScrollPane infoscroll;
-    private JButton skiftbruker;
+    private JButton skiftbruker,gåtilbake;
     
     //Senterpanel datafelter
-    private JPanel senterpanel,senterpanelnorth,senterpanelnorthcenter,
+    private JPanel senterpanel,senterpanelvisdata, senterpaneltop,
             senterpanelnorthnylege,senterpanelsouth;
     private TabellVindu tabellen;
     private Border senterpanelgrense;
     private JButton søk,logginn;
     private JTextField søkpasientid,søkreseptid,legeid;
     
-    public LegePanel(String autnr,TreeMap<Integer,Resept> reseptliste){
+    public LegePanel(String autnr,TreeMap<String,Pasient> pasientliste,
+            TreeMap<Integer,Resept> reseptliste){
+        
         super.setLayout(new BorderLayout());
         lytteren = new Lytter();
         legensautnr = autnr;
+        this.pasientliste = pasientliste;
         this.reseptliste = reseptliste;
         spesifikkreseptliste = new TreeMap<>();
         
@@ -62,27 +66,31 @@ public class LegePanel extends JPanel{
         skiftbruker.addActionListener(lytteren);
         sidepanel.add(skiftbruker);
         
+        gåtilbake = new JButton("Tilbake til meny");
+        gåtilbake.addActionListener(lytteren);
+        sidepanel.add(gåtilbake);
+        
         //SENTERPANEL ramme
-        senterpanel = new JPanel(new GridLayout(0,1));
+        senterpanel = new JPanel(new CardLayout());
         senterpanelgrense = BorderFactory.createTitledBorder("Reseptoversikt");
         senterpanel.setBorder(senterpanelgrense);
-        senterpanelnorth = new JPanel(new BorderLayout());
-        senterpanelnorthcenter = new JPanel(new FlowLayout());
+        senterpanelvisdata = new JPanel(new BorderLayout());
+        senterpaneltop = new JPanel(new FlowLayout());
         senterpanelnorthnylege = new JPanel(new FlowLayout());
-        senterpanelsouth = new JPanel(new BorderLayout());
+        senterpanelsouth = new JPanel(new FlowLayout());
          
         //SENTERPANELNORTH content:
         søkpasientid = new JTextField(15);
-        senterpanelnorthcenter.add(new JLabel("Søk Pasient"));
-        senterpanelnorthcenter.add(søkpasientid);
+        senterpaneltop.add(new JLabel("Søk Pasient"));
+        senterpaneltop.add(søkpasientid);
         
         søkreseptid = new JTextField(15);
-        senterpanelnorthcenter.add(new JLabel("Søk Resept"));
-        senterpanelnorthcenter.add(søkreseptid);
+        senterpaneltop.add(new JLabel("Søk Resept"));
+        senterpaneltop.add(søkreseptid);
         
         søk = new JButton("Søk");
         søk.addActionListener(lytteren);
-        senterpanelnorthcenter.add(søk);
+        senterpaneltop.add(søk);
         
         //SENTERPANEL Ny lege
         legeid = new JTextField(15);
@@ -93,14 +101,21 @@ public class LegePanel extends JPanel{
         logginn.addActionListener(lytteren);
         senterpanelnorthnylege.add(logginn);
         
-        senterpanelnorth.add(senterpanelnorthcenter, BorderLayout.CENTER);
-        senterpanel.add(senterpanelnorth);
+        senterpanelvisdata.add(senterpaneltop,BorderLayout.PAGE_START);
+        senterpanel.add(senterpanelvisdata,VISDATA);
+        senterpanel.add(senterpanelnorthnylege, NY_LEGE);
         super.add(sidepanel, BorderLayout.LINE_START);
         super.add(senterpanel, BorderLayout.CENTER);
                 
         //SENTERPANEL tabell
         matTabellen();
         filtrerLegelisten(legensautnr);
+        visFørste();
+    }
+    
+    public void visFørste(){
+        CardLayout c = (CardLayout)senterpanel.getLayout();
+        c.first(senterpanel);
     }
     
     private void matTabellen(){
@@ -125,28 +140,7 @@ public class LegePanel extends JPanel{
             }
         }
         TabellVindu tabell = new TabellVindu(tabelldata, kolonnenavn);
-        senterpanelsouth.add(tabell,BorderLayout.CENTER);
-        senterpanel.add(senterpanelsouth);
-    }
-    
-    public void skiftbruker(){
-        infofelt.setText("Skriv inn ditt autorisasjonsnr");
-        hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-        senterpanelnorthcenter.setVisible(false);
-        senterpanelsouth.setVisible(false);
-        senterpanelnorth.add(senterpanelnorthnylege, BorderLayout.CENTER);
-    }
-    
-    public void loggInnNyLege(){
-        String nyelegen = legeid.getText();
-        if(nyelegen.matches("")){
-            legensautnr = nyelegen;
-            filtrerLegelisten(legensautnr);
-            matTabellen();
-            senterpanelnorth.remove(senterpanelnorthnylege);
-            senterpanelnorthcenter.setVisible(true);
-            senterpanelsouth.setVisible(true);
-        }
+        senterpanelvisdata.add(tabell,BorderLayout.CENTER);
     }
     
     public void filtrerLegelisten(String autnr){
@@ -163,7 +157,29 @@ public class LegePanel extends JPanel{
             infofelt.setText("Legenummeret var tomt\nAlle resepter vises\n"
                     + "Fordi jeg er lat");
         }
-        return;
+    }
+    
+    public void skiftbruker(){
+        CardLayout c = (CardLayout)senterpanel.getLayout();
+        c.show(senterpanel,NY_LEGE);
+    }
+    
+    public void loggInnNyLege(){
+        String nyelegen = legeid.getText();
+        if(!nyelegen.matches("")){
+            legensautnr = nyelegen;
+            filtrerLegelisten(legensautnr);
+            matTabellen();
+            visFørste();
+        }
+        else{
+            visFørste();
+        }
+    }
+    
+    public void tilbakeTilMeny(){
+        hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
+        hovedrammekopi.visFørste();
     }
     
     private class Lytter implements ActionListener{
@@ -174,6 +190,9 @@ public class LegePanel extends JPanel{
             }
             else if(e.getSource()==logginn){
                 loggInnNyLege();
+            }
+            else{
+                tilbakeTilMeny();
             }
         }
     }

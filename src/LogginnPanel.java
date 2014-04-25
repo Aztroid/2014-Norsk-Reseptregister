@@ -14,7 +14,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class LogginnPanel extends JPanel{
-    private final String LEGE_DATA = "1";
+    private final String LEGE_DATA = "0";
+    private final String KONTROLL_DATA = "1";
     private Lytter lytteren;
     private Hovedramme hovedrammekopi;
     private String legeautnr;
@@ -91,15 +92,16 @@ public class LogginnPanel extends JPanel{
     public void visLegeVindu(){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
         legeautnr = legebrukernavn.getText();
-        hovedrammekopi.add(new LegePanel(legeautnr,reseptliste),LEGE_DATA);
+        hovedrammekopi.add(new LegePanel(legeautnr,pasientliste,reseptliste)
+                ,LEGE_DATA);
         hovedrammekopi.visPanel(LEGE_DATA);
     }
     
     public void visKontrollørLogginn(){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
         legeautnr = legebrukernavn.getText();
-        hovedrammekopi.add(new LegePanel(legeautnr,reseptliste),LEGE_DATA);
-        hovedrammekopi.visPanel(LEGE_DATA);
+        hovedrammekopi.add(new KontrollørPanel(pasientliste,legeliste,reseptliste),KONTROLL_DATA);
+        hovedrammekopi.visPanel(KONTROLL_DATA);
     }
     
     private class Lytter implements ActionListener{
