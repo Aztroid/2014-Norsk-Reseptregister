@@ -14,7 +14,8 @@ import javax.swing.border.Border;
 
 public class LegePanel extends JPanel{
     private final String VISDATA = "0";
-    private final String NY_LEGE = "0";
+    private final String NY_PASIENT = "0";
+    private final String NY_RESEPT = "1";
     private Lytter lytteren;
     private TreeMap<Integer,Resept> reseptliste;
     private TreeMap<Integer,Resept> spesifikkreseptliste;
@@ -27,15 +28,22 @@ public class LegePanel extends JPanel{
     private JTextArea infofelt;
     private Border sidepanelgrense;
     private JScrollPane infoscroll;
-    private JButton skiftbruker,gåtilbake;
+    private JButton nypasient,nyresept,gåtilbake;
     
     //Senterpanel datafelter
     private JPanel senterpanel,senterpanelvisdata, senterpaneltop,
-            senterpanelnorthnylege,senterpanelsouth;
+            senterpanelnorthnypasient, senterpanelnorthnyresept,
+            senterpanelsouth;
     private TabellVindu tabellen;
     private Border senterpanelgrense;
-    private JButton søk,logginn;
-    private JTextField søkpasientid,søkreseptid,legeid;
+    private JButton søk,regpasient,regresept;
+    private JTextField søkpasientid,søkreseptid,
+           /*REGPASIENT*/ fornavnpasient, etternavnpasient, fødselsnr,
+            
+           /*REGRESEPT*/ fødselsnrresept, autnrresept, medisinnøkkel, mengde,
+            defdøgndosering, kategori,søkefelt;
+    private JRadioButton gra, grb, grc;
+    private ButtonGroup resteptgruppealt;
     
     public LegePanel(String autnr,TreeMap<String,Pasient> pasientliste,
             TreeMap<Integer,Resept> reseptliste){
@@ -62,13 +70,17 @@ public class LegePanel extends JPanel{
         sidepanel.add(infoscroll);
         
         //SIDEPANEL knapper
-        skiftbruker = new JButton("Skift Lege");
-        skiftbruker.addActionListener(lytteren);
-        sidepanel.add(skiftbruker);
-        
         gåtilbake = new JButton("Tilbake til meny");
         gåtilbake.addActionListener(lytteren);
         sidepanel.add(gåtilbake);
+        
+        nypasient = new JButton("Registrer Pasient");
+        nypasient.addActionListener(lytteren);
+        sidepanel.add(nypasient);
+        
+        nyresept = new JButton("Registrer Resept");
+        nyresept.addActionListener(lytteren);
+        sidepanel.add(nyresept);
         
         //SENTERPANEL ramme
         senterpanel = new JPanel(new CardLayout());
@@ -76,10 +88,11 @@ public class LegePanel extends JPanel{
         senterpanel.setBorder(senterpanelgrense);
         senterpanelvisdata = new JPanel(new BorderLayout());
         senterpaneltop = new JPanel(new FlowLayout());
-        senterpanelnorthnylege = new JPanel(new FlowLayout());
+        senterpanelnorthnypasient = new JPanel(new FlowLayout());
+        senterpanelnorthnyresept = new JPanel(new FlowLayout());
         senterpanelsouth = new JPanel(new FlowLayout());
          
-        //SENTERPANELNORTH content:
+        //SENTERPANELTOP content:
         søkpasientid = new JTextField(15);
         senterpaneltop.add(new JLabel("Søk Pasient"));
         senterpaneltop.add(søkpasientid);
@@ -92,25 +105,84 @@ public class LegePanel extends JPanel{
         søk.addActionListener(lytteren);
         senterpaneltop.add(søk);
         
-        //SENTERPANEL Ny lege
-        legeid = new JTextField(15);
-        senterpanelnorthnylege.add(new JLabel("Authorisasjons nr."));
-        senterpanelnorthnylege.add(legeid);
+        //SENTERPANEL Ny Pasient
+        senterpanelnorthnypasient.add(new JLabel("Personnr: "));
+        fødselsnr = new JTextField(30);
+        fødselsnr.addActionListener(lytteren);
+        senterpanelnorthnypasient.add(fødselsnr);
+
+        senterpanelnorthnypasient.add(new JLabel("Fornavn Pasient: "));
+        fornavnpasient = new JTextField(30);
+        fornavnpasient.addActionListener(lytteren);
+        senterpanelnorthnypasient.add(fornavnpasient);
+
+        senterpanelnorthnypasient.add(new JLabel("Etternavn Pasient: "));
+        etternavnpasient = new JTextField(30);
+        etternavnpasient.addActionListener(lytteren);
+        senterpanelnorthnypasient.add(etternavnpasient);
         
-        logginn = new JButton("Logg Inn");
-        logginn.addActionListener(lytteren);
-        senterpanelnorthnylege.add(logginn);
+        regpasient = new JButton("Register Pasient");
+        regpasient.addActionListener(lytteren);
+        senterpanelnorthnypasient.add(regpasient);
         
+        //SENTERPANEL Ny Resept
+        senterpanelnorthnyresept.add(new JLabel("Pasient(Fnr): "));
+        fødselsnrresept = new JTextField(30);
+        fødselsnrresept.addActionListener(lytteren);
+        senterpanelnorthnyresept.add(fødselsnrresept);
+
+        senterpanelnorthnyresept.add(new JLabel("Leg(Aut.nr): "));
+        autnrresept = new JTextField(30);
+        autnrresept.addActionListener(lytteren);
+        senterpanelnorthnyresept.add(autnrresept);
+
+        senterpanelnorthnyresept.add(new JLabel("ACT-Nr: "));
+        medisinnøkkel = new JTextField(30);
+        medisinnøkkel.addActionListener(lytteren);
+        senterpanelnorthnyresept.add(medisinnøkkel);
+        
+        senterpanelnorthnyresept.add(new JLabel("Mengde(gr): "));
+        mengde = new JTextField(30);
+        mengde.addActionListener(lytteren);
+        senterpanelnorthnyresept.add(mengde);
+        
+        senterpanelnorthnyresept.add(new JLabel("Diag.Døgn: "));
+        defdøgndosering = new JTextField(30);
+        defdøgndosering.addActionListener(lytteren);
+        senterpanelnorthnyresept.add(defdøgndosering);
+
+        senterpanelnorthnyresept.add(new JLabel("Kategori: "));
+        kategori = new JTextField(30);
+        kategori.addActionListener(lytteren);
+        senterpanelnorthnyresept.add(kategori);
+        
+        senterpanelnorthnyresept.add(new JLabel("Reseptgruppe(felleskatalogen): "));
+        resteptgruppealt = new ButtonGroup();
+        gra = new JRadioButton("Gruppe A", false);
+        gra.addActionListener(lytteren);
+        grb = new JRadioButton("Gruppe B", false);
+        grb.addActionListener(lytteren);
+        grc = new JRadioButton("Gruppe C", true);
+        grc.addActionListener(lytteren);
+        resteptgruppealt.add(gra);
+        resteptgruppealt.add(grb);
+        resteptgruppealt.add(grc);
+        senterpanelnorthnyresept.add(gra);
+        senterpanelnorthnyresept.add(grb);
+        senterpanelnorthnyresept.add(grc);
+        
+        //LEGGER ALLE PANELER TIL
         senterpanelvisdata.add(senterpaneltop,BorderLayout.PAGE_START);
         senterpanel.add(senterpanelvisdata,VISDATA);
-        senterpanel.add(senterpanelnorthnylege, NY_LEGE);
+        senterpanel.add(senterpanelnorthnypasient, NY_PASIENT);
+        senterpanel.add(senterpanelnorthnyresept, NY_RESEPT);
         super.add(sidepanel, BorderLayout.LINE_START);
         super.add(senterpanel, BorderLayout.CENTER);
                 
         //SENTERPANEL tabell
-        matTabellen();
-        filtrerLegelisten(legensautnr);
-        visFørste();
+        filtrerLegelisten(legensautnr);/*Finner kun de reseptene den 
+                                        aktuelle legen har skrevet utr*/
+        visFørste();//Viser det første panelet
     }
     
     public void visFørste(){
@@ -119,28 +191,7 @@ public class LegePanel extends JPanel{
     }
     
     private void matTabellen(){
-        Resept løper;
-        Object[][] tabelldata = new Object[spesifikkreseptliste.size()][9];
-        Object[] linjen;
-        String[] kolonnenavn = {"Dato", "Reseptnr.", "Personnr.", "Lege(Autnr.)", 
-            "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", "Reseptgruppe"};
-        for(int i = 0; i<spesifikkreseptliste.size(); i++){
-            for(Map.Entry<Integer,Resept> entry:spesifikkreseptliste.entrySet()){
-                løper = entry.getValue();
-                linjen = løper.getTabelllinje();
-                tabelldata[i][0]=linjen[0];
-                tabelldata[i][1]=linjen[1];
-                tabelldata[i][2]=linjen[2];
-                tabelldata[i][3]=linjen[3];
-                tabelldata[i][4]=linjen[4];
-                tabelldata[i][5]=linjen[5];
-                tabelldata[i][6]=linjen[6];
-                tabelldata[i][7]=linjen[7];
-                tabelldata[i][8]=linjen[8];
-            }
-        }
-        TabellVindu tabell = new TabellVindu(tabelldata, kolonnenavn);
-        senterpanelvisdata.add(tabell,BorderLayout.CENTER);
+        return;
     }
     
     public void filtrerLegelisten(String autnr){
@@ -159,22 +210,14 @@ public class LegePanel extends JPanel{
         }
     }
     
-    public void skiftbruker(){
+    public void nyPasient(){
         CardLayout c = (CardLayout)senterpanel.getLayout();
-        c.show(senterpanel,NY_LEGE);
+        c.show(senterpanel,NY_PASIENT);
     }
     
-    public void loggInnNyLege(){
-        String nyelegen = legeid.getText();
-        if(!nyelegen.matches("")){
-            legensautnr = nyelegen;
-            filtrerLegelisten(legensautnr);
-            matTabellen();
-            visFørste();
-        }
-        else{
-            visFørste();
-        }
+    public void nyResept(){
+        CardLayout c = (CardLayout)senterpanel.getLayout();
+        c.show(senterpanel,NY_RESEPT);
     }
     
     public void tilbakeTilMeny(){
@@ -185,14 +228,14 @@ public class LegePanel extends JPanel{
     private class Lytter implements ActionListener{
         
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource()==skiftbruker){
-                skiftbruker();
+            if (e.getSource()==gåtilbake){
+                tilbakeTilMeny();
             }
-            else if(e.getSource()==logginn){
-                loggInnNyLege();
+            else if(e.getSource()==nypasient){
+                nyPasient();
             }
             else{
-                tilbakeTilMeny();
+                nyResept();
             }
         }
     }

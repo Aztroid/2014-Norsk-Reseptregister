@@ -17,12 +17,21 @@ public class Lege extends Person{
         arbeidssted = ar;
         reseptbevilgning = b;
     }
-    
+    /**
+     * Returnerer legens arbeidssted
+     * @return arbeidssted
+     */
     public String getArbeidssted(){
         return arbeidssted;
     }
+
+    public String getAutorisasjonsnr() {
+        return autorisasjonsnr;
+    }
+    
     
     public String getBevilgning(){
+        
         return reseptbevilgning;
     }
     

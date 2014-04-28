@@ -14,10 +14,10 @@ import javax.swing.border.*;
 
 public class KontrollørPanel extends JPanel{
     private final String VISDATA = "0";
-    private final String REGPASIENT = "1";
-    private final String REGLEGE = "2";
-    private final String REGRESEPT = "3";
+    private final String VISSTATISTIKK = "1";
+    private final String VISVARSLING = "3";
     
+    private Hovedramme hovedrammekopi;
     private Lytter lytteren;
     private TreeMap<String,Pasient> pasientliste;
     private TreeMap<Integer,Resept> reseptliste;
@@ -29,11 +29,11 @@ public class KontrollørPanel extends JPanel{
     private JTextArea infofelt;
     private Border sidepanelgrense;
     private JScrollPane infoscroll;
-    private JButton nypasient,nylege,nyresept,visdata;
+    private JButton gåtilbake,visdata,statistikk,varsling;
     
     //Senterpanel datafelter
     private JPanel senterpanel,senterpanelvisdata, senterpaneltop,
-            senterpanelregpasient,senterpanelreglege,senterpanelregresept;
+            senterpanelstatistikk,senterpanelvarsling;
     private TabellVindu tabellen;
     private Border senterpanelgrense;
     private JButton søk;
@@ -65,21 +65,21 @@ public class KontrollørPanel extends JPanel{
         
         //SIDEPANEL knapper
         
+        gåtilbake = new JButton("Tilbake til meny");
+        gåtilbake.addActionListener(lytteren);
+        sidepanel.add(gåtilbake);
+        
         visdata = new JButton("Vis Reseptregister");
         visdata.addActionListener(lytteren);
         sidepanel.add(visdata);
         
-        nypasient = new JButton("Registrer Pasient");
-        nypasient.addActionListener(lytteren);
-        sidepanel.add(nypasient);
+        statistikk = new JButton("Vis Statistikk");
+        statistikk.addActionListener(lytteren);
+        sidepanel.add(statistikk);
         
-        nylege = new JButton("Registrer Pasient");
-        nylege.addActionListener(lytteren);
-        sidepanel.add(nylege);
-        
-        nyresept = new JButton("Registrer Pasient");
-        nyresept.addActionListener(lytteren);
-        sidepanel.add(nyresept);
+        varsling = new JButton("Gå til Varslingsenter");
+        varsling.addActionListener(lytteren);
+        sidepanel.add(varsling);
         
         //SENTERPANEL ramme
         senterpanel = new JPanel(new CardLayout());
@@ -107,23 +107,19 @@ public class KontrollørPanel extends JPanel{
         senterpaneltop.add(søk);
          
         //SENTERPANEL Regpasient:
-        senterpanelregpasient = new JPanel(new FlowLayout());
-        senterpanelreglege = new JPanel(new FlowLayout());
-        senterpanelregresept = new JPanel(new FlowLayout());
+        senterpanelstatistikk = new JPanel(new FlowLayout());
+        senterpanelvarsling = new JPanel(new FlowLayout());
         
         //SENTERPANEL 
         senterpanelvisdata.add(senterpaneltop,BorderLayout.PAGE_START);
         senterpanel.add(senterpanelvisdata,VISDATA);
-        senterpanel.add(senterpanelregpasient, REGPASIENT);
-        senterpanel.add(senterpanelreglege, REGLEGE);
-        senterpanel.add(senterpanelregresept, REGRESEPT);
+        senterpanel.add(senterpanelstatistikk, VISSTATISTIKK);
+        senterpanel.add(senterpanelvarsling, VISVARSLING);
         
         super.add(sidepanel, BorderLayout.LINE_START);
         super.add(senterpanel, BorderLayout.CENTER);
                 
         //SENTERPANEL tabell
-        fylllisten();
-        matTabellen();
         visFørste();
     }
     
@@ -132,45 +128,39 @@ public class KontrollørPanel extends JPanel{
         c.first(senterpanel);
     }
     
-    private void matTabellen(){
-        Resept løper;
-        Object[][] tabelldata = new Object[reseptliste.size()][reseptliste.size()];
-        Object[] linjen;
-        String[] kolonnenavn = {"Dato", "Reseptnr.", "Personnr.", "Lege(Autnr.)", 
-            "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", "Reseptgruppe"};
-        TabellVindu tabell = new TabellVindu(tabelldata,kolonnenavn);
-        //tabell.setOpaque(true);
+    private void lagTabellen(){
+        TabellVindu tabell = new TabellVindu(reseptliste);
+        tabell.setOpaque(true);
         senterpanelvisdata.add(tabell,BorderLayout.CENTER);
     }
     
     public void regPasient(){
         CardLayout c = (CardLayout)senterpanel.getLayout();
-        c.show(senterpanel,REGPASIENT);
+        c.show(senterpanel,VISVARSLING);
     }
     
-    public void fylllisten(){
-        String personnr = "test";
-        String legenr = "test";
-        Resept ny;
-        for(int i = 1; i<10000;i++){
-            personnr = "test";
-            legenr = "test";
-            personnr+= i;
-            legenr+= i;
-            ny = new Resept(reseptnøkkel++,personnr,legenr,"test",
-                    "test","test","test",'A',"test");
-            reseptliste.put(ny.getReseptnr(),ny);
-            System.out.println(ny.toString());
-        }
+    public void fylltabellen(){
+        for(int i = 0; i < 100000; i++){
+            reseptliste.put(i, new Resept(i,"L"+i,"P"+i,"med"+i,"mengde"+i,
+                    "DDD"+i,"Kat"+i,'A',"Anv"+i));
+        }   
+    }
+    
+    public void tilbakeTilMeny(){
+        hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
+        hovedrammekopi.visFørste();
     }
     
     private class Lytter implements ActionListener{
         
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource()==nypasient){
+            if (e.getSource()==visdata){
+                fylltabellen();
+                lagTabellen();
+                revalidate();
             }
-            else if(e.getSource()==nylege){
-                
+            else if(e.getSource()==gåtilbake){
+                tilbakeTilMeny();
             }
         }
     }

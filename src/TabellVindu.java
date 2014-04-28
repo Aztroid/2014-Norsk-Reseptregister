@@ -6,19 +6,18 @@
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.util.*;
 
 public class TabellVindu extends JPanel{
-    private boolean DEBUG;
-    private Object [][] tabelldata;
-    private String[] kolonnenavn;
-    private JButton kapp;
+    private TreeMap<Integer,Resept> reseptliste;
+    private Tabellmodell modellen;
+    final JTable tabellen;
     
-    public TabellVindu(Object [][] t, String[] k){
+    public TabellVindu(TreeMap<Integer,Resept> reseptliste){
         super(new GridLayout(0,1));
-        tabelldata = t;
-        kolonnenavn = k;
-    
-        final JTable tabellen = new JTable(tabelldata,kolonnenavn);
+        this.reseptliste = reseptliste;
+        modellen = new Tabellmodell(reseptliste);
+        tabellen = new JTable(modellen);
         tabellen.setPreferredScrollableViewportSize(new Dimension(500, 70));
         tabellen.setFillsViewportHeight(true);
         

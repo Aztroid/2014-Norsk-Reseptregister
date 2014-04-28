@@ -619,7 +619,7 @@ public class TestGUI extends JFrame {
                 tabellen[i][8]=linjen[8];
             }
         }
-        TabellVindu nyttvindu = new TabellVindu(tabellen, kolonnenavn);
+        TabellVindu nyttvindu = new TabellVindu(reseptliste);
         JFrame ramme = new JFrame("Testtabell");
         ramme.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         nyttvindu.setOpaque(true);
