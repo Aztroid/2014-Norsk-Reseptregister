@@ -75,22 +75,15 @@ public class LogginnPanel extends JPanel{
         legebrukernavn = new JTextField(15);
         senterpanel.add(new JLabel("Søk Pasient"));
         senterpanel.add(legebrukernavn);
+        //setLayout(new FlowLayout);
         username = new JTextField(10);
         password = new JPasswordField(10);
         submit = new JButton("Login");
-      
-        
-        
-      
-        
        
         add(username);
         add(password);
         add(submit);
-       
-  
-        
-        
+
         Icon legeikon = new ImageIcon(getClass().getResource("bildefiler/knapp1_lege.gif"));
         lege = new JButton("Lege", legeikon);
         lege.setVerticalTextPosition( AbstractButton.BOTTOM );

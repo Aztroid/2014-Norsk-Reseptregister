@@ -13,7 +13,10 @@ import javax.swing.table.*;
 public class Tabellmodell extends AbstractTableModel{
     
     private TreeMap<Integer,Resept> listen;
-    private final String[] kolonnenavn = {"Dato", "Reseptnr.", "Personnr.", "Lege(Autnr.)", "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", "Reseptgruppe"};
+    private final String[] kolonnenavn = {"Dato", "Reseptnr.", "Personnr.", 
+        "Lege(Autnr.)", "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", 
+        "Reseptgruppe"};
+    
     private LinkedList<Resept> data;
     private static int linjeteller = 0;
     

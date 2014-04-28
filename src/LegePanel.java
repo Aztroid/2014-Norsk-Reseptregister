@@ -14,8 +14,8 @@ import javax.swing.border.Border;
 
 public class LegePanel extends JPanel{
     private final String VISDATA = "0";
-    private final String NY_PASIENT = "0";
-    private final String NY_RESEPT = "1";
+    private final String NY_PASIENT = "1";
+    private final String NY_RESEPT = "2";
     private Lytter lytteren;
     private TreeMap<Integer,Resept> reseptliste;
     private TreeMap<Integer,Resept> spesifikkreseptliste;
@@ -28,12 +28,11 @@ public class LegePanel extends JPanel{
     private JTextArea infofelt;
     private Border sidepanelgrense;
     private JScrollPane infoscroll;
-    private JButton nypasient,nyresept,gåtilbake;
+    private JButton nypasient,nyresept,gåtilbake,visdata;
     
     //Senterpanel datafelter
-    private JPanel senterpanel,senterpanelvisdata, senterpaneltop,
-            senterpanelnorthnypasient, senterpanelnorthnyresept,
-            senterpanelsouth;
+    private JPanel senterpanel,senterpanelvisdata, senterpaneltop, senterpanelnypasient,
+            senterpanelnyresept, senterpanelsouth;
     private TabellVindu tabellen;
     private Border senterpanelgrense;
     private JButton søk,regpasient,regresept;
@@ -74,11 +73,15 @@ public class LegePanel extends JPanel{
         gåtilbake.addActionListener(lytteren);
         sidepanel.add(gåtilbake);
         
-        nypasient = new JButton("Registrer Pasient");
+        visdata = new JButton("Dine Resepter");
+        visdata.addActionListener(lytteren);
+        sidepanel.add(visdata);
+        
+        nypasient = new JButton("Ny Pasient");
         nypasient.addActionListener(lytteren);
         sidepanel.add(nypasient);
         
-        nyresept = new JButton("Registrer Resept");
+        nyresept = new JButton("Ny Resept");
         nyresept.addActionListener(lytteren);
         sidepanel.add(nyresept);
         
@@ -88,8 +91,8 @@ public class LegePanel extends JPanel{
         senterpanel.setBorder(senterpanelgrense);
         senterpanelvisdata = new JPanel(new BorderLayout());
         senterpaneltop = new JPanel(new FlowLayout());
-        senterpanelnorthnypasient = new JPanel(new FlowLayout());
-        senterpanelnorthnyresept = new JPanel(new FlowLayout());
+        senterpanelnypasient = new JPanel();
+        senterpanelnyresept = new JPanel();
         senterpanelsouth = new JPanel(new FlowLayout());
          
         //SENTERPANELTOP content:
@@ -106,57 +109,57 @@ public class LegePanel extends JPanel{
         senterpaneltop.add(søk);
         
         //SENTERPANEL Ny Pasient
-        senterpanelnorthnypasient.add(new JLabel("Personnr: "));
-        fødselsnr = new JTextField(30);
+        senterpanelnypasient.add(new JLabel("Fødselsnr:"));
+        fødselsnr = new JTextField(15);
         fødselsnr.addActionListener(lytteren);
-        senterpanelnorthnypasient.add(fødselsnr);
+        senterpanelnypasient.add(fødselsnr);
 
-        senterpanelnorthnypasient.add(new JLabel("Fornavn Pasient: "));
-        fornavnpasient = new JTextField(30);
+        senterpanelnypasient.add(new JLabel("Fornavn:"));
+        fornavnpasient = new JTextField(15);
         fornavnpasient.addActionListener(lytteren);
-        senterpanelnorthnypasient.add(fornavnpasient);
+        senterpanelnypasient.add(fornavnpasient);
 
-        senterpanelnorthnypasient.add(new JLabel("Etternavn Pasient: "));
-        etternavnpasient = new JTextField(30);
+        senterpanelnypasient.add(new JLabel("Etternavn Pasient: "));
+        etternavnpasient = new JTextField(15);
         etternavnpasient.addActionListener(lytteren);
-        senterpanelnorthnypasient.add(etternavnpasient);
+        senterpanelnypasient.add(etternavnpasient);
         
         regpasient = new JButton("Register Pasient");
         regpasient.addActionListener(lytteren);
-        senterpanelnorthnypasient.add(regpasient);
+        senterpanelnypasient.add(regpasient);
         
         //SENTERPANEL Ny Resept
-        senterpanelnorthnyresept.add(new JLabel("Pasient(Fnr): "));
+        senterpanelnyresept.add(new JLabel("Pasient(Fnr): "));
         fødselsnrresept = new JTextField(30);
         fødselsnrresept.addActionListener(lytteren);
-        senterpanelnorthnyresept.add(fødselsnrresept);
+        senterpanelnyresept.add(fødselsnrresept);
 
-        senterpanelnorthnyresept.add(new JLabel("Leg(Aut.nr): "));
+        senterpanelnyresept.add(new JLabel("Leg(Aut.nr): "));
         autnrresept = new JTextField(30);
         autnrresept.addActionListener(lytteren);
-        senterpanelnorthnyresept.add(autnrresept);
+        senterpanelnyresept.add(autnrresept);
 
-        senterpanelnorthnyresept.add(new JLabel("ACT-Nr: "));
+        senterpanelnyresept.add(new JLabel("ACT-Nr: "));
         medisinnøkkel = new JTextField(30);
         medisinnøkkel.addActionListener(lytteren);
-        senterpanelnorthnyresept.add(medisinnøkkel);
+        senterpanelnyresept.add(medisinnøkkel);
         
-        senterpanelnorthnyresept.add(new JLabel("Mengde(gr): "));
+        senterpanelnyresept.add(new JLabel("Mengde(gr): "));
         mengde = new JTextField(30);
         mengde.addActionListener(lytteren);
-        senterpanelnorthnyresept.add(mengde);
+        senterpanelnyresept.add(mengde);
         
-        senterpanelnorthnyresept.add(new JLabel("Diag.Døgn: "));
+        senterpanelnyresept.add(new JLabel("Diag.Døgn: "));
         defdøgndosering = new JTextField(30);
         defdøgndosering.addActionListener(lytteren);
-        senterpanelnorthnyresept.add(defdøgndosering);
+        senterpanelnyresept.add(defdøgndosering);
 
-        senterpanelnorthnyresept.add(new JLabel("Kategori: "));
+        senterpanelnyresept.add(new JLabel("Kategori: "));
         kategori = new JTextField(30);
         kategori.addActionListener(lytteren);
-        senterpanelnorthnyresept.add(kategori);
+        senterpanelnyresept.add(kategori);
         
-        senterpanelnorthnyresept.add(new JLabel("Reseptgruppe(felleskatalogen): "));
+        senterpanelnyresept.add(new JLabel("Reseptgruppe(felleskatalogen): "));
         resteptgruppealt = new ButtonGroup();
         gra = new JRadioButton("Gruppe A", false);
         gra.addActionListener(lytteren);
@@ -167,15 +170,19 @@ public class LegePanel extends JPanel{
         resteptgruppealt.add(gra);
         resteptgruppealt.add(grb);
         resteptgruppealt.add(grc);
-        senterpanelnorthnyresept.add(gra);
-        senterpanelnorthnyresept.add(grb);
-        senterpanelnorthnyresept.add(grc);
+        senterpanelnyresept.add(gra);
+        senterpanelnyresept.add(grb);
+        senterpanelnyresept.add(grc);
+        
+        regresept = new JButton("Register Pasient");
+        regresept.addActionListener(lytteren);
+        senterpanelnyresept.add(regresept);
         
         //LEGGER ALLE PANELER TIL
         senterpanelvisdata.add(senterpaneltop,BorderLayout.PAGE_START);
         senterpanel.add(senterpanelvisdata,VISDATA);
-        senterpanel.add(senterpanelnorthnypasient, NY_PASIENT);
-        senterpanel.add(senterpanelnorthnyresept, NY_RESEPT);
+        senterpanel.add(senterpanelnypasient, NY_PASIENT);
+        senterpanel.add(senterpanelnyresept, NY_RESEPT);
         super.add(sidepanel, BorderLayout.LINE_START);
         super.add(senterpanel, BorderLayout.CENTER);
                 
@@ -225,6 +232,19 @@ public class LegePanel extends JPanel{
         hovedrammekopi.visFørste();
     }
     
+    private void lagTabellen(){
+        TabellVindu tabell = new TabellVindu(spesifikkreseptliste);
+        tabell.setOpaque(true);
+        senterpanelvisdata.add(tabell,BorderLayout.CENTER);
+    }
+    
+    public void fylltabellen(){
+        for(int i = 0; i < 100000; i++){
+            spesifikkreseptliste.put(i, new Resept(i,"L"+i,"P"+i,"med"+i,"mengde"+i,
+                    "DDD"+i,"Kat"+i,'A',"Anv"+i));
+        } 
+    }
+    
     private class Lytter implements ActionListener{
         
         public void actionPerformed(ActionEvent e) {
@@ -234,8 +254,13 @@ public class LegePanel extends JPanel{
             else if(e.getSource()==nypasient){
                 nyPasient();
             }
-            else{
+            else if(e.getSource()==nyresept){
                 nyResept();
+            }
+            else if(e.getSource()==visdata){
+                fylltabellen();
+                lagTabellen();
+                revalidate();
             }
         }
     }
