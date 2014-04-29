@@ -163,5 +163,5 @@ public class KontrollørPanel extends JPanel{
             }
         }
     }
-}
+}//End of Class
 

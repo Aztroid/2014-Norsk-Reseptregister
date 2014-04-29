@@ -14,8 +14,10 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class LogginnPanel extends JPanel{
-    private final String LEGE_DATA = "0";
-    private final String KONTROLL_DATA = "1";
+    private final String BAKGRUNN = "0";
+    private final String LEGE_DATA = "1";
+    private final String KONTROLL_DATA = "2";
+    private final String REG_LEGE = "3";
     private Lytter lytteren;
     private Hovedramme hovedrammekopi;
     private String legeautnr;
@@ -39,7 +41,10 @@ public class LogginnPanel extends JPanel{
     private Border senterpanelgrense;
     private JButton logginn;
     
-    //Senterpanel Logginnlege
+    //Senterpanel Bakgrunn
+    private JPanel senterpanelbakgrunn;
+    
+    //SenterpanelLogginnlege
     private JTextField fornavnlege, etternavnlege, autorisasjonsnummer, 
             reseptbevilgning, arbeidssted;
     private JButton reglege;
@@ -82,12 +87,13 @@ public class LogginnPanel extends JPanel{
         sidepanel.add(logginn);
 
         //SENTERPANEL ramme
-        senterpanel = new JPanel(new BorderLayout());
+        senterpanel = new JPanel(new CardLayout());
         senterpanelgrense = BorderFactory.createTitledBorder("Logg inn");
         senterpanel.setBorder(senterpanelgrense);
         
         //SENTERPANEL Reglege:
         senterpanelreglege = new JPanel(new GridLayout(0,1));
+        
         senterpanelreglege.add(new JLabel("Autorisasjonsnr: "));
         autorisasjonsnummer = new JTextField(30);
         autorisasjonsnummer.addActionListener(lytteren);
@@ -123,14 +129,19 @@ public class LogginnPanel extends JPanel{
         reglege.addActionListener(lytteren);
         senterpanelreglege.add(reglege);
         
-        //setLayout(new FlowLayout);
+        //Senterpanel Bakgrunn
+        senterpanelbakgrunn = new JPanel();
+        
+        //Legger til panelene
+        senterpanel.add(senterpanelbakgrunn,BAKGRUNN);
+        senterpanel.add(senterpanelreglege,REG_LEGE);
         super.add(sidepanel, BorderLayout.LINE_START);
         super.add(senterpanel, BorderLayout.CENTER);
     }
     
     public void sjekk() {
         String autorisasjonsnrrregex = "\\d{9}";
-        JLabel jUserName = new JLabel("Auth-Nr");
+        JLabel jUserName = new JLabel("Aut-Nr");
         JTextField username = new JTextField();
         JLabel jPassword = new JLabel("Passord");
         JTextField password = new JPasswordField();
@@ -144,13 +155,14 @@ public class LogginnPanel extends JPanel{
                 visKontrollørLogginn();
             } 
             else if (username.getText().matches(autorisasjonsnrrregex)){
-                Lege finnes = legeliste.get(username.getText());
+                visLegeVindu(username.getText());
+                /*Lege finnes = legeliste.get(username.getText());
                 if(finnes!=null){
                     visLegeVindu(username.getText());
                 }
                 else{
                     visRegLege();
-                }
+                }*/
             }
         }
     }
@@ -168,16 +180,16 @@ public class LogginnPanel extends JPanel{
         hovedrammekopi.visPanel(KONTROLL_DATA);
     }
     
+    public void visRegLege(){
+        CardLayout c = (CardLayout)senterpanel.getLayout();
+        c.show(senterpanel,REG_LEGE);
+    }
+    
     private boolean blankeLegefelter(){
         //Sjekker for blanke felter ved registrering av lege
         return (fornavnlege.getText().matches("")||etternavnlege.getText().
                 matches("")||autorisasjonsnummer.getText().matches("")||
                 autorisasjonsnummer.getText().matches(""));
-    }
-    
-    public void visRegLege(){
-        senterpanel.add(senterpanelreglege, BorderLayout.CENTER);
-        revalidate();
     }
     
     private void regNyLege(){
@@ -211,9 +223,8 @@ public class LogginnPanel extends JPanel{
             legeliste.put(legenøkkel,ny);
             //LAGRE LEGELISTEN
             infofelt.setText("Lege registrert.");
-            senterpanel.remove(senterpanelreglege);
-            revalidate();
-            repaint();
+            CardLayout c = (CardLayout)senterpanel.getLayout();
+            c.show(senterpanel,BAKGRUNN);
             sjekk();
         }
         else{

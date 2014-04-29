@@ -10,10 +10,11 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
+//Denne klassen er hovedrammen, det er her alle paneler blir lagt til
+
 public class Hovedramme extends JFrame{
     //Hovedrammens datafelter
     private final String LOGG_INN = "0";
-    private JPanel containerpanel;
     private double skjermbredde;
     private double skjermhøyde;
     private int bredde;
@@ -33,7 +34,7 @@ public class Hovedramme extends JFrame{
         høyde = (int)skjermhøyde;
        
         /*Setter rammens bredde og høyde, lar plattformen velge plassering av
-          rammen*/
+        rammen*/
         setSize(bredde,høyde); //Fullskjerm/2
         setLocationRelativeTo(null);//Midstiling
         
@@ -52,16 +53,17 @@ public class Hovedramme extends JFrame{
         super.getContentPane().setLayout(new CardLayout());
         super.add(new LogginnPanel(pasientliste, legeliste,reseptliste),
                 LOGG_INN);
-        visPanel(LOGG_INN);
         setVisible(true);
     }
     public void visPanel(String panelid){
+        //Metode som kan be hovedrammen om å vise et ønskelig panel
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.show(super.getContentPane(),panelid);
         System.out.println(c.toString());
     }
     
     public void visFørste(){
+        //Metode som viser hovedrammens første vindu, dvs, logginnvindu
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.first(super.getContentPane());
     }
@@ -77,4 +79,4 @@ public class Hovedramme extends JFrame{
     public TreeMap<Integer,Resept> getReseptliste(){
         return reseptliste;
     }
-}
+}//End of Class
