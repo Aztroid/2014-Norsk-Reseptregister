@@ -26,9 +26,7 @@ public class LogginnPanel extends JPanel{
     //Logg inn
     private JTextField username;
     private JPasswordField password;
-    private JButton submit;
-    
-    
+
     //Sidepanel datafelter
     private JPanel sidepanel;
     private JTextArea infofelt;
@@ -37,9 +35,21 @@ public class LogginnPanel extends JPanel{
     
     //Senterpanel datafelter
     private JPanel senterpanel;
+    private JPanel senterpanelreglege;
     private Border senterpanelgrense;
-    private JButton lege, kontrollør;
-    private JTextField legebrukernavn;
+    private JButton logginn;
+    
+    //Senterpanel Logginnlege
+    private JTextField fornavnlege, etternavnlege, autorisasjonsnummer, 
+            reseptbevilgning, arbeidssted;
+    private JButton reglege;
+    private Tegnlytter tegnlytteren;
+    private JCheckBox Abox;
+    private JCheckBox Bbox;
+    private JCheckBox Cbox;
+    private boolean gruppeA;
+    private boolean gruppeB;
+    private boolean gruppeC;
     
     public LogginnPanel(TreeMap<String,Pasient> pasientliste,
             TreeMap<String,Lege> legeliste,
@@ -60,73 +70,174 @@ public class LogginnPanel extends JPanel{
         //SIDEPANEL infofelt
         infofelt = new JTextArea(4,18);
         infoscroll = new JScrollPane(infofelt);
-        infofelt.setText("Vennligst velg rolle");
+        infofelt.setText("Logg inn");
         
         infofelt.setEditable(false);
         sidepanel.add(infoscroll);
         
+        logginn = new JButton("Logg inn");
+        logginn.setVerticalTextPosition( AbstractButton.BOTTOM );
+        logginn.setHorizontalTextPosition( AbstractButton.CENTER );
+        logginn.addActionListener(lytteren);
+        sidepanel.add(logginn);
+
         //SENTERPANEL ramme
-        senterpanel = new JPanel();
-        senterpanel.setLayout(new GridLayout(0,1));
+        senterpanel = new JPanel(new BorderLayout());
         senterpanelgrense = BorderFactory.createTitledBorder("Logg inn");
         senterpanel.setBorder(senterpanelgrense);
         
-        //SENTERPANEL content:
-        legebrukernavn = new JTextField(15);
-        senterpanel.add(new JLabel("Søk Pasient"));
-        senterpanel.add(legebrukernavn);
-        //setLayout(new FlowLayout);
-        username = new JTextField(10);
-        password = new JPasswordField(10);
-        submit = new JButton("Login");
-       
-        add(username);
-        add(password);
-        add(submit);
+        //SENTERPANEL Reglege:
+        senterpanelreglege = new JPanel(new GridLayout(0,1));
+        senterpanelreglege.add(new JLabel("Autorisasjonsnr: "));
+        autorisasjonsnummer = new JTextField(30);
+        autorisasjonsnummer.addActionListener(lytteren);
+        senterpanelreglege.add(autorisasjonsnummer);
 
-        Icon legeikon = new ImageIcon(getClass().getResource("bildefiler/knapp1_lege.gif"));
-        lege = new JButton("Lege", legeikon);
-        lege.setVerticalTextPosition( AbstractButton.BOTTOM );
-        lege.setHorizontalTextPosition( AbstractButton.CENTER );
-        lege.addActionListener(lytteren);
-        senterpanel.add(lege);
+        senterpanelreglege.add(new JLabel("Fornavn Lege: "));
+        fornavnlege = new JTextField(30);
+        fornavnlege.addActionListener(lytteren);
+        senterpanelreglege.add(fornavnlege);
+
+        senterpanelreglege.add(new JLabel("Etternavn Lege: "));
+        etternavnlege = new JTextField(30);
+        etternavnlege.addActionListener(lytteren);
+        senterpanelreglege.add(etternavnlege);
         
-        Icon kontrollørikon = new ImageIcon(getClass().getResource
-            ("bildefiler/knapp2_kontrolloer.gif"));
-        kontrollør = new JButton("Kontrollør", kontrollørikon);
-        kontrollør.setVerticalTextPosition( AbstractButton.BOTTOM );
-        kontrollør.setHorizontalTextPosition( AbstractButton.CENTER );
-        kontrollør.addActionListener(lytteren);
-        senterpanel.add(kontrollør);
+        senterpanelreglege.add(new JLabel("Godkjent Reseptbevilkning:"));
+        Abox = new JCheckBox("Gruppe A");
+        Abox.addItemListener(tegnlytteren);
+        senterpanelreglege.add(Abox);
+        Bbox = new JCheckBox("Gruppe B");
+        Bbox.addItemListener(tegnlytteren);
+        senterpanelreglege.add(Bbox);
+        Cbox = new JCheckBox("Gruppe C");
+        Cbox.addItemListener(tegnlytteren);
+        senterpanelreglege.add(Cbox);
         
+        senterpanelreglege.add(new JLabel("Arbeidssted: "));
+        arbeidssted = new JTextField(30);
+        arbeidssted.addActionListener(lytteren);
+        senterpanelreglege.add(arbeidssted);
+        
+        reglege = new JButton("Register Lege");
+        reglege.addActionListener(lytteren);
+        senterpanelreglege.add(reglege);
+        
+        //setLayout(new FlowLayout);
         super.add(sidepanel, BorderLayout.LINE_START);
         super.add(senterpanel, BorderLayout.CENTER);
     }
     
-    public void visLegeVindu(){
+    public void sjekk() {
+        String autorisasjonsnrrregex = "\\d{9}";
+        JLabel jUserName = new JLabel("Auth-Nr");
+        JTextField username = new JTextField();
+        JLabel jPassword = new JLabel("Passord");
+        JTextField password = new JPasswordField();
+        Object[] ob = {jUserName, username, jPassword, password};
+        int result = JOptionPane.showConfirmDialog(null, ob, "Logg inn", JOptionPane.OK_CANCEL_OPTION);
+ 
+        if (result == JOptionPane.OK_OPTION){
+            String un = username.getText();
+            String pw = password.getText();
+            if (un.equalsIgnoreCase("Admin") && pw.equals("guest")) {
+                visKontrollørLogginn();
+            } 
+            else if (username.getText().matches(autorisasjonsnrrregex)){
+                Lege finnes = legeliste.get(username.getText());
+                if(finnes!=null){
+                    visLegeVindu(username.getText());
+                }
+                else{
+                    visRegLege();
+                }
+            }
+        }
+    }
+    
+    public void visLegeVindu(String autnr){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-        legeautnr = legebrukernavn.getText();
-        hovedrammekopi.add(new LegePanel(legeautnr,pasientliste,reseptliste)
+        hovedrammekopi.add(new LegePanel(autnr,"ABC",pasientliste,reseptliste)
                 ,LEGE_DATA);
         hovedrammekopi.visPanel(LEGE_DATA);
     }
     
     public void visKontrollørLogginn(){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-        legeautnr = legebrukernavn.getText();
         hovedrammekopi.add(new KontrollørPanel(pasientliste,legeliste,reseptliste),KONTROLL_DATA);
         hovedrammekopi.visPanel(KONTROLL_DATA);
+    }
+    
+    private boolean blankeLegefelter(){
+        //Sjekker for blanke felter ved registrering av lege
+        return (fornavnlege.getText().matches("")||etternavnlege.getText().
+                matches("")||autorisasjonsnummer.getText().matches("")||
+                autorisasjonsnummer.getText().matches(""));
+    }
+    
+    public void visRegLege(){
+        senterpanel.add(senterpanelreglege, BorderLayout.CENTER);
+        revalidate();
+    }
+    
+    private void regNyLege(){
+        if(blankeLegefelter()){
+            infofelt.setText("Et eller fler av feltene er tomme");
+            return;
+        }
+        String autorisasjonsnrrregex = "\\d{9}";
+        String legenøkkel = autorisasjonsnummer.getText();
+        String fornavn = fornavnlege.getText();
+        String etternavn = etternavnlege.getText();
+        String adresse = arbeidssted.getText();
+        String reseptbev = "";
+        if(!legenøkkel.matches(autorisasjonsnrrregex)){
+            infofelt.setText("Autorisasjonsnummeret du har skrevet inn er "
+                    + "ikke gyldig");
+            return;
+        }
+        else if(legeliste.get(legenøkkel)==null){
+            if(gruppeA){
+                reseptbev += "A";
+            }
+            if(gruppeB){
+                reseptbev += "B";
+            }
+            if(gruppeC){
+                reseptbev += "C";
+            }
+            Lege ny = new Lege(fornavn, etternavn, legenøkkel, adresse, 
+                    reseptbev);
+            legeliste.put(legenøkkel,ny);
+            //LAGRE LEGELISTEN
+            infofelt.setText("Lege registrert.");
+            senterpanel.remove(senterpanelreglege);
+            revalidate();
+            repaint();
+            sjekk();
+        }
+        else{
+            infofelt.setText("Legen finnes i registeret fra før");
+        }
     }
     
     private class Lytter implements ActionListener{
 
         public void actionPerformed(ActionEvent e) {
-            if(e.getSource()==lege){
-                visLegeVindu();
+            if(e.getSource()==logginn){
+                sjekk();  
             }
-            else{
-                visKontrollørLogginn();
+            else if(e.getSource()==reglege){
+                regNyLege();
             }
+        }
+    }
+    
+    private class Tegnlytter implements ItemListener{
+        public void itemStateChanged(ItemEvent e){
+            gruppeA = Abox.isSelected();
+            gruppeB = Bbox.isSelected();
+            gruppeC = Cbox.isSelected();
         }
     }
 }

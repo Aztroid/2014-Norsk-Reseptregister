@@ -120,7 +120,6 @@ public class KontrollørPanel extends JPanel{
         super.add(senterpanel, BorderLayout.CENTER);
                 
         //SENTERPANEL tabell
-        visFørste();
     }
     
     public void visFørste(){
