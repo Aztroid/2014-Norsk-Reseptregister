@@ -1,0 +1,29 @@
+/*Hovedprosjekt Dats-1600
+William B. Wold, s183670, HIINGDATA13H1AA
+Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
+Vegar Nyg�rd, s193362, HIINGDATA13H1AA
+ */
+
+public class Kontrollør extends Person{
+    String kontrollørnr;
+    String arbeidssted;
+    
+    public Kontrollør(String f, String e, String k, String ar){
+        super(f,e);
+        kontrollørnr = k;
+        arbeidssted = ar;
+    }
+    
+    public String getArbeidssted(){
+        return arbeidssted;
+    }
+
+    public String getAutorisasjonsnr() {
+        return kontrollørnr;
+    }
+    
+    public String toString(){
+        return super.toString() + "Arbeidssted: " + arbeidssted
+                + "\nKontrollørnr: " + kontrollørnr;
+    }
+}

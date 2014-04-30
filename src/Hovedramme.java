@@ -15,6 +15,7 @@ import javax.swing.border.*;
 public class Hovedramme extends JFrame{
     //Hovedrammens datafelter
     private final String LOGG_INN = "0";
+    private final String ADMIN = "1";
     private double skjermbredde;
     private double skjermhøyde;
     private int bredde;
@@ -22,6 +23,7 @@ public class Hovedramme extends JFrame{
     private TreeMap<String,Pasient> pasientliste;
     private TreeMap<String,Lege> legeliste;
     private TreeMap<Integer,Resept> reseptliste;
+    private TreeMap<Integer,Kontrollør> kontrollørliste;
     
     public Hovedramme(){
         
@@ -49,20 +51,45 @@ public class Hovedramme extends JFrame{
         pasientliste = new TreeMap<>();
         legeliste = new TreeMap<>();
         reseptliste = new TreeMap<>();
+        kontrollørliste = new TreeMap<>();
         setTitle("Norsk Reseptregister");
         super.getContentPane().setLayout(new CardLayout());
-        super.add(new LogginnPanel(pasientliste, legeliste,reseptliste),
-                LOGG_INN);
+        super.add(new LogginnPanel(pasientliste, legeliste, reseptliste,
+                kontrollørliste),LOGG_INN);
+        super.add(new AdminPanel(legeliste,kontrollørliste),ADMIN);
         setVisible(true);
     }
     public void visPanel(String panelid){
         //Metode som kan be hovedrammen om å vise et ønskelig panel
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.show(super.getContentPane(),panelid);
-        System.out.println(c.toString());
     }
     
     public void visFørste(){
+        //Metode som viser hovedrammens første vindu, dvs, logginnvindu
+        CardLayout c = (CardLayout)super.getContentPane().getLayout();
+        c.first(super.getContentPane());
+    }
+    
+    public void visFørsteLege(TreeMap<String,Pasient> nypasientliste,
+            TreeMap<Integer,Resept> nyreseptliste){
+        pasientliste = nypasientliste;
+        reseptliste = nyreseptliste;
+        //Metode som viser hovedrammens første vindu, dvs, logginnvindu
+        CardLayout c = (CardLayout)super.getContentPane().getLayout();
+        c.first(super.getContentPane());
+    }
+    
+    public void visFørsteAdmin(TreeMap<String,Lege> nylegeliste,
+            TreeMap<Integer,Kontrollør> nykontrollørliste){
+        legeliste = nylegeliste;
+        kontrollørliste = nykontrollørliste;
+        //Metode som viser hovedrammens første vindu, dvs, logginnvindu
+        CardLayout c = (CardLayout)super.getContentPane().getLayout();
+        c.first(super.getContentPane());
+    }
+    
+    public void visFørsteKont(){
         //Metode som viser hovedrammens første vindu, dvs, logginnvindu
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.first(super.getContentPane());
@@ -79,4 +106,4 @@ public class Hovedramme extends JFrame{
     public TreeMap<Integer,Resept> getReseptliste(){
         return reseptliste;
     }
-}//End of Class
+}//End of Class Hovedramme

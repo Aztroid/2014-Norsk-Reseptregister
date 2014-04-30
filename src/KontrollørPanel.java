@@ -13,6 +13,35 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class KontrollørPanel extends JPanel{
+      int jan1 = 5;
+      int jan2 = 10;
+      int feb1 = jan2;
+      int feb2 = 20;
+      int mar1 = feb2;
+      int mar2 = 10;
+      int apr1 = mar2;
+      int apr2 = 45;
+      int may1 = apr2;
+      int may2 = 20;
+      int jun1 = may2;
+      int jun2 = 55;
+        int jul1 = jun2;
+        int jul2 = 30;
+        int aug1 = jul2;
+        int aug2 = 25;
+        int sep1 = aug2;
+        int sep2 = 50;
+        int oct1 = sep2;
+        int oct2 = 70;
+        int nov1 = oct2;
+        int nov2 = 40;
+        int dec1 = nov2;
+        int dec2 = 20;
+        Image image;
+    String[] items = { "2013", "2014", "2015", "2016", "2017", "2018" };
+    JComboBox cb = new JComboBox(items);
+    
+    
     private final String VISDATA = "0";
     private final String VISSTATISTIKK = "1";
     private final String VISVARSLING = "3";
@@ -37,7 +66,7 @@ public class KontrollørPanel extends JPanel{
     private TabellVindu tabellen;
     private Border senterpanelgrense;
     private JButton søk;
-    private JTextField søkpasientid,søkreseptid,søklegeid;
+    private JTextField søkpasientid,søkreseptid,søklegeid, hentlegemiddelstatistikk, legestatistikk;
     
     public KontrollørPanel(TreeMap<String,Pasient> pasientliste,
             TreeMap<String,Lege> legeliste,
@@ -110,6 +139,15 @@ public class KontrollørPanel extends JPanel{
         senterpanelstatistikk = new JPanel(new FlowLayout());
         senterpanelvarsling = new JPanel(new FlowLayout());
         
+        //SENTERPANEL VISSTATISTIKK
+        hentlegemiddelstatistikk = new JTextField(15);
+        senterpanelstatistikk.add(new JLabel("Legemiddel"));
+        senterpanelstatistikk.add(hentlegemiddelstatistikk);
+        legestatistikk = new JTextField(15);
+        senterpanelstatistikk.add(new JLabel("Lege"));
+        senterpanelstatistikk.add(legestatistikk);
+        senterpanelstatistikk.add(cb);
+        
         //SENTERPANEL 
         senterpanelvisdata.add(senterpaneltop,BorderLayout.PAGE_START);
         senterpanel.add(senterpanelvisdata,VISDATA);
@@ -120,8 +158,10 @@ public class KontrollørPanel extends JPanel{
         super.add(senterpanel, BorderLayout.CENTER);
                 
         //SENTERPANEL tabell
+        visFørste();
     }
-    
+
+   
     public void visFørste(){
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.first(senterpanel);
@@ -144,6 +184,10 @@ public class KontrollørPanel extends JPanel{
                     "DDD"+i,"Kat"+i,'A',"Anv"+i));
         }   
     }
+    public void visStatistikk(){
+            CardLayout c = (CardLayout)senterpanel.getLayout();
+            c.show(senterpanel,VISSTATISTIKK);
+    }
     
     public void tilbakeTilMeny(){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
@@ -161,7 +205,17 @@ public class KontrollørPanel extends JPanel{
             else if(e.getSource()==gåtilbake){
                 tilbakeTilMeny();
             }
+              else if(e.getSource()==statistikk){
+                 visStatistikk();
+              }
         }
+ 
     }
-}//End of Class
+}
 
+      
+        
+    
+
+
+    

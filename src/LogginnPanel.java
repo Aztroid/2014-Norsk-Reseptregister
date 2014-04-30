@@ -17,62 +17,54 @@ public class LogginnPanel extends JPanel{
     private final String BAKGRUNN = "0";
     private final String LEGE_DATA = "1";
     private final String KONTROLL_DATA = "2";
-    private final String REG_LEGE = "3";
+    private final String ADMIN = "3";
+    private final String LOGG_INN = "4";
     private Lytter lytteren;
     private Hovedramme hovedrammekopi;
-    private String legeautnr;
     private TreeMap<String,Pasient> pasientliste;
     private TreeMap<String,Lege> legeliste;
     private TreeMap<Integer,Resept> reseptliste;
-    
-    //Logg inn
-    private JTextField username;
-    private JPasswordField password;
+    private TreeMap<Integer,Kontrollør> kontrollørliste;
 
     //Sidepanel datafelter
     private JPanel sidepanel;
     private JTextArea infofelt;
     private Border sidepanelgrense;
     private JScrollPane infoscroll;
+    private JButton logginn,admin;
     
     //Senterpanel datafelter
     private JPanel senterpanel;
-    private JPanel senterpanelreglege;
     private Border senterpanelgrense;
-    private JButton logginn;
     
     //Senterpanel Bakgrunn
     private JPanel senterpanelbakgrunn;
     
-    //SenterpanelLogginnlege
-    private JTextField fornavnlege, etternavnlege, autorisasjonsnummer, 
-            reseptbevilgning, arbeidssted;
-    private JButton reglege;
-    private Tegnlytter tegnlytteren;
-    private JCheckBox Abox;
-    private JCheckBox Bbox;
-    private JCheckBox Cbox;
-    private boolean gruppeA;
-    private boolean gruppeB;
-    private boolean gruppeC;
-    
+    //Senterpanel Logginn
+    private JPanel senterpanellogginn;
+    private GridBagConstraints c;
+    private JTextField username;
+    private JPasswordField password;
+    private JButton okknapp;
+   
     public LogginnPanel(TreeMap<String,Pasient> pasientliste,
             TreeMap<String,Lege> legeliste,
-            TreeMap<Integer,Resept> reseptliste){
+            TreeMap<Integer,Resept> reseptliste,
+            TreeMap<Integer,Kontrollør> kontrollørliste){
         super(new BorderLayout());
         lytteren = new Lytter();
         
         this.pasientliste = pasientliste;
         this.legeliste = legeliste;
         this.reseptliste = reseptliste;
+        this.kontrollørliste = kontrollørliste;
         
-        //SIDEPANEL ramme
+        //SIDEPANEL
         sidepanel = new JPanel();
         sidepanel.setLayout(new GridLayout(8,1,3,3));
         sidepanelgrense = BorderFactory.createTitledBorder("Navigering");
         sidepanel.setBorder(sidepanelgrense);
         
-        //SIDEPANEL infofelt
         infofelt = new JTextArea(4,18);
         infoscroll = new JScrollPane(infofelt);
         infofelt.setText("Logg inn");
@@ -85,91 +77,99 @@ public class LogginnPanel extends JPanel{
         logginn.setHorizontalTextPosition( AbstractButton.CENTER );
         logginn.addActionListener(lytteren);
         sidepanel.add(logginn);
+        
+        admin = new JButton("Administrator");
+        admin.addActionListener(lytteren);
+        sidepanel.add(admin);
 
         //SENTERPANEL ramme
         senterpanel = new JPanel(new CardLayout());
         senterpanelgrense = BorderFactory.createTitledBorder("Logg inn");
         senterpanel.setBorder(senterpanelgrense);
-        
-        //SENTERPANEL Reglege:
-        senterpanelreglege = new JPanel(new GridLayout(0,1));
-        
-        senterpanelreglege.add(new JLabel("Autorisasjonsnr: "));
-        autorisasjonsnummer = new JTextField(30);
-        autorisasjonsnummer.addActionListener(lytteren);
-        senterpanelreglege.add(autorisasjonsnummer);
-
-        senterpanelreglege.add(new JLabel("Fornavn Lege: "));
-        fornavnlege = new JTextField(30);
-        fornavnlege.addActionListener(lytteren);
-        senterpanelreglege.add(fornavnlege);
-
-        senterpanelreglege.add(new JLabel("Etternavn Lege: "));
-        etternavnlege = new JTextField(30);
-        etternavnlege.addActionListener(lytteren);
-        senterpanelreglege.add(etternavnlege);
-        
-        senterpanelreglege.add(new JLabel("Godkjent Reseptbevilkning:"));
-        Abox = new JCheckBox("Gruppe A");
-        Abox.addItemListener(tegnlytteren);
-        senterpanelreglege.add(Abox);
-        Bbox = new JCheckBox("Gruppe B");
-        Bbox.addItemListener(tegnlytteren);
-        senterpanelreglege.add(Bbox);
-        Cbox = new JCheckBox("Gruppe C");
-        Cbox.addItemListener(tegnlytteren);
-        senterpanelreglege.add(Cbox);
-        
-        senterpanelreglege.add(new JLabel("Arbeidssted: "));
-        arbeidssted = new JTextField(30);
-        arbeidssted.addActionListener(lytteren);
-        senterpanelreglege.add(arbeidssted);
-        
-        reglege = new JButton("Register Lege");
-        reglege.addActionListener(lytteren);
-        senterpanelreglege.add(reglege);
-        
+           
         //Senterpanel Bakgrunn
         senterpanelbakgrunn = new JPanel();
         
+        //Senterpanel Logginn
+        senterpanellogginn = new JPanel(new GridBagLayout());
+        c = new GridBagConstraints();
+        c.fill = GridBagConstraints.NONE;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.ipadx = 5;
+        c.ipady = 5;
+        
+        senterpanellogginn.add(new JLabel("Aut-Nr / Brukernavn"),c);
+        c.gridx = 1;
+        username = new JTextField(15);
+        senterpanellogginn.add(username,c);
+        c.gridx = 0;
+        
+        c.gridy = 1;
+        senterpanellogginn.add(new JLabel("Passord"),c);
+        c.gridx = 1;
+        password = new JPasswordField(15);
+        senterpanellogginn.add(password,c);
+        
+        c.gridy = 2;
+        okknapp = new JButton("Ok");
+        okknapp.addActionListener(lytteren);
+        senterpanellogginn.add(okknapp,c);
+        
         //Legger til panelene
         senterpanel.add(senterpanelbakgrunn,BAKGRUNN);
-        senterpanel.add(senterpanelreglege,REG_LEGE);
+        senterpanel.add(senterpanellogginn,LOGG_INN);
         super.add(sidepanel, BorderLayout.LINE_START);
         super.add(senterpanel, BorderLayout.CENTER);
     }
     
-    public void sjekk() {
+    public void visLogginn(){
+        //Viser Logginn Panelet
+        infofelt.setText("Logg inn med brukernavn/passord\ntildelt av administrator");
+        CardLayout c = (CardLayout)senterpanel.getLayout();
+        c.show(senterpanel,LOGG_INN);
+    }
+    
+    public void sjekk(){
+        /*Finner ut hvilken type bruker som prøver å logge seg inn, og om denne
+        brukeren er registrert*/
+        Lege bruker;
         String autorisasjonsnrrregex = "\\d{9}";
-        JLabel jUserName = new JLabel("Aut-Nr");
-        JTextField username = new JTextField();
-        JLabel jPassword = new JLabel("Passord");
-        JTextField password = new JPasswordField();
-        Object[] ob = {jUserName, username, jPassword, password};
-        int result = JOptionPane.showConfirmDialog(null, ob, "Logg inn", JOptionPane.OK_CANCEL_OPTION);
- 
-        if (result == JOptionPane.OK_OPTION){
-            String un = username.getText();
-            String pw = password.getText();
-            if (un.equalsIgnoreCase("Admin") && pw.equals("guest")) {
-                visKontrollørLogginn();
-            } 
-            else if (username.getText().matches(autorisasjonsnrrregex)){
-                visLegeVindu(username.getText());
-                /*Lege finnes = legeliste.get(username.getText());
-                if(finnes!=null){
-                    visLegeVindu(username.getText());
-                }
-                else{
-                    visRegLege();
-                }*/
+        String passord = password.getText();
+        if (username.getText().matches(autorisasjonsnrrregex)){
+            bruker = legeliste.get(username.getText());
+            if(bruker!=null){
+                visLegeVindu(bruker.getAutorisasjonsnr(),
+                        bruker.getBevilgning());
             }
+            else{
+                infofelt.setText("Kontakt administrator for\nopprettelse av"
+                        + " ny lege");
+                visFørste();
+            }
+        }
+        else{
+            visKontrollørLogginn();
         }
     }
     
-    public void visLegeVindu(String autnr){
+    public void visFørste(){
+        /*Metode som viser det første panelet i lagt til i senterpanelet
+        dette er visdatapanelet før tabellen er generert*/
+        CardLayout c = (CardLayout)senterpanel.getLayout();
+        c.first(senterpanel);
+    }
+    
+    public void visAdminPanel(){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-        hovedrammekopi.add(new LegePanel(autnr,"ABC",pasientliste,reseptliste)
+        hovedrammekopi.add(new AdminPanel(legeliste,kontrollørliste)
+                ,ADMIN);
+        hovedrammekopi.visPanel(ADMIN);
+    }
+    
+    public void visLegeVindu(String autnr,String reseptbev){
+        hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
+        hovedrammekopi.add(new LegePanel(autnr,reseptbev,pasientliste,reseptliste)
                 ,LEGE_DATA);
         hovedrammekopi.visPanel(LEGE_DATA);
     }
@@ -180,75 +180,18 @@ public class LogginnPanel extends JPanel{
         hovedrammekopi.visPanel(KONTROLL_DATA);
     }
     
-    public void visRegLege(){
-        CardLayout c = (CardLayout)senterpanel.getLayout();
-        c.show(senterpanel,REG_LEGE);
-    }
-    
-    private boolean blankeLegefelter(){
-        //Sjekker for blanke felter ved registrering av lege
-        return (fornavnlege.getText().matches("")||etternavnlege.getText().
-                matches("")||autorisasjonsnummer.getText().matches("")||
-                autorisasjonsnummer.getText().matches(""));
-    }
-    
-    private void regNyLege(){
-        if(blankeLegefelter()){
-            infofelt.setText("Et eller fler av feltene er tomme");
-            return;
-        }
-        String autorisasjonsnrrregex = "\\d{9}";
-        String legenøkkel = autorisasjonsnummer.getText();
-        String fornavn = fornavnlege.getText();
-        String etternavn = etternavnlege.getText();
-        String adresse = arbeidssted.getText();
-        String reseptbev = "";
-        if(!legenøkkel.matches(autorisasjonsnrrregex)){
-            infofelt.setText("Autorisasjonsnummeret du har skrevet inn er "
-                    + "ikke gyldig");
-            return;
-        }
-        else if(legeliste.get(legenøkkel)==null){
-            if(gruppeA){
-                reseptbev += "A";
-            }
-            if(gruppeB){
-                reseptbev += "B";
-            }
-            if(gruppeC){
-                reseptbev += "C";
-            }
-            Lege ny = new Lege(fornavn, etternavn, legenøkkel, adresse, 
-                    reseptbev);
-            legeliste.put(legenøkkel,ny);
-            //LAGRE LEGELISTEN
-            infofelt.setText("Lege registrert.");
-            CardLayout c = (CardLayout)senterpanel.getLayout();
-            c.show(senterpanel,BAKGRUNN);
-            sjekk();
-        }
-        else{
-            infofelt.setText("Legen finnes i registeret fra før");
-        }
-    }
-    
     private class Lytter implements ActionListener{
 
         public void actionPerformed(ActionEvent e) {
             if(e.getSource()==logginn){
-                sjekk();  
+                visLogginn();  
             }
-            else if(e.getSource()==reglege){
-                regNyLege();
+            else if(e.getSource()==okknapp){
+                sjekk();
+            }
+            else if(e.getSource()==admin){
+                visAdminPanel();
             }
         }
     }
-    
-    private class Tegnlytter implements ItemListener{
-        public void itemStateChanged(ItemEvent e){
-            gruppeA = Abox.isSelected();
-            gruppeB = Bbox.isSelected();
-            gruppeC = Cbox.isSelected();
-        }
-    }
-}
+}//End of class LogginnPanel

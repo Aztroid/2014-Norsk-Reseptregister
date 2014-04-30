@@ -166,34 +166,53 @@ public class LegePanel extends JPanel{
         senterpanelnypasient.add(regpasient,c);
 
         //Senterpanel "ny Resept"
-        senterpanelnyresept = new JPanel(new GridLayout(0,2));
+        senterpanelnyresept = new JPanel(new GridBagLayout());
+        c.gridx = 0;
+        c.gridy = 0;
+        c.ipadx = 5;
+        c.ipady = 5;
         
-        senterpanelnyresept.add(new JLabel("Pasient(Fnr): "));
+        senterpanelnyresept.add(new JLabel("Pasient(Fnr): "),c);
+        c.gridx = 1;
         fødselsnrresept = new JTextField(30);
         fødselsnrresept.addActionListener(lytteren);
-        senterpanelnyresept.add(fødselsnrresept);
+        senterpanelnyresept.add(fødselsnrresept,c);
+        c.gridx = 0;
 
-        senterpanelnyresept.add(new JLabel("ACT-Nr: "));
+        c.gridy = 1;
+        senterpanelnyresept.add(new JLabel("ACT-Nr: "),c);
+        c.gridx = 1;
         medisinnøkkel = new JTextField(30);
         medisinnøkkel.addActionListener(lytteren);
-        senterpanelnyresept.add(medisinnøkkel);
+        senterpanelnyresept.add(medisinnøkkel,c);
+        c.gridx = 0;
         
-        senterpanelnyresept.add(new JLabel("Mengde(gr): "));
+        c.gridy = 2;
+        senterpanelnyresept.add(new JLabel("Mengde(gr): "),c);
+        c.gridx = 1;
         mengde = new JTextField(30);
         mengde.addActionListener(lytteren);
-        senterpanelnyresept.add(mengde);
+        senterpanelnyresept.add(mengde,c);
+        c.gridx = 0;
         
-        senterpanelnyresept.add(new JLabel("Diag.Døgn: "));
+        c.gridy = 3;
+        senterpanelnyresept.add(new JLabel("Diag.Døgn: "),c);
+        c.gridx = 1;
         defdøgndosering = new JTextField(30);
         defdøgndosering.addActionListener(lytteren);
-        senterpanelnyresept.add(defdøgndosering);
-
-        senterpanelnyresept.add(new JLabel("Kategori: "));
+        senterpanelnyresept.add(defdøgndosering,c);
+        c.gridx = 0;
+        
+        c.gridy = 4;
+        senterpanelnyresept.add(new JLabel("Kategori: "),c);
+        c.gridx = 1;
         kategori = new JTextField(30);
         kategori.addActionListener(lytteren);
-        senterpanelnyresept.add(kategori);
+        senterpanelnyresept.add(kategori,c);
+        c.gridx = 0;
         
-        senterpanelnyresept.add(new JLabel("Reseptgruppe(felleskatalogen): "));
+        c.gridy = 5;
+        senterpanelnyresept.add(new JLabel("Reseptgruppe: "),c);
         resteptgruppealt = new ButtonGroup();
         gra = new JRadioButton("Gruppe A", false);
         gra.addActionListener(lytteren);
@@ -204,18 +223,27 @@ public class LegePanel extends JPanel{
         resteptgruppealt.add(gra);
         resteptgruppealt.add(grb);
         resteptgruppealt.add(grc);
-        senterpanelnyresept.add(gra);
-        senterpanelnyresept.add(grb);
-        senterpanelnyresept.add(grc);
+        c.gridx = 1;
+        c.gridy = 6;
+        senterpanelnyresept.add(gra,c);
+        c.gridy = 7;
+        senterpanelnyresept.add(grb,c);
+        c.gridy = 8;
+        senterpanelnyresept.add(grc,c);
+        c.gridx = 0;
         
-        senterpanelnyresept.add(new JLabel("Legens anv:"));
+        c.gridy = 9;
+        senterpanelnyresept.add(new JLabel("Legens anv:"),c);
+        c.gridx = 1;
         anvisning = new JTextArea(10, 30);
         anvisning.setEditable(true);
-        senterpanelnyresept.add(new JScrollPane(anvisning));
+        senterpanelnyresept.add(new JScrollPane(anvisning),c);
         
-        regresept = new JButton("Register Pasient");
+        c.gridy = 11;
+        regresept = new JButton("Register Resept");
+        c.gridx = 1;
         regresept.addActionListener(lytteren);
-        senterpanelnyresept.add(regresept);
+        senterpanelnyresept.add(regresept,c);
         kontrollresept = "[ABC]|AB|BC|AC|ABC";
         reseptnøkkel = 1; //Første resept får nr 1
         
@@ -409,4 +437,4 @@ public class LegePanel extends JPanel{
             }
         }
     }
-}
+}//End of Class LegePanel
