@@ -5,6 +5,7 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.net.*;
 import java.util.*;
 import javax.swing.*;
@@ -49,9 +50,9 @@ public class Hovedramme extends JFrame{
             setIconImage(ikon);
         }
         pasientliste = new TreeMap<>();
-        legeliste = new TreeMap<>();
         reseptliste = new TreeMap<>();
-        kontrollørliste = new TreeMap<>();
+        legeliste = new TreeMap<>();
+        lesListene();
         setTitle("Norsk Reseptregister");
         super.getContentPane().setLayout(new CardLayout());
         super.add(new LogginnPanel(pasientliste, legeliste, reseptliste,
@@ -93,6 +94,32 @@ public class Hovedramme extends JFrame{
         //Metode som viser hovedrammens første vindu, dvs, logginnvindu
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.first(super.getContentPane());
+    }
+    
+    private void lesListene(){
+        /*Metode som Leser lister og static konstantene som blir brukt for
+        å opprette objekter i listene, misslykkes lesningen opprettes nye 
+        lister*/
+       
+        try(ObjectInputStream innfil = new ObjectInputStream(
+                new FileInputStream("src/listene.data"))){
+            kontrollørliste = (TreeMap<Integer,Kontrollør>) innfil.readObject();
+        }
+        catch(ClassNotFoundException cnfe){
+            JOptionPane.showMessageDialog(null,cnfe.getMessage() + 
+                    "\nOppretter en tom liste\n");
+            kontrollørliste = new TreeMap<>();
+        }
+        catch(FileNotFoundException fnfe){
+            JOptionPane.showMessageDialog(null,
+                    "Finner ikke datafil. Oppretter tom liste");
+            kontrollørliste = new TreeMap<>();
+        }
+        catch(IOException ioe){
+            JOptionPane.showMessageDialog(null,
+                    "Innlesningsfeil. Oppretter nye tomme lister");
+            kontrollørliste = new TreeMap<>();
+        }
     }
     
     public TreeMap<String,Pasient> getPasientliste(){

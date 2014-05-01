@@ -6,6 +6,7 @@ Vegar Nygård, s193362, HIINGDATA13H1AA
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -48,8 +49,9 @@ public class AdminPanel extends JPanel{
     private boolean gruppeC;
     
     //Senterpanel regKont
+    private static Integer kontnøkkel;
     private JPanel senterpanelregkont;
-    private JTextField fornavnkont, etternavnkont, kontnr, arbeidsstedkont;
+    private JTextField fornavnkont, etternavnkont, brukernavn, arbeidsstedkont;
     private JButton regkont;
     
     public AdminPanel(TreeMap<String,Lege> legeliste,
@@ -184,11 +186,20 @@ public class AdminPanel extends JPanel{
         arbeidsstedkont = new JTextField(30);
         arbeidsstedkont.addActionListener(lytteren);
         senterpanelregkont.add(arbeidsstedkont,c);
+        c.gridx = 0;
         
         c.gridy = 4;
+        senterpanelregkont.add(new JLabel("Brukernavn: "),c);
+        c.gridx = 1;
+        brukernavn = new JTextField(30);
+        brukernavn.addActionListener(lytteren);
+        senterpanelregkont.add(brukernavn,c);
+        
+        c.gridy = 5;
         regkont = new JButton("Register Kontrollør");
         regkont.addActionListener(lytteren);
         senterpanelregkont.add(regkont,c);
+        kontnøkkel = 1000; //Første kontrollør får nr 1000
         
         //Legger til panelene
         senterpanel.add(senterpanelbakgrunn,BAKGRUNN);
@@ -223,7 +234,7 @@ public class AdminPanel extends JPanel{
         //Sjekker for blanke felter ved registrering av lege
         return (fornavnlege.getText().matches("")||etternavnlege.getText().
                 matches("")||autorisasjonsnummer.getText().matches("")||
-                autorisasjonsnummer.getText().matches(""));
+                arbeidssted.getText().matches(""));
     }
     
     private void regNyLege(){
@@ -255,11 +266,58 @@ public class AdminPanel extends JPanel{
             Lege ny = new Lege(fornavn, etternavn, legenøkkel, adresse, 
                     reseptbev);
             legeliste.put(legenøkkel,ny);
-            System.out.println("Reseptbev" + reseptbev);
             infofelt.setText("Lege registrert.");
+            lagreAdminListene();
         }
         else{
             infofelt.setText("Legen finnes i registeret fra før");
+        }
+    }
+    
+    private boolean blankekontfelter(){
+        //Sjekker for blanke felter ved registrering av lege
+        return (fornavnkont.getText().matches("")||etternavnkont.getText().
+                matches("")||brukernavn.getText().matches("")||
+                arbeidsstedkont.getText().matches(""));
+    }
+    
+    private void regNyKont(){
+        if(blankekontfelter()){
+            infofelt.setText("Et eller fler av feltene er tomme");
+            return;
+        }
+        String bruker = brukernavn.getText();
+        String fornavn = fornavnkont.getText();
+        String etternavn = etternavnkont.getText();
+        String adresse = arbeidsstedkont.getText();
+        String passord = tilfeldiString();
+        if(kontrollørliste.get(kontnøkkel)==null){
+            Kontrollør ny = new Kontrollør(fornavn, etternavn, bruker, 
+                    passord,kontnøkkel, adresse);
+            kontrollørliste.put(kontnøkkel,ny);
+            infofelt.setText("Kontrollør registrert.");
+            kontnøkkel++;
+            lagreAdminListene();
+        }
+        else{
+            infofelt.setText("Kontrollør finnes i registeret fra før");
+        }
+    }
+    
+    private String tilfeldiString(){
+        return "";
+    }
+    
+    public void lagreAdminListene(){
+        try(ObjectOutputStream utfil = new ObjectOutputStream(
+                new FileOutputStream("src/listene.data"))){
+            utfil.writeObject(kontrollørliste);
+        }
+        catch(NotSerializableException ns){
+            JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
+        }
+        catch(IOException ioe){
+            JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
         }
     }
 
@@ -286,6 +344,9 @@ public class AdminPanel extends JPanel{
             
             else if(e.getSource()==reglege){
                 regNyLege();
+            }
+            else if(e.getSource()==regkont){
+                regNyKont();
             }
         }
     }
