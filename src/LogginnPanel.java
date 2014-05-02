@@ -25,6 +25,7 @@ public class LogginnPanel extends JPanel{
     private TreeMap<String,Lege> legeliste;
     private TreeMap<Integer,Resept> reseptliste;
     private TreeMap<Integer,Kontrollør> kontrollørliste;
+    private Integer sisteresept;
 
     //Sidepanel datafelter
     private JPanel sidepanel;
@@ -47,7 +48,8 @@ public class LogginnPanel extends JPanel{
     private JPasswordField password;
     private JButton okknapp;
    
-    public LogginnPanel(TreeMap<String,Pasient> pasientliste,
+    public LogginnPanel(Integer sisteresept, 
+            TreeMap<String,Pasient> pasientliste,
             TreeMap<String,Lege> legeliste,
             TreeMap<Integer,Resept> reseptliste,
             TreeMap<Integer,Kontrollør> kontrollørliste){
@@ -58,6 +60,7 @@ public class LogginnPanel extends JPanel{
         this.legeliste = legeliste;
         this.reseptliste = reseptliste;
         this.kontrollørliste = kontrollørliste;
+        this.sisteresept = sisteresept;
         
         //SIDEPANEL
         sidepanel = new JPanel();
@@ -162,14 +165,12 @@ public class LogginnPanel extends JPanel{
     
     public void visAdminPanel(){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-        hovedrammekopi.add(new AdminPanel(legeliste,kontrollørliste)
-                ,ADMIN);
-        hovedrammekopi.visPanel(ADMIN);
+        hovedrammekopi.visAdmin();
     }
     
-    public void visLegeVindu(String autnr,String reseptbev){
+    public void visLegeVindu(String autnr, String reseptbev){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-        hovedrammekopi.add(new LegePanel(autnr,reseptbev,pasientliste,reseptliste)
+        hovedrammekopi.add(new LegePanel(autnr,reseptbev,sisteresept,pasientliste,reseptliste)
                 ,LEGE_DATA);
         hovedrammekopi.visPanel(LEGE_DATA);
     }

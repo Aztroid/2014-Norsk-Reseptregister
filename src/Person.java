@@ -7,7 +7,10 @@
 Lege og Pasient
 */
 
-public class Person{
+import java.io.Serializable;
+
+public class Person implements Serializable{
+    
     private String fornavn, etternavn;
     
     public Person(String f, String e){

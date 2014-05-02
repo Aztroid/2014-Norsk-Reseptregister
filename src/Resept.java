@@ -8,8 +8,9 @@
 
 import java.text.*;
 import java.util.Calendar;
+import java.io.Serializable;
 
-public class Resept {
+public class Resept implements Serializable{
     /*Merk! DDD = Definert døgndose, dette datafeltet er tatt med for å kunne 
     produisere mer reliabel statistikk*/
     private Calendar dato;

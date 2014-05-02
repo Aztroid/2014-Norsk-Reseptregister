@@ -8,6 +8,7 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.Border;
@@ -25,6 +26,8 @@ public class LegePanel extends JPanel{
     private String legensautnr; //Identifiserer legen som er logget inn
     private String reseptbevilgning; //Identifiserer legen reseptbevilgning
     private Hovedramme hovedrammekopi;
+    private final int PASIENT = 1;
+    private final int RESEPT = 2;
     
     //Sidepanel datafelter
     private JPanel sidepanel;
@@ -50,7 +53,6 @@ public class LegePanel extends JPanel{
     
     //Senterpanel "ny resept" datafelter
     private JPanel senterpanelnyresept;
-    private Box nyreseptbox;
     private static Integer reseptnøkkel; //Reseptnummeret
     private JTextField fødselsnrresept, medisinnøkkel, mengde, defdøgndosering, 
                        kategori;
@@ -64,6 +66,7 @@ public class LegePanel extends JPanel{
     /*Konstruktøren får kun to lister da det ikke skal registreres annet av 
     legen*/
     public LegePanel(String autnr,String reseptgodkjennelse, 
+            Integer sisteresept, 
             TreeMap<String,Pasient> pasientliste, 
             TreeMap<Integer,Resept> reseptliste){
         
@@ -74,6 +77,7 @@ public class LegePanel extends JPanel{
         this.reseptliste = reseptliste;
         spesifikkreseptliste = new TreeMap<>();
         reseptbevilgning = reseptgodkjennelse;
+        reseptnøkkel = ++sisteresept;
         
         //SIDEPANEL
         sidepanel = new JPanel();
@@ -245,7 +249,6 @@ public class LegePanel extends JPanel{
         regresept.addActionListener(lytteren);
         senterpanelnyresept.add(regresept,c);
         kontrollresept = "[ABC]|AB|BC|AC|ABC";
-        reseptnøkkel = 1; //Første resept får nr 1
         
         //LEGGER ALLE PANELER TIL
         senterpanel.add(senterpanelvisdata, VISDATA);
@@ -253,7 +256,7 @@ public class LegePanel extends JPanel{
         senterpanel.add(senterpanelnyresept, NY_RESEPT);
         super.add(sidepanel, BorderLayout.LINE_START);
         super.add(senterpanel, BorderLayout.CENTER);       
-        filtrerLegelisten();
+        filtrerReseptlisten();
     }
     
     public void visFørste(){
@@ -263,7 +266,7 @@ public class LegePanel extends JPanel{
         c.first(senterpanel);
     }
     
-    public void filtrerLegelisten(){
+    public void filtrerReseptlisten(){
         /*Denne metoden finner alle resepter den innloggede legen har skrevet
         ut, og legger de til i den spesifike reseptlisten, denne lages på nytt
         for hver lege som logger inn, og hver gang legen registrerer en ny
@@ -285,6 +288,7 @@ public class LegePanel extends JPanel{
     }
     
     public void nyPasient(){
+        skrivUtlisten(PASIENT);
         /*Denne metoden viser "ny pasient" panelet som inneholder alle datafelter 
         for å registrere nye pasienter for den innloggede legen*/
         CardLayout c = (CardLayout)senterpanel.getLayout();
@@ -292,6 +296,7 @@ public class LegePanel extends JPanel{
     }
     
     public void nyResept(){
+        skrivUtlisten(RESEPT);
         /*Denne metoden viser "ny resept" panelet som inneholder alle datafelter 
         for å registrere nye resepter for den innloggede legen*/
         CardLayout c = (CardLayout)senterpanel.getLayout();
@@ -348,6 +353,7 @@ public class LegePanel extends JPanel{
         else if(pasientliste.get(pasientnøkkel)==null){
             Pasient ny = new Pasient(fornavn, etternavn, pasientnøkkel);
             pasientliste.put(pasientnøkkel,ny);
+            lagreLegeListene(PASIENT);
             infofelt.setText("Person registrert.");
             return;
         }
@@ -389,12 +395,14 @@ public class LegePanel extends JPanel{
             }
             else{
                 reseptaktivert();
-                Resept ny = new Resept(reseptnøkkel++, pasientnøkkel,legenøkkel,
+                Resept ny = new Resept(reseptnøkkel, pasientnøkkel,legenøkkel,
                         medisinnr, medisinmengde,DDD,medisinkategori,
                         reseptensgruppe,legensanvisning);
                 reseptliste.put(ny.getReseptnr(),ny);
                 infofelt.setText("Resept registrert.");
-                filtrerLegelisten();
+                reseptnøkkel++;
+                lagreLegeListene(RESEPT);
+                filtrerReseptlisten();
                 revalidate();
             }
         }
@@ -410,6 +418,48 @@ public class LegePanel extends JPanel{
         }
         else{
             reseptensgruppe = 'C';
+        }
+    }
+    
+    public void lagreLegeListene(int n){
+        if(n==PASIENT){
+            try(ObjectOutputStream utfil = new ObjectOutputStream(
+                    new FileOutputStream("src/pasientliste.data"))){
+                utfil.writeObject(pasientliste);
+            }
+            catch(NotSerializableException ns){
+                JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
+            }
+            catch(IOException ioe){
+                JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
+            }
+        }
+        else if(n==RESEPT){
+            try(ObjectOutputStream utfil = new ObjectOutputStream(
+                    new FileOutputStream("src/reseptliste.data"))){
+                utfil.writeObject(reseptliste);
+            }
+            catch(NotSerializableException ns){
+                JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
+            }
+            catch(IOException ioe){
+                JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
+            }
+        }
+    }
+    
+    public void skrivUtlisten(int n){
+        if(n==PASIENT){
+            for(Map.Entry<String,Pasient> entry:pasientliste.entrySet()){
+                    Pasient løper = entry.getValue();
+                    infofelt.append("Nøkkel : " + løper.getFødselsnr()+"\n");
+            }
+        }
+        else if(n==RESEPT){
+            for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+                    Resept løper = entry.getValue();
+                    infofelt.append("Nøkkel : " + løper.getReseptnr()+"\n");
+            }
         }
     }
     

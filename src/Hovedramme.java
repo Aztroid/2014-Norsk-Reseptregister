@@ -17,6 +17,10 @@ public class Hovedramme extends JFrame{
     //Hovedrammens datafelter
     private final String LOGG_INN = "0";
     private final String ADMIN = "1";
+    private final int KONTROLLØR = 1;
+    private final int LEGE = 2;
+    private final int PASIENT = 3;
+    private final int RESEPT = 4;
     private double skjermbredde;
     private double skjermhøyde;
     private int bredde;
@@ -26,6 +30,8 @@ public class Hovedramme extends JFrame{
     private TreeMap<String,Lege> legeliste;
     private TreeMap<Integer,Resept> reseptliste;
     private TreeMap<Integer,Kontrollør> kontrollørliste;
+    private static Integer sisteresept;
+    private static Integer sistekontrollør;
     
     public Hovedramme(){
         
@@ -36,7 +42,7 @@ public class Hovedramme extends JFrame{
         skjermhøyde = skjermdimensjon.height/1.3;
         bredde = (int)skjermbredde;
         høyde = (int)skjermhøyde;
-       
+        
         /*Setter rammens bredde og høyde, lar plattformen velge plassering av
         rammen*/
         setSize(bredde,høyde); //Fullskjerm/2
@@ -50,22 +56,29 @@ public class Hovedramme extends JFrame{
             Image ikon = bilde.getImage();
             setIconImage(ikon);
         }
-        pasientliste = new TreeMap<>();
-        reseptliste = new TreeMap<>();
-        //legeliste = new TreeMap<>();
-        lesAdminVindu();
-        //lesListene();
+        lesListene(KONTROLLØR);
+        lesListene(LEGE);
+        lesListene(PASIENT);
+        lesListene(RESEPT);
         setTitle("Norsk Reseptregister");
         super.getContentPane().setLayout(new CardLayout());
-        super.add(new LogginnPanel(pasientliste, legeliste, reseptliste,
-                kontrollørliste),LOGG_INN);
-        super.add(new AdminPanel(legeliste,kontrollørliste),ADMIN);
+        super.add(new LogginnPanel(sisteresept, pasientliste, legeliste, 
+                reseptliste, kontrollørliste),LOGG_INN);
+        super.add(new AdminPanel(sistekontrollør,legeliste,kontrollørliste),
+                ADMIN);
         setVisible(true);
     }
+    
     public void visPanel(String panelid){
         //Metode som kan be hovedrammen om å vise et ønskelig panel
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.show(super.getContentPane(),panelid);
+    }
+    
+    public void visAdmin(){
+        //Metode som kan be hovedrammen om å vise et ønskelig panel
+        CardLayout c = (CardLayout)super.getContentPane().getLayout();
+        c.show(super.getContentPane(),ADMIN);
     }
     
     public void visFørste(){
@@ -98,66 +111,104 @@ public class Hovedramme extends JFrame{
         c.first(super.getContentPane());
     }
     
-    private void lesListene(){
+    private void lesListene(int n){
         /*Metode som Leser lister og static konstantene som blir brukt for
         å opprette objekter i listene, misslykkes lesningen opprettes nye 
         lister*/
-       
-        try(ObjectInputStream innfil = new ObjectInputStream(
-                new FileInputStream("src/listene.data"))){
+        if(n==KONTROLLØR){
+            try(ObjectInputStream innfil = new ObjectInputStream(
+                new FileInputStream("src/kontrollørliste.data"))){
             kontrollørliste = (TreeMap<Integer,Kontrollør>) innfil.readObject();
-        }
-        catch(ClassNotFoundException cnfe){
-            JOptionPane.showMessageDialog(null,cnfe.getMessage() + 
+            sistekontrollør = kontrollørliste.lastKey();
+            }
+            catch(ClassNotFoundException cnfe){
+                JOptionPane.showMessageDialog(null,cnfe.getMessage() + 
                     "\nOppretter en tom liste\n");
-            kontrollørliste = new TreeMap<>();
+                kontrollørliste = new TreeMap<>();
+                sistekontrollør = 999;
+            }
+            catch(FileNotFoundException fnfe){
+                JOptionPane.showMessageDialog(null,
+                        "Finner ikke datafil. Oppretter tom Kontrollørliste");
+                kontrollørliste = new TreeMap<>();
+                sistekontrollør = 999;
+            }
+            catch(IOException ioe){
+                JOptionPane.showMessageDialog(null,
+                        "Innlesningsfeil. Oppretter tom Kontrollørliste");
+                kontrollørliste = new TreeMap<>();
+                sistekontrollør = 999;
+            }
         }
-        catch(FileNotFoundException fnfe){
-            JOptionPane.showMessageDialog(null,
-                    "Finner ikke datafil. Oppretter tom liste");
-            kontrollørliste = new TreeMap<>();
+        else if(n==LEGE){
+            try(ObjectInputStream innfil = new ObjectInputStream(
+                new FileInputStream("src/legeliste.data"))){
+            legeliste = (TreeMap<String,Lege>) innfil.readObject();
+            }
+            catch(ClassNotFoundException cnfe){
+                JOptionPane.showMessageDialog(null,cnfe.getMessage() + 
+                    "\nOppretter en tom liste\n");
+                legeliste = new TreeMap<>();
+            }
+            catch(FileNotFoundException fnfe){
+                JOptionPane.showMessageDialog(null,
+                        "Finner ikke datafil. Oppretter tom Legeliste");
+                legeliste = new TreeMap<>();
+            }
+            catch(IOException ioe){
+                JOptionPane.showMessageDialog(null,
+                        "Innlesningsfeil. Oppretter tom Legeliste");
+                legeliste = new TreeMap<>();
+            }
         }
-        catch(IOException ioe){
-            JOptionPane.showMessageDialog(null,
-                    "Innlesningsfeil. Oppretter nye tomme lister");
-            kontrollørliste = new TreeMap<>();
+        else if(n==PASIENT){
+            try(ObjectInputStream innfil = new ObjectInputStream(
+                new FileInputStream("src/pasientliste.data"))){
+            pasientliste = (TreeMap<String,Pasient>) innfil.readObject();
+            }
+            catch(ClassNotFoundException cnfe){
+                JOptionPane.showMessageDialog(null,cnfe.getMessage() + 
+                    "\nOppretter en tom liste\n");
+                pasientliste = new TreeMap<>();
+            }
+            catch(FileNotFoundException fnfe){
+                JOptionPane.showMessageDialog(null,
+                        "Finner ikke datafil. Oppretter tom Pasientliste");
+                pasientliste = new TreeMap<>();
+            }
+            catch(IOException ioe){
+                JOptionPane.showMessageDialog(null,
+                        "Innlesningsfeil. Oppretter tom Pasientliste");
+                pasientliste = new TreeMap<>();
+            }
+        }
+        else if(n==RESEPT){
+            try(ObjectInputStream innfil = new ObjectInputStream(
+                new FileInputStream("src/reseptliste.data"))){
+            reseptliste = (TreeMap<Integer,Resept>) innfil.readObject();
+            sisteresept = reseptliste.lastKey();
+            }
+            catch(ClassNotFoundException cnfe){
+                JOptionPane.showMessageDialog(null,cnfe.getMessage() + 
+                    "\nOppretter en tom liste\n");
+                reseptliste = new TreeMap<>();
+                sisteresept = 0;
+            }
+            catch(FileNotFoundException fnfe){
+                JOptionPane.showMessageDialog(null,
+                        "Finner ikke datafil. Oppretter tom Reseptliste");
+                reseptliste = new TreeMap<>();
+                sisteresept = 0;
+            }
+            catch(IOException ioe){
+                JOptionPane.showMessageDialog(null,
+                        "Innlesningsfeil. Oppretter tom Reseptliste");
+                reseptliste = new TreeMap<>();
+                sisteresept = 0;
+            }
         }
     }
     
-    public void lesAdminVindu(){
-        try(ObjectInputStream innfil = new ObjectInputStream(
-                new FileInputStream("src/listene.data"))){
-            adminpanel = (AdminPanel) innfil.readObject();
-        }
-        catch(ClassNotFoundException cnfe){
-            JOptionPane.showMessageDialog(null,cnfe.getMessage() + 
-                    "\nOppretter en tom liste\n");
-            kontrollørliste = new TreeMap<>();
-        }
-        catch(FileNotFoundException fnfe){
-            JOptionPane.showMessageDialog(null,
-                    "Finner ikke datafil. Oppretter tom liste");
-            kontrollørliste = new TreeMap<>();
-        }
-        catch(IOException ioe){
-            JOptionPane.showMessageDialog(null,
-                    "Innlesningsfeil. Oppretter nye tomme lister");
-            kontrollørliste = new TreeMap<>();
-        }
-    }
-    
-    public void lagreAdminVindu(){
-        try(ObjectOutputStream utfil = new ObjectOutputStream(
-                new FileOutputStream("src/listene.data"))){
-            utfil.writeObject(kontrollørliste);
-        }
-        catch(NotSerializableException ns){
-            JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
-        }
-        catch(IOException ioe){
-            JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
-        }
-    }
     
     public TreeMap<String,Pasient> getPasientliste(){
         return pasientliste;

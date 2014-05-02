@@ -6,15 +6,17 @@
 //Denne klassen beskriver resepter
 
 public class Lege extends Person{
-    String autorisasjonsnr;
-    String arbeidssted;//ADR om mulig
-    String reseptbevilgning;
+    private String pword;
+    private String autorisasjonsnr;
+    private String arbeidssted;//ADR om mulig
+    private String reseptbevilgning;
     
-    public Lege(String f, String e, String a, String ar, String b){
+    public Lege(String f, String e, String p, String a, String ar, String r){
         super(f,e);
+        pword = p;
         autorisasjonsnr = a;
         arbeidssted = ar;
-        reseptbevilgning = b;
+        reseptbevilgning = r;
     }
 
     public String getArbeidssted(){

@@ -8,40 +8,13 @@
 
 import java.awt.*;
 import java.awt.event.*;
+import java.awt.geom.Line2D;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
 
 public class KontrollørPanel extends JPanel{
-      int jan1 = 5;
-      int jan2 = 10;
-      int feb1 = jan2;
-      int feb2 = 20;
-      int mar1 = feb2;
-      int mar2 = 10;
-      int apr1 = mar2;
-      int apr2 = 45;
-      int may1 = apr2;
-      int may2 = 20;
-      int jun1 = may2;
-      int jun2 = 55;
-        int jul1 = jun2;
-        int jul2 = 30;
-        int aug1 = jul2;
-        int aug2 = 25;
-        int sep1 = aug2;
-        int sep2 = 50;
-        int oct1 = sep2;
-        int oct2 = 70;
-        int nov1 = oct2;
-        int nov2 = 40;
-        int dec1 = nov2;
-        int dec2 = 20;
-        Image image;
-    String[] items = { "2013", "2014", "2015", "2016", "2017", "2018" };
-    JComboBox cb = new JComboBox(items);
-    
-    
+
     private final String VISDATA = "0";
     private final String VISSTATISTIKK = "1";
     private final String VISVARSLING = "3";
@@ -66,8 +39,17 @@ public class KontrollørPanel extends JPanel{
     private TabellVindu tabellen;
     private Border senterpanelgrense;
     private JButton søk;
-    private JTextField søkpasientid,søkreseptid,søklegeid, hentlegemiddelstatistikk, legestatistikk;
+    private JTextField søkpasientid,søkreseptid,søklegeid;
+    int [] a = {10,20,60,90,20,50,100,30,30,60,80,50};
+    int [] b = {10,30,40,20,90,50,90,40,10,80,20,10};
     
+   //Sennterpanel Statistikk  
+    private JTextField hentlegemiddelstatistikk, legestatistikk;
+      
+    private String[] items = { "2013", "2014", "2015", "2016", "2017", "2018" };
+    private JComboBox cb = new JComboBox(items);
+    private Graphics1 grafikk1;
+      private Graphics1 grafikk;
     public KontrollørPanel(TreeMap<String,Pasient> pasientliste,
             TreeMap<String,Lege> legeliste,
             TreeMap<Integer,Resept> reseptliste){
@@ -136,10 +118,13 @@ public class KontrollørPanel extends JPanel{
         senterpaneltop.add(søk);
          
         //SENTERPANEL Regpasient:
-        senterpanelstatistikk = new JPanel(new FlowLayout());
+        
         senterpanelvarsling = new JPanel(new FlowLayout());
         
         //SENTERPANEL VISSTATISTIKK
+        senterpanelstatistikk = new JPanel(new GridLayout(1, 1));
+        grafikk = new Graphics1(a);
+        grafikk1 = new Graphics1(b);
         hentlegemiddelstatistikk = new JTextField(15);
         senterpanelstatistikk.add(new JLabel("Legemiddel"));
         senterpanelstatistikk.add(hentlegemiddelstatistikk);
@@ -147,6 +132,8 @@ public class KontrollørPanel extends JPanel{
         senterpanelstatistikk.add(new JLabel("Lege"));
         senterpanelstatistikk.add(legestatistikk);
         senterpanelstatistikk.add(cb);
+        senterpanelstatistikk.add(grafikk);
+        senterpanelstatistikk.add(grafikk1);
         
         //SENTERPANEL 
         senterpanelvisdata.add(senterpaneltop,BorderLayout.PAGE_START);
@@ -212,10 +199,3 @@ public class KontrollørPanel extends JPanel{
  
     }
 }
-
-      
-        
-    
-
-
-    

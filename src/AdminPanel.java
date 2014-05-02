@@ -15,6 +15,8 @@ public class AdminPanel extends JPanel{
     private final String BAKGRUNN = "0";
     private final String NYLEGE= "1";
     private final String NYKONTROLLØR = "2";
+    private final int KONTROLLØR = 1;
+    private final int LEGE = 2;
     private Lytter lytteren;
     private Hovedramme hovedrammekopi;
     private TreeMap<String,Lege> legeliste;
@@ -54,11 +56,11 @@ public class AdminPanel extends JPanel{
     private JTextField fornavnkont, etternavnkont, brukernavn, arbeidsstedkont;
     private JButton regkont;
     
-    public AdminPanel(TreeMap<String,Lege> legeliste,
+    public AdminPanel(Integer sistekontrollør,TreeMap<String,Lege> legeliste,
             TreeMap<Integer,Kontrollør> kontrollørliste){
         super(new BorderLayout());
         lytteren = new Lytter();
-        
+        kontnøkkel = ++sistekontrollør;
         this.legeliste = legeliste;
         this.kontrollørliste = kontrollørliste;
         
@@ -186,20 +188,11 @@ public class AdminPanel extends JPanel{
         arbeidsstedkont = new JTextField(30);
         arbeidsstedkont.addActionListener(lytteren);
         senterpanelregkont.add(arbeidsstedkont,c);
-        c.gridx = 0;
         
         c.gridy = 4;
-        senterpanelregkont.add(new JLabel("Brukernavn: "),c);
-        c.gridx = 1;
-        brukernavn = new JTextField(30);
-        brukernavn.addActionListener(lytteren);
-        senterpanelregkont.add(brukernavn,c);
-        
-        c.gridy = 5;
         regkont = new JButton("Register Kontrollør");
         regkont.addActionListener(lytteren);
         senterpanelregkont.add(regkont,c);
-        kontnøkkel = 1000; //Første kontrollør får nr 1000
         
         //Legger til panelene
         senterpanel.add(senterpanelbakgrunn,BAKGRUNN);
@@ -219,6 +212,7 @@ public class AdminPanel extends JPanel{
     public void visNylege(){
         //Viser Logginn Panelet
         infofelt.setText("Registrer ny lege");
+        skrivUtlisten(LEGE);
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,NYLEGE);
     }
@@ -226,6 +220,7 @@ public class AdminPanel extends JPanel{
     public void visNyKont(){
         //Viser Logginn Panelet
         infofelt.setText("Registrer ny Kontrollør");
+        skrivUtlisten(KONTROLLØR);
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,NYKONTROLLØR);
     }
@@ -247,6 +242,7 @@ public class AdminPanel extends JPanel{
         String fornavn = fornavnlege.getText();
         String etternavn = etternavnlege.getText();
         String adresse = arbeidssted.getText();
+        String passord = tilfeldiString();
         String reseptbev = "";
         if(!legenøkkel.matches(autorisasjonsnrrregex)){
             infofelt.setText("Autorisasjonsnummeret du har\nskrevet inn er "
@@ -263,11 +259,11 @@ public class AdminPanel extends JPanel{
             if(gruppeC){
                 reseptbev += "C";
             }
-            Lege ny = new Lege(fornavn, etternavn, legenøkkel, adresse, 
+            Lege ny = new Lege(fornavn, etternavn, passord, legenøkkel, adresse, 
                     reseptbev);
             legeliste.put(legenøkkel,ny);
             infofelt.setText("Lege registrert.");
-            lagreAdminListene();
+            lagreAdminListene(LEGE);
         }
         else{
             infofelt.setText("Legen finnes i registeret fra før");
@@ -277,8 +273,7 @@ public class AdminPanel extends JPanel{
     private boolean blankekontfelter(){
         //Sjekker for blanke felter ved registrering av lege
         return (fornavnkont.getText().matches("")||etternavnkont.getText().
-                matches("")||brukernavn.getText().matches("")||
-                arbeidsstedkont.getText().matches(""));
+                matches("")||arbeidsstedkont.getText().matches(""));
     }
     
     private void regNyKont(){
@@ -286,7 +281,7 @@ public class AdminPanel extends JPanel{
             infofelt.setText("Et eller fler av feltene er tomme");
             return;
         }
-        String bruker = brukernavn.getText();
+        String bruker = "" + kontnøkkel;
         String fornavn = fornavnkont.getText();
         String etternavn = etternavnkont.getText();
         String adresse = arbeidsstedkont.getText();
@@ -297,35 +292,71 @@ public class AdminPanel extends JPanel{
             kontrollørliste.put(kontnøkkel,ny);
             infofelt.setText("Kontrollør registrert.");
             kontnøkkel++;
-            lagreAdminListene();
+            lagreAdminListene(KONTROLLØR);
+            JOptionPane.showMessageDialog(null, "Autnr: " + bruker + "\n" + passord );
         }
         else{
             infofelt.setText("Kontrollør finnes i registeret fra før");
         }
     }
     
-    private String tilfeldiString(){
-        return "";
-    }
-    
-    public void lagreAdminListene(){    
-        hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-                hovedrammekopi.lagreAdminVindu();
-    }
-    
-    /*public void lagreAdminListene(){
-        try(ObjectOutputStream utfil = new ObjectOutputStream(
-                new FileOutputStream("src/listene.data"))){
-            utfil.writeObject(kontrollørliste);
-        }
-        catch(NotSerializableException ns){
-            JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
-        }
-        catch(IOException ioe){
-            JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
-        }
-    }*/
+   private String tilfeldiString(){
+       
+        StringBuilder sb = new StringBuilder();
+        int n = 15;
+        String set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>?/;:/*-+.#$%^&£!"; // characters to choose from
+        int i;
 
+        for (i= 0; i < n; i++) {
+            int k = (int) Math.random();   
+            sb.append(set.charAt(k));
+        }
+        String result = sb.toString();
+        return result;
+    }
+    
+    public void lagreAdminListene(int n){
+        if(n==LEGE){
+            try(ObjectOutputStream utfil = new ObjectOutputStream(
+                    new FileOutputStream("src/legeliste.data"))){
+                utfil.writeObject(legeliste);
+            }
+            catch(NotSerializableException ns){
+                JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
+            }
+            catch(IOException ioe){
+                JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
+            }
+        }
+        else if(n==KONTROLLØR){
+            try(ObjectOutputStream utfil = new ObjectOutputStream(
+                    new FileOutputStream("src/kontrollørliste.data"))){
+                utfil.writeObject(kontrollørliste);
+            }
+            catch(NotSerializableException ns){
+                JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
+            }
+            catch(IOException ioe){
+                JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
+            }
+        }
+    }
+    
+    public void skrivUtlisten(int n){
+        if(n==KONTROLLØR){
+            for(Map.Entry<Integer,Kontrollør> entry:kontrollørliste.entrySet()){
+                    Kontrollør løper = entry.getValue();
+                    infofelt.append("Nøkkel : " + løper.getKontnøkkel()+"\n");
+            }
+        }
+        else if(n==LEGE){
+            for(Map.Entry<String,Lege> entry:legeliste.entrySet()){
+                    Lege løper = entry.getValue();
+                    infofelt.append("Nøkkel : " + løper.getAutorisasjonsnr()+"\n");
+            }
+        }
+    }
+    
     private class Tegnlytter implements ItemListener{
         public void itemStateChanged(ItemEvent e){
             gruppeA = Abox.isSelected();

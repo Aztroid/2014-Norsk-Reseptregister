@@ -5,9 +5,9 @@ Vegar Nyg�rd, s193362, HIINGDATA13H1AA
  */
 
 public class Kontrollør extends Person{
-    String[] logginn;
-    Integer kontrollørnr;
-    String arbeidssted;
+    private String[] logginn;
+    private Integer kontrollørnr;
+    private String arbeidssted;
     
     public Kontrollør(String f, String e,String b, String p, Integer k, String ar){
         super(f,e);

@@ -347,7 +347,7 @@ public class TestGUI extends JFrame {
             if(gruppeC){
                 reseptbev += "C";
             }
-            Lege ny = new Lege(fornavn, etternavn, legenøkkel, adresse, 
+            Lege ny = new Lege(fornavn, etternavn, "vinter09", legenøkkel, adresse, 
                     reseptbev);
             legeliste.put(legenøkkel,ny);
             infosjerm.setText("Lege registrert.");
