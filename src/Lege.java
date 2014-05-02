@@ -27,6 +27,9 @@ public class Lege extends Person{
         return autorisasjonsnr;
     }
     
+    public String getPword() {
+        return pword;
+    }
     
     public String getBevilgning(){
         

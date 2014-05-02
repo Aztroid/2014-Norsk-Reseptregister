@@ -5,15 +5,13 @@ Vegar Nyg�rd, s193362, HIINGDATA13H1AA
  */
 
 public class Kontrollør extends Person{
-    private String[] logginn;
+    private String pword;
     private Integer kontrollørnr;
     private String arbeidssted;
     
-    public Kontrollør(String f, String e,String b, String p, Integer k, String ar){
+    public Kontrollør(String f, String e, String p, Integer k, String ar){
         super(f,e);
-        logginn = new String[2];
-        logginn[0] = b;
-        logginn[1] = p;
+        pword = p;
         kontrollørnr = k;
         arbeidssted = ar;
     }
@@ -24,6 +22,10 @@ public class Kontrollør extends Person{
 
     public Integer getKontnøkkel() {
         return kontrollørnr;
+    }
+    
+    public String getPword() {
+        return pword;
     }
     
     public String toString(){

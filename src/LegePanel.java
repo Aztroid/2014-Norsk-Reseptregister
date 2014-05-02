@@ -284,7 +284,7 @@ public class LegePanel extends JPanel{
         /*Denne metoden leder brukeren tilbake til startvinduet for en ny 
         innlogging*/
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-        hovedrammekopi.visFørste();
+        hovedrammekopi.visFørsteLege(pasientliste,reseptliste);
     }
     
     public void nyPasient(){
@@ -452,13 +452,13 @@ public class LegePanel extends JPanel{
         if(n==PASIENT){
             for(Map.Entry<String,Pasient> entry:pasientliste.entrySet()){
                     Pasient løper = entry.getValue();
-                    infofelt.append("Nøkkel : " + løper.getFødselsnr()+"\n");
+                    infofelt.append("\nNøkkel : " + løper.getFødselsnr()+"\n");
             }
         }
         else if(n==RESEPT){
             for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
                     Resept løper = entry.getValue();
-                    infofelt.append("Nøkkel : " + løper.getReseptnr()+"\n");
+                    infofelt.append("\nNøkkel : " + løper.getReseptnr()+"\n");
             }
         }
     }

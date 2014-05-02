@@ -12,9 +12,9 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class AdminPanel extends JPanel{
-    private final String BAKGRUNN = "0";
-    private final String NYLEGE= "1";
-    private final String NYKONTROLLØR = "2";
+    private final String BAKGRUNN = "6";
+    private final String NYLEGE= "7";
+    private final String NYKONTROLLØR = "8";
     private final int KONTROLLØR = 1;
     private final int LEGE = 2;
     private Lytter lytteren;
@@ -264,6 +264,8 @@ public class AdminPanel extends JPanel{
             legeliste.put(legenøkkel,ny);
             infofelt.setText("Lege registrert.");
             lagreAdminListene(LEGE);
+            JOptionPane.showMessageDialog(null, "Autnr: " + legenøkkel + 
+                    "\nPassord: " + passord );
         }
         else{
             infofelt.setText("Legen finnes i registeret fra før");
@@ -287,13 +289,14 @@ public class AdminPanel extends JPanel{
         String adresse = arbeidsstedkont.getText();
         String passord = tilfeldiString();
         if(kontrollørliste.get(kontnøkkel)==null){
-            Kontrollør ny = new Kontrollør(fornavn, etternavn, bruker, 
+            Kontrollør ny = new Kontrollør(fornavn, etternavn, 
                     passord,kontnøkkel, adresse);
             kontrollørliste.put(kontnøkkel,ny);
             infofelt.setText("Kontrollør registrert.");
             kontnøkkel++;
             lagreAdminListene(KONTROLLØR);
-            JOptionPane.showMessageDialog(null, "Autnr: " + bruker + "\n" + passord );
+            JOptionPane.showMessageDialog(null, "KontNr: " + bruker + "\n" + 
+                    passord );
         }
         else{
             infofelt.setText("Kontrollør finnes i registeret fra før");
@@ -301,19 +304,22 @@ public class AdminPanel extends JPanel{
     }
     
    private String tilfeldiString(){
-       
-        StringBuilder sb = new StringBuilder();
-        int n = 15;
-        String set = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789<>?/;:/*-+.#$%^&£!"; // characters to choose from
-        int i;
+       /*
+       StringBuilder passordGenerator = new StringBuilder();
+       int n = 7;
+       String tegnSett = "abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ0123456789<>?/;:/*-+.#$%^&£!´±}±][{¥½$£@¡]"; // characters to choose from
+       int i = 0;
 
-        for (i= 0; i < n; i++) {
-            int k = (int) Math.random();   
-            sb.append(set.charAt(k));
-        }
-        String result = sb.toString();
-        return result;
-    }
+       while(i < n){
+           int tilfeldig = (int) (Math.random() * tegnSett.length());
+           passordGenerator.append(tegnSett.charAt(tilfeldig));
+           i++;
+       }
+        
+       String result = passordGenerator.toString();
+       return result;*/
+       return "a";
+   }
     
     public void lagreAdminListene(int n){
         if(n==LEGE){
@@ -346,13 +352,13 @@ public class AdminPanel extends JPanel{
         if(n==KONTROLLØR){
             for(Map.Entry<Integer,Kontrollør> entry:kontrollørliste.entrySet()){
                     Kontrollør løper = entry.getValue();
-                    infofelt.append("Nøkkel : " + løper.getKontnøkkel()+"\n");
+                    infofelt.append("\nNøkkel : " + løper.getKontnøkkel()+"\n");
             }
         }
         else if(n==LEGE){
             for(Map.Entry<String,Lege> entry:legeliste.entrySet()){
                     Lege løper = entry.getValue();
-                    infofelt.append("Nøkkel : " + løper.getAutorisasjonsnr()+"\n");
+                    infofelt.append("\nNøkkel : " + løper.getAutorisasjonsnr()+"\n");
             }
         }
     }

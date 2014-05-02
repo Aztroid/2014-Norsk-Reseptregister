@@ -34,7 +34,6 @@ public class Hovedramme extends JFrame{
     private static Integer sistekontrollør;
     
     public Hovedramme(){
-        
         //Oppretter Toolkit for å kunne justere programmet autmatisk
         Toolkit verktøykasse = Toolkit.getDefaultToolkit();
         Dimension skjermdimensjon = verktøykasse.getScreenSize();
@@ -81,7 +80,7 @@ public class Hovedramme extends JFrame{
         c.show(super.getContentPane(),ADMIN);
     }
     
-    public void visFørste(){
+    public void visFørsteKontrollør(TreeMap<String,Lege> nylegeliste){
         //Metode som viser hovedrammens første vindu, dvs, logginnvindu
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.first(super.getContentPane());

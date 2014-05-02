@@ -15,9 +15,9 @@ import javax.swing.border.*;
 
 public class KontrollørPanel extends JPanel{
 
-    private final String VISDATA = "0";
-    private final String VISSTATISTIKK = "1";
-    private final String VISVARSLING = "3";
+    private final String VISDATA = "9";
+    private final String VISSTATISTIKK = "10";
+    private final String VISVARSLING = "11";
     
     private Hovedramme hovedrammekopi;
     private Lytter lytteren;
@@ -49,7 +49,8 @@ public class KontrollørPanel extends JPanel{
     private String[] items = { "2013", "2014", "2015", "2016", "2017", "2018" };
     private JComboBox cb = new JComboBox(items);
     private Graphics1 grafikk1;
-      private Graphics1 grafikk;
+    private Graphics1 grafikk;
+    
     public KontrollørPanel(TreeMap<String,Pasient> pasientliste,
             TreeMap<String,Lege> legeliste,
             TreeMap<Integer,Resept> reseptliste){
@@ -165,12 +166,6 @@ public class KontrollørPanel extends JPanel{
         c.show(senterpanel,VISVARSLING);
     }
     
-    public void fylltabellen(){
-        for(int i = 0; i < 100000; i++){
-            reseptliste.put(i, new Resept(i,"L"+i,"P"+i,"med"+i,"mengde"+i,
-                    "DDD"+i,"Kat"+i,'A',"Anv"+i));
-        }   
-    }
     public void visStatistikk(){
             CardLayout c = (CardLayout)senterpanel.getLayout();
             c.show(senterpanel,VISSTATISTIKK);
@@ -178,14 +173,13 @@ public class KontrollørPanel extends JPanel{
     
     public void tilbakeTilMeny(){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-        hovedrammekopi.visFørste();
+        hovedrammekopi.visFørsteKontrollør(legeliste);
     }
     
     private class Lytter implements ActionListener{
         
         public void actionPerformed(ActionEvent e) {
             if (e.getSource()==visdata){
-                fylltabellen();
                 lagTabellen();
                 revalidate();
             }

@@ -14,11 +14,10 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class LogginnPanel extends JPanel{
-    private final String BAKGRUNN = "0";
-    private final String LEGE_DATA = "1";
-    private final String KONTROLL_DATA = "2";
-    private final String ADMIN = "3";
-    private final String LOGG_INN = "4";
+    private final String BAKGRUNN = "2";
+    private final String LEGE_DATA = "3";
+    private final String KONTROLL_DATA = "4";
+    private final String LOGG_INN = "5";
     private Lytter lytteren;
     private Hovedramme hovedrammekopi;
     private TreeMap<String,Pasient> pasientliste;
@@ -128,7 +127,8 @@ public class LogginnPanel extends JPanel{
     
     public void visLogginn(){
         //Viser Logginn Panelet
-        infofelt.setText("Logg inn med brukernavn/passord\ntildelt av administrator");
+        infofelt.setText("Logg inn med brukernavn/passord\ntildelt av "
+                + "administrator");
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,LOGG_INN);
     }
@@ -136,23 +136,80 @@ public class LogginnPanel extends JPanel{
     public void sjekk(){
         /*Finner ut hvilken type bruker som prøver å logge seg inn, og om denne
         brukeren er registrert*/
-        Lege bruker;
         String autorisasjonsnrrregex = "\\d{9}";
-        String passord = password.getText();
+        try{
         if (username.getText().matches(autorisasjonsnrrregex)){
-            bruker = legeliste.get(username.getText());
+            Lege bruker = legeliste.get(username.getText());
             if(bruker!=null){
-                visLegeVindu(bruker.getAutorisasjonsnr(),
-                        bruker.getBevilgning());
+                if(password.getText().matches(bruker.getPword())){
+                    visLegeVindu(bruker.getAutorisasjonsnr(),
+                            bruker.getBevilgning());
+                    blankelogginnfelter();
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Feil Passord",
+                            "Advarsel",JOptionPane.WARNING_MESSAGE);
+                    blankelogginnfelter();
+                }
             }
             else{
-                infofelt.setText("Kontakt administrator for\nopprettelse av"
-                        + " ny lege");
-                visFørste();
+                infofelt.setText("Legen er ikke i systemet\n"
+                        + "kontakt administrator for\nopprettelse av ny lege");
+                blankelogginnfelter();
             }
         }
         else{
-            visKontrollørLogginn();
+            Kontrollør bruker = kontrollørliste.get(Integer.parseInt(
+                    username.getText()));
+            if(bruker!=null){
+                if(password.getText().matches(bruker.getPword())){
+                    visKontrollørLogginn();
+                    blankelogginnfelter();
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "Feil Passord",
+                            "Advarsel",JOptionPane.WARNING_MESSAGE);
+                    blankelogginnfelter();
+                }
+            }
+            else{
+                infofelt.setText("Kontrolløren er ikke i systemet\n"
+                        + "kontakt administrator for\nopprettelse av ny "
+                        + "kontrollør");
+                blankelogginnfelter();
+            }
+        }
+        }
+        catch(NullPointerException NPE){
+            infofelt.setText("Feil innlogginsdata, prøv igjen");
+        }
+        catch(NumberFormatException nfe){
+            infofelt.setText("Feil innlogginsdata, prøv igjen");
+        }
+    }
+    
+    public void sjekkAdmin(){
+        /*Må skrive inn adminnøkkelen i logginn for å komme inn*/
+        String adminnøkkel = "guest";
+        
+        try{
+            String input = JOptionPane.showInputDialog
+            (null,"Skriv inn adminnøkkel: ");
+            if(input.matches(adminnøkkel)){
+                visAdminPanel();
+            }
+            else{
+                JOptionPane.showMessageDialog(null, "Feil Passord",
+                                "Advarsel",JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        catch(NullPointerException NPE){
+            JOptionPane.showMessageDialog(null, "Feil Passord",
+                                "Advarsel",JOptionPane.WARNING_MESSAGE);
+        }
+        catch(NumberFormatException nfe){
+            JOptionPane.showMessageDialog(null, "Feil Passord",
+                                "Advarsel",JOptionPane.WARNING_MESSAGE);
         }
     }
     
@@ -170,15 +227,21 @@ public class LogginnPanel extends JPanel{
     
     public void visLegeVindu(String autnr, String reseptbev){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-        hovedrammekopi.add(new LegePanel(autnr,reseptbev,sisteresept,pasientliste,reseptliste)
-                ,LEGE_DATA);
+        hovedrammekopi.add(new LegePanel(autnr,reseptbev,sisteresept,
+                pasientliste,reseptliste),LEGE_DATA);
         hovedrammekopi.visPanel(LEGE_DATA);
     }
     
     public void visKontrollørLogginn(){
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
-        hovedrammekopi.add(new KontrollørPanel(pasientliste,legeliste,reseptliste),KONTROLL_DATA);
+        hovedrammekopi.add(new KontrollørPanel(pasientliste,legeliste,
+                reseptliste),KONTROLL_DATA);
         hovedrammekopi.visPanel(KONTROLL_DATA);
+    }
+    
+    private void blankelogginnfelter(){
+        username.setText("");
+        password.setText("");    
     }
     
     private class Lytter implements ActionListener{
@@ -191,7 +254,7 @@ public class LogginnPanel extends JPanel{
                 sjekk();
             }
             else if(e.getSource()==admin){
-                visAdminPanel();
+                sjekkAdmin();
             }
         }
     }
