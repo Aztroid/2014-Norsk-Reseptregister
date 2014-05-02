@@ -308,7 +308,12 @@ public class AdminPanel extends JPanel{
         return "";
     }
     
-    public void lagreAdminListene(){
+    public void lagreAdminListene(){    
+        hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
+                hovedrammekopi.lagreAdminVindu();
+    }
+    
+    /*public void lagreAdminListene(){
         try(ObjectOutputStream utfil = new ObjectOutputStream(
                 new FileOutputStream("src/listene.data"))){
             utfil.writeObject(kontrollørliste);
@@ -319,7 +324,7 @@ public class AdminPanel extends JPanel{
         catch(IOException ioe){
             JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
         }
-    }
+    }*/
 
     private class Tegnlytter implements ItemListener{
         public void itemStateChanged(ItemEvent e){

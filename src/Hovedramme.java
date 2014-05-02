@@ -21,6 +21,7 @@ public class Hovedramme extends JFrame{
     private double skjermhøyde;
     private int bredde;
     private int høyde;
+    private AdminPanel adminpanel;
     private TreeMap<String,Pasient> pasientliste;
     private TreeMap<String,Lege> legeliste;
     private TreeMap<Integer,Resept> reseptliste;
@@ -51,8 +52,9 @@ public class Hovedramme extends JFrame{
         }
         pasientliste = new TreeMap<>();
         reseptliste = new TreeMap<>();
-        legeliste = new TreeMap<>();
-        lesListene();
+        //legeliste = new TreeMap<>();
+        lesAdminVindu();
+        //lesListene();
         setTitle("Norsk Reseptregister");
         super.getContentPane().setLayout(new CardLayout());
         super.add(new LogginnPanel(pasientliste, legeliste, reseptliste,
@@ -119,6 +121,41 @@ public class Hovedramme extends JFrame{
             JOptionPane.showMessageDialog(null,
                     "Innlesningsfeil. Oppretter nye tomme lister");
             kontrollørliste = new TreeMap<>();
+        }
+    }
+    
+    public void lesAdminVindu(){
+        try(ObjectInputStream innfil = new ObjectInputStream(
+                new FileInputStream("src/listene.data"))){
+            adminpanel = (AdminPanel) innfil.readObject();
+        }
+        catch(ClassNotFoundException cnfe){
+            JOptionPane.showMessageDialog(null,cnfe.getMessage() + 
+                    "\nOppretter en tom liste\n");
+            kontrollørliste = new TreeMap<>();
+        }
+        catch(FileNotFoundException fnfe){
+            JOptionPane.showMessageDialog(null,
+                    "Finner ikke datafil. Oppretter tom liste");
+            kontrollørliste = new TreeMap<>();
+        }
+        catch(IOException ioe){
+            JOptionPane.showMessageDialog(null,
+                    "Innlesningsfeil. Oppretter nye tomme lister");
+            kontrollørliste = new TreeMap<>();
+        }
+    }
+    
+    public void lagreAdminVindu(){
+        try(ObjectOutputStream utfil = new ObjectOutputStream(
+                new FileOutputStream("src/listene.data"))){
+            utfil.writeObject(kontrollørliste);
+        }
+        catch(NotSerializableException ns){
+            JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
+        }
+        catch(IOException ioe){
+            JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
         }
     }
     
