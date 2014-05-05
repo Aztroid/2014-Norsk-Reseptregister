@@ -9,6 +9,7 @@
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.Line2D;
+import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -33,23 +34,24 @@ public class KontrollørPanel extends JPanel{
     private JScrollPane infoscroll;
     private JButton gåtilbake,visdata,statistikk,varsling;
     
-    //Senterpanel datafelter
-    private JPanel senterpanel,senterpanelvisdata, senterpaneltop,
-            senterpanelstatistikk,senterpanelvarsling;
+    //Senterpanel visdata
+    private JPanel senterpanel,senterpanelvisdata, visdatanorth;
     private TabellVindu tabellen;
     private Border senterpanelgrense;
     private JButton søk;
     private JTextField søkpasientid,søkreseptid,søklegeid;
-    int [] a = {10,20,60,90,20,50,100,30,30,60,80,50};
-    int [] b = {10,30,40,20,90,50,90,40,10,80,20,10};
+    int[] kordinater;
     
    //Sennterpanel Statistikk  
+    private JPanel senterpanelstatistikk, statistikknorth;
     private JTextField hentlegemiddelstatistikk, legestatistikk;
-      
     private String[] items = { "2013", "2014", "2015", "2016", "2017", "2018" };
-    private JComboBox cb = new JComboBox(items);
-    private Graphics1 grafikk1;
-    private Graphics1 grafikk;
+    private JComboBox cb;
+    private Statistikkpanel grafikk1;
+    private Statistikkpanel grafikk;
+    
+    //Senterpanel varsling
+    private JPanel senterpanelvarsling;
     
     public KontrollørPanel(TreeMap<String,Pasient> pasientliste,
             TreeMap<String,Lege> legeliste,
@@ -76,7 +78,6 @@ public class KontrollørPanel extends JPanel{
         sidepanel.add(infoscroll);
         
         //SIDEPANEL knapper
-        
         gåtilbake = new JButton("Tilbake til meny");
         gåtilbake.addActionListener(lytteren);
         sidepanel.add(gåtilbake);
@@ -100,75 +101,62 @@ public class KontrollørPanel extends JPanel{
         
         //Senterpanel Visdata
         senterpanelvisdata = new JPanel(new BorderLayout());
-        senterpaneltop = new JPanel(new FlowLayout());
+        visdatanorth = new JPanel(new FlowLayout());
         
         søkpasientid = new JTextField(15);
-        senterpaneltop.add(new JLabel("Søk Pasient"));
-        senterpaneltop.add(søkpasientid);
+        visdatanorth.add(new JLabel("Søk Pasient"));
+        visdatanorth.add(søkpasientid);
         
         søklegeid = new JTextField(15);
-        senterpaneltop.add(new JLabel("Søk Lege"));
-        senterpaneltop.add(søklegeid);
+        visdatanorth.add(new JLabel("Søk Lege"));
+        visdatanorth.add(søklegeid);
         
         søkreseptid = new JTextField(15);
-        senterpaneltop.add(new JLabel("Søk Resept"));
-        senterpaneltop.add(søkreseptid);
+        visdatanorth.add(new JLabel("Søk Resept"));
+        visdatanorth.add(søkreseptid);
         
         søk = new JButton("Søk");
         søk.addActionListener(lytteren);
-        senterpaneltop.add(søk);
-         
-        //SENTERPANEL Regpasient:
+        visdatanorth.add(søk);
         
+        //Tabellen
+        tabellen = new TabellVindu(this.reseptliste);
+        tabellen.setOpaque(true);
+        senterpanelvisdata.add(tabellen,BorderLayout.CENTER);
+         
+        //SENTERPANEL varsling:
         senterpanelvarsling = new JPanel(new FlowLayout());
         
         //SENTERPANEL VISSTATISTIKK
-        senterpanelstatistikk = new JPanel(new GridLayout(1, 1));
-        grafikk = new Graphics1(a);
-        grafikk1 = new Graphics1(b);
+        senterpanelstatistikk = new JPanel(new BorderLayout());
+        statistikknorth = new JPanel(new FlowLayout());
+        genererKordinatliste();
+        grafikk = new Statistikkpanel(kordinater);
+        //grafikk1 = new Graphics1(b);
+        
         hentlegemiddelstatistikk = new JTextField(15);
-        senterpanelstatistikk.add(new JLabel("Legemiddel"));
-        senterpanelstatistikk.add(hentlegemiddelstatistikk);
+        statistikknorth.add(new JLabel("Legemiddel"));
+        statistikknorth.add(hentlegemiddelstatistikk);
+        
         legestatistikk = new JTextField(15);
-        senterpanelstatistikk.add(new JLabel("Lege"));
-        senterpanelstatistikk.add(legestatistikk);
-        senterpanelstatistikk.add(cb);
-        senterpanelstatistikk.add(grafikk);
-        senterpanelstatistikk.add(grafikk1);
+        statistikknorth.add(new JLabel("Lege"));
+        statistikknorth.add(legestatistikk);
+        
+        cb = new JComboBox(items);
+        statistikknorth.add(cb);
+        
+        senterpanelstatistikk.add(statistikknorth,BorderLayout.PAGE_START);
+        senterpanelstatistikk.add(grafikk,BorderLayout.CENTER);
+        //senterpanelstatistikk.add(grafikk1,BorderLayout.LINE_END);
         
         //SENTERPANEL 
-        senterpanelvisdata.add(senterpaneltop,BorderLayout.PAGE_START);
+        senterpanelvisdata.add(visdatanorth,BorderLayout.PAGE_START);
         senterpanel.add(senterpanelvisdata,VISDATA);
         senterpanel.add(senterpanelstatistikk, VISSTATISTIKK);
         senterpanel.add(senterpanelvarsling, VISVARSLING);
         
         super.add(sidepanel, BorderLayout.LINE_START);
         super.add(senterpanel, BorderLayout.CENTER);
-                
-        //SENTERPANEL tabell
-        visFørste();
-    }
-
-   
-    public void visFørste(){
-        CardLayout c = (CardLayout)senterpanel.getLayout();
-        c.first(senterpanel);
-    }
-    
-    private void lagTabellen(){
-        TabellVindu tabell = new TabellVindu(reseptliste);
-        tabell.setOpaque(true);
-        senterpanelvisdata.add(tabell,BorderLayout.CENTER);
-    }
-    
-    public void regPasient(){
-        CardLayout c = (CardLayout)senterpanel.getLayout();
-        c.show(senterpanel,VISVARSLING);
-    }
-    
-    public void visStatistikk(){
-            CardLayout c = (CardLayout)senterpanel.getLayout();
-            c.show(senterpanel,VISSTATISTIKK);
     }
     
     public void tilbakeTilMeny(){
@@ -176,12 +164,74 @@ public class KontrollørPanel extends JPanel{
         hovedrammekopi.visFørsteKontrollør(legeliste);
     }
     
+    public void visData(){
+        /*Denne metoden viser "vis data" panelet som inneholder tabellen og
+        søkefeltene for tabellen*/
+        oppDaterTabelen();
+        CardLayout c = (CardLayout)senterpanel.getLayout();
+        tabellen.repaint();
+        senterpanelvisdata.revalidate();
+        super.revalidate();
+        c.show(senterpanel,VISDATA);
+    }
+    
+    private void oppDaterTabelen(){
+        /*Denne metoden generer en ny tabell bassert på den innloggede legens 
+        utskrevende resepter, og legger tabellen til i "vis data" panelet*/
+        tabellen.nyInnData(reseptliste);
+    }
+    
+    public void visStatistikk(){
+            CardLayout c = (CardLayout)senterpanel.getLayout();
+            c.show(senterpanel,VISSTATISTIKK);
+    }
+    
+    public void visVarsling(){
+        CardLayout c = (CardLayout)senterpanel.getLayout();
+        c.show(senterpanel,VISVARSLING);
+    }
+    
+    public void genererKordinatliste(){
+        kordinater = new int[12];
+        Resept løper;
+        for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+            løper = entry.getValue();
+            Calendar reseptkalenderformat = løper.getKalenderformat();
+            int mnd = reseptkalenderformat.get(Calendar.MONTH);
+            switch(mnd){
+                case 1: kordinater[0]++;//Dato
+                    break;
+                case 2: kordinater[1]++;//Reseptnr
+                    break;
+                case 3: kordinater[2]++;//Lege autnr
+                    break;
+                case 4: kordinater[3]++;//Pasient fnr
+                    break;
+                case 5: kordinater[4]++;//Medisin(ACTnr)
+                    break;
+                case 6: kordinater[5]++;//Mengde
+                    break;
+                case 7: kordinater[6]++;//DDD
+                    break;
+                case 8: kordinater[7]++;//Kategori
+                    break;
+                case 9: kordinater[8]++;//Reseptgruppe
+                    break;
+                case 10: kordinater[9]++;//Reseptgruppe
+                    break;
+                case 11: kordinater[10]++;//Reseptgruppe
+                    break;
+                case 12: kordinater[11]++;//Reseptgruppe
+                    break;
+            }
+        }
+    }
+    
     private class Lytter implements ActionListener{
         
         public void actionPerformed(ActionEvent e) {
             if (e.getSource()==visdata){
-                lagTabellen();
-                revalidate();
+                visData();
             }
             else if(e.getSource()==gåtilbake){
                 tilbakeTilMeny();

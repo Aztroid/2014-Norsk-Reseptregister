@@ -25,6 +25,11 @@ public class Tabellmodell extends AbstractTableModel{
         data = new LinkedList<>(listen.values());
     }
     
+    public void nyInnData(TreeMap<Integer,Resept> nyliste){
+        this.listen = nyliste;
+        data = new LinkedList<>(listen.values());
+    }
+    
     public String getColonName(int kol){
         return kolonnenavn[kol];
     }

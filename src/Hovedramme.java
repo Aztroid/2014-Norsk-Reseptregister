@@ -88,6 +88,7 @@ public class Hovedramme extends JFrame{
     
     public void visFørsteLege(TreeMap<String,Pasient> nypasientliste,
             TreeMap<Integer,Resept> nyreseptliste){
+        sisteresept = reseptliste.lastKey();
         pasientliste = nypasientliste;
         reseptliste = nyreseptliste;
         //Metode som viser hovedrammens første vindu, dvs, logginnvindu

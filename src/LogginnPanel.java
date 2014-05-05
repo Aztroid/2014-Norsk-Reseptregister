@@ -204,12 +204,10 @@ public class LogginnPanel extends JPanel{
             }
         }
         catch(NullPointerException NPE){
-            JOptionPane.showMessageDialog(null, "Feil Passord",
-                                "Advarsel",JOptionPane.WARNING_MESSAGE);
+            
         }
         catch(NumberFormatException nfe){
-            JOptionPane.showMessageDialog(null, "Feil Passord",
-                                "Advarsel",JOptionPane.WARNING_MESSAGE);
+            
         }
     }
     

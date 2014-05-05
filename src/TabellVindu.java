@@ -24,4 +24,9 @@ public class TabellVindu extends JPanel{
         JScrollPane skrollefeltet = new JScrollPane(tabellen);
         add(skrollefeltet);
     }
+    
+    public void nyInnData(TreeMap<Integer,Resept> nyliste){
+        modellen.nyInnData(nyliste);
+        modellen.fireTableDataChanged();
+    }
 }

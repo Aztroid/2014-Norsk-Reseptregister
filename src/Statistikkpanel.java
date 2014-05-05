@@ -7,79 +7,41 @@ import java.awt.Shape;
 import java.awt.geom.Line2D;
 import javax.swing.JPanel;
 
-
-
 /*Hovedprosjekt Dats-1600
  William B. Wold, s183670, HIINGDATA13H1AA
  Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
-    Vegar Nygård, s193362, HIINGDATA13H1AA
+ Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
-/**
- *
- * @author alibifil
-**/
-public class Graphics1 extends JPanel{
+public class Statistikkpanel extends JPanel{
     
-     //Grafiske punkter
-    private int januar;
-        
-    private int februar;
-     
-    private int mars;
-       
-    private int april;
-        
-    private int mai;
-   
-    private int juni;
-    
-    private int juli;
-   
-    private int august;
-   
-    private int september;
-   
-    private int oktober;
-   
-    private int november;
-    
-    private int desember;
-    private int [] a;
+    //Kordinatdata
+    private int[] førstelinje;
+    private int[] andrelinje;
             
-    public  Graphics1(int[] w){
-                a = w;
-    januar = a[0]*2;
-    februar = a[1]*2;
-    mars = a[2]*2;
-    april = a[3]*2;
-    mai = a[4]*2;
-    juni = a[5]*2;
-    juli = a[6]*2;
-    august = a[7]*2;
-    september = a[8]*2;
-    oktober = a[9]*2;
-    november = a[10]*2;
-    desember = a[11]*2;
-                
-            }
+    public Statistikkpanel(int[] førstekord){
+        førstelinje = førstekord;
+        genererPunkter();
+    }
+    
+    public Statistikkpanel(int[] førstekord, int[] andrekord ){
+        førstelinje = førstekord;
+        andrelinje = andrekord;
+        genererPunkter();
+    }
+    
     public void genererPunkter(){
         //Gir statistikk grafen korrekte verdier for månedene sine resept utskrift.
-    januar = a[0]*2;
-    februar = a[1]*2;
-    mars = a[2]*2;
-    april = a[3]*2;
-    mai = a[4]*2;
-    juni = a[5]*2;
-    juli = a[6]*2;
-    august = a[7]*2;
-    september = a[8]*2;
-    oktober = a[9]*2;
-    november = a[10]*2;
-    desember = a[11]*2;
+       for(int i = 0; i<førstelinje.length; i++){
+                førstelinje[i] = førstelinje[i]*2;
+       }
+       if(andrelinje!=null){
+           for(int i = 0; i<andrelinje.length; i++){
+                andrelinje[i] = andrelinje[i]*2;
+           }
+       }   
+    }
     
-    
-}
     public void paintComponent(Graphics g){
         super.paintComponent(g);
         Graphics2D graph2 = (Graphics2D)g;
@@ -90,18 +52,18 @@ public class Graphics1 extends JPanel{
                
         Shape drawLine = new Line2D.Float(55, 25, 55 , 255);
 	Shape drawLine2 = new Line2D.Float(55, 255, 500, 255);
-	Shape jan = new Line2D.Float(55, 255 , 95, 255 - januar);
-	Shape feb = new Line2D.Float(95, 255 - januar, 135, 255 - februar);
-	Shape mar = new Line2D.Float(135, 255 - februar, 175, 255 - mars);
-	Shape apr = new Line2D.Float(175, 255 - mars, 215, 255 - april);
-	Shape may = new Line2D.Float(215, 255 - april, 255, 255 - mai);
-	Shape jun = new Line2D.Float(255, 255 - mai, 295, 255 - juni);
-	Shape jul = new Line2D.Float(295, 255 - juni, 335, 255 - juli);		
-	Shape aug = new Line2D.Float(335, 255 - juli, 375, 255 - august);
-	Shape sep = new Line2D.Float(375, 255 - august, 415, 255 - september);
-	Shape oct = new Line2D.Float(415, 255 - september, 455, 255 - oktober);	
-	Shape nov = new Line2D.Float(455, 255 - oktober, 495, 255 - november);
-	Shape dec = new Line2D.Float(495, 255 - november, 535, 255 - desember);	
+	Shape jan = new Line2D.Float(55, 255 , 95, 255 - førstelinje[0]);
+	Shape feb = new Line2D.Float(95, 255 - førstelinje[0], 135, 255 - førstelinje[1]);
+	Shape mar = new Line2D.Float(135, 255 - førstelinje[1], 175, 255 - førstelinje[2]);
+	Shape apr = new Line2D.Float(175, 255 - førstelinje[2], 215, 255 - førstelinje[3]);
+	Shape may = new Line2D.Float(215, 255 - førstelinje[3], 255, 255 - førstelinje[4]);
+	Shape jun = new Line2D.Float(255, 255 - førstelinje[4], 295, 255 - førstelinje[5]);
+	Shape jul = new Line2D.Float(295, 255 - førstelinje[5], 335, 255 - førstelinje[6]);		
+	Shape aug = new Line2D.Float(335, 255 - førstelinje[6], 375, 255 - førstelinje[7]);
+	Shape sep = new Line2D.Float(375, 255 - førstelinje[7], 415, 255 - førstelinje[8]);
+	Shape oct = new Line2D.Float(415, 255 - førstelinje[8], 455, 255 - førstelinje[9]);	
+	Shape nov = new Line2D.Float(455, 255 - førstelinje[9], 495, 255 - førstelinje[10]);
+	Shape dec = new Line2D.Float(495, 255 - førstelinje[10], 535, 255 - førstelinje[11]);	
         graph2.setPaint(Color.BLACK);
 	graph2.setPaint(Color.RED);
 	graph2.draw(jan);
@@ -179,11 +141,6 @@ public class Graphics1 extends JPanel{
 	g.drawString("| sep ", 375, 265);
 	g.drawString("| okt ", 415, 265);
 	g.drawString("| nov ", 455, 265);
-	g.drawString("| des ", 495, 265);
-	
-	
-	
+	g.drawString("| des ", 495, 265);	
     }
-   
-
 }

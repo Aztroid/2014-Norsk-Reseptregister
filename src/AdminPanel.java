@@ -307,7 +307,9 @@ public class AdminPanel extends JPanel{
        /*
        StringBuilder passordGenerator = new StringBuilder();
        int n = 7;
-       String tegnSett = "abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRSTUVWXYZÆØÅ0123456789<>?/;:/*-+.#$%^&£!´±}±][{¥½$£@¡]"; // characters to choose from
+       String tegnSett = "abcdefghijklmnopqrstuvwxyzæøåABCDEFGHIJKLMNOPQRS
+       TUVWXYZÆØÅ0123456789<>?/;:/*-+.#
+       %^&!´}][{£@]"; // Tilfeldige passordtegn
        int i = 0;
 
        while(i < n){
@@ -328,10 +330,12 @@ public class AdminPanel extends JPanel{
                 utfil.writeObject(legeliste);
             }
             catch(NotSerializableException ns){
-                JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
+                JOptionPane.showMessageDialog(null,"Objektet er ikke "
+                        + "serialisert");
             }
             catch(IOException ioe){
-                JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
+                JOptionPane.showMessageDialog(null,"Problem med utskrift "
+                        + "til fil");
             }
         }
         else if(n==KONTROLLØR){
@@ -340,10 +344,12 @@ public class AdminPanel extends JPanel{
                 utfil.writeObject(kontrollørliste);
             }
             catch(NotSerializableException ns){
-                JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
+                JOptionPane.showMessageDialog(null,"Objektet er ikke "
+                        + "serialisert");
             }
             catch(IOException ioe){
-                JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
+                JOptionPane.showMessageDialog(null,"Problem med utskrift "
+                        + "til fil");
             }
         }
     }
@@ -358,7 +364,8 @@ public class AdminPanel extends JPanel{
         else if(n==LEGE){
             for(Map.Entry<String,Lege> entry:legeliste.entrySet()){
                     Lege løper = entry.getValue();
-                    infofelt.append("\nNøkkel : " + løper.getAutorisasjonsnr()+"\n");
+                    infofelt.append("\nNøkkel : " 
+                            + løper.getAutorisasjonsnr()+"\n");
             }
         }
     }

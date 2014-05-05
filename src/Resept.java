@@ -48,6 +48,10 @@ public class Resept implements Serializable{
         return df.format(dato.getTime());
     }
     
+    public Calendar getKalenderformat(){
+        return dato;
+    }
+    
     public String getLege(){
         //Metode som returnerer autorisasjonsnummeret til legen
         return autorisasjonsnr;
