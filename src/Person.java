@@ -30,6 +30,6 @@ public class Person implements Serializable{
     
     public String toString(){
         //Metode som gir f.eks "Hansen, Ola
-        return "Navn: " + etternavn + ", " + fornavn + "\n";
+        return etternavn + ", " + fornavn;
     }
 }

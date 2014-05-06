@@ -7,18 +7,24 @@
 
 public class Pasient extends Person{
     String fødselsnr;
+    String lege;
     //LISTE
     
-    public Pasient(String f, String e, String n){
+    public Pasient(String f, String e, String n,String l){
         super(f, e);
         fødselsnr = n;
+        lege = l;
     }
     
     public String getFødselsnr(){
         return fødselsnr;
     }
     
+    public String getLege(){
+        return lege;
+    }
+    
     public String toString(){
-        return super.toString() + "Fnr: " + fødselsnr;
+        return fødselsnr + ", " + super.toString();
     }
 }

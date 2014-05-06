@@ -7,16 +7,17 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 import java.util.*;
+import javax.swing.table.*;
 
 public class TabellVindu extends JPanel{
     private TreeMap<Integer,Resept> reseptliste;
-    private Tabellmodell modellen;
+    private LegeTabellmodell modellen;
     final JTable tabellen;
     
     public TabellVindu(TreeMap<Integer,Resept> reseptliste){
         super(new GridLayout(0,1));
         this.reseptliste = reseptliste;
-        modellen = new Tabellmodell(reseptliste);
+        modellen = new LegeTabellmodell(reseptliste);
         tabellen = new JTable(modellen);
         tabellen.setPreferredScrollableViewportSize(new Dimension(500, 70));
         tabellen.setFillsViewportHeight(true);

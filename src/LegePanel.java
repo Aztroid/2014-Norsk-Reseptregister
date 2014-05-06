@@ -23,6 +23,7 @@ public class LegePanel extends JPanel{
     private TreeMap<Integer,Resept> reseptliste;
     private TreeMap<Integer,Resept> spesifikkreseptliste;
     private TreeMap<String,Pasient> pasientliste;
+    private TreeMap<String,Pasient> spesifikkpasientliste;
     private String legensautnr; //Identifiserer legen som er logget inn
     private String reseptbevilgning; //Identifiserer legen reseptbevilgning
     private Hovedramme hovedrammekopi;
@@ -56,15 +57,16 @@ public class LegePanel extends JPanel{
     private JPanel senterpanelnyresept;
     private static Integer reseptnøkkel; //Reseptnummeret
     private RadioLytteren radiolytteren;
-    private JTextField fødselsnrresept, medisinnøkkel, mengde, defdøgndosering;
+    private JTextField medisinnøkkel, mengde, defdøgndosering;
     private JTextArea anvisning;
-    private JButton regresept;
+    private JButton regresept,velgpasient;
     private String kontrollresept;
     private JRadioButton gra, grb, grc;
     private ButtonGroup resteptgruppealt;
-    private JComboBox reseptkategorier,undergruppe;
-    private String[] items,ATCliste,A,B,C,D,G,H,J,L,M,N,P,R,S,V;
+    private JComboBox reseptkategorier,legenspasienter;
+    private String[] items,pasienter;
     private char reseptensgruppe = 'C';
+    private MedisinBibliotek medisinbiblioteket;
     
     /*Konstruktøren får kun to lister da det ikke skal registreres annet av 
     legen*/
@@ -79,6 +81,7 @@ public class LegePanel extends JPanel{
         this.pasientliste = pasientliste;
         this.reseptliste = reseptliste;
         spesifikkreseptliste = new TreeMap<>();
+        spesifikkpasientliste = new TreeMap<>();
         reseptbevilgning = reseptgodkjennelse;
         reseptnøkkel = ++sisteresept;
         
@@ -134,6 +137,13 @@ public class LegePanel extends JPanel{
         senterpaneltop.add(søk);
         senterpanelvisdata.add(senterpaneltop,BorderLayout.PAGE_START);
         
+        //Tabellvinduet
+        filtrerReseptlisten();
+        filtrerPasientlisten();
+        tabell = new TabellVindu(spesifikkreseptliste);
+        tabell.setOpaque(true);
+        senterpanelvisdata.add(tabell,BorderLayout.CENTER);
+        
         //Senterpanel "ny Pasient"
         senterpanelnypasient = new JPanel(new GridBagLayout());
         c = new GridBagConstraints();
@@ -173,6 +183,7 @@ public class LegePanel extends JPanel{
         senterpanelnypasient.add(regpasient,c);
 
         //Senterpanel "ny Resept"
+        medisinbiblioteket = new MedisinBibliotek();
         radiolytteren = new RadioLytteren();
         senterpanelnyresept = new JPanel(new GridBagLayout());
         c.gridx = 0;
@@ -182,9 +193,9 @@ public class LegePanel extends JPanel{
         
         senterpanelnyresept.add(new JLabel("Pasient(Fnr): "),c);
         c.gridx = 1;
-        fødselsnrresept = new JTextField(30);
-        fødselsnrresept.addActionListener(lytteren);
-        senterpanelnyresept.add(fødselsnrresept,c);
+        velgpasient = new JButton("Velg Pasient");
+        velgpasient.addActionListener(lytteren);
+        senterpanelnyresept.add(velgpasient,c);
         c.gridx = 0;
 
         c.gridy = 1;
@@ -228,10 +239,7 @@ public class LegePanel extends JPanel{
         c.gridy = 4;
         senterpanelnyresept.add(new JLabel("ATC-Nr: "),c);
         c.gridx = 1;
-        undergruppe = new JComboBox(ATCliste);
-        medisinnøkkel.addActionListener(lytteren);
-        senterpanelnyresept.add(medisinnøkkel,c);
-        c.gridx = 2;
+        medisinnøkkel = new JTextField(15);
         medisinnøkkel.addActionListener(lytteren);
         senterpanelnyresept.add(medisinnøkkel,c);
         c.gridx = 0;
@@ -271,12 +279,6 @@ public class LegePanel extends JPanel{
         senterpanelnyresept.add(regresept,c);
         kontrollresept = "[ABC]|AB|BC|AC|ABC";
         
-        //Tabellvinduet
-        filtrerReseptlisten();
-        tabell = new TabellVindu(spesifikkreseptliste);
-        tabell.setOpaque(true);
-        senterpanelvisdata.add(tabell,BorderLayout.CENTER);
-        
         //LEGGER ALLE PANELER TIL
         senterpanel.add(senterpanelvisdata, VISDATA);
         senterpanel.add(senterpanelnypasient, NY_PASIENT);
@@ -306,6 +308,20 @@ public class LegePanel extends JPanel{
         }
     }
     
+    public void filtrerPasientlisten(){
+        /*Denne metoden finner alle resepter den innloggede legen har skrevet
+        ut, og henter pasientene samt putter de inn i en spesifik pasientliste 
+        for den innloggede legen. Denne lages på nytt for hver lege som logger 
+        inn, og hver gang legen registrerer en ny resept*/
+        Pasient løper;
+        for(Map.Entry<String,Pasient> entry:pasientliste.entrySet()){
+            løper = entry.getValue();
+            if(legensautnr.equalsIgnoreCase(løper.getLege())){
+                spesifikkpasientliste.put(løper.getFødselsnr(),løper);
+            }
+        }
+    }
+    
     public void tilbakeTilMeny(){
         /*Denne metoden leder brukeren tilbake til startvinduet for en ny 
         innlogging*/
@@ -316,13 +332,21 @@ public class LegePanel extends JPanel{
     public void nyPasient(){
         /*Denne metoden viser "ny pasient" panelet som inneholder alle datafelter 
         for å registrere nye pasienter for den innloggede legen*/
+        if(legenspasienter!=null){
+            senterpanelnyresept.remove(legenspasienter);
+        }
+        velgpasient.setVisible(true);
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,NY_PASIENT);
     }
     
     public void nyResept(){
+        if(legenspasienter!=null){
+            senterpanelnyresept.remove(legenspasienter);
+        }
         /*Denne metoden viser "ny resept" panelet som inneholder alle datafelter 
         for å registrere nye resepter for den innloggede legen*/
+        velgpasient.setVisible(true);
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,NY_RESEPT);
     }
@@ -344,14 +368,6 @@ public class LegePanel extends JPanel{
         tabell.nyInnData(spesifikkreseptliste);
     }
     
-    public void fylltabellen(){
-    //Dette er en hjelpemetode for å teste programmets kapasitet
-        for(int i = 0; i < 100000; i++){
-            spesifikkreseptliste.put(i, new Resept(i,legensautnr,"P"+i,"med"+i,
-                    "mengde"+i,"DDD"+i,"Kat"+i,'A',"Anv"+i));
-        } 
-    }
-    
     private boolean blankePersonfelter(){
         //Sjekker for blanke felter ved registrering av person
         return (fødselsnr.getText().matches("")||fornavnpasient.getText().
@@ -360,8 +376,7 @@ public class LegePanel extends JPanel{
     
     private boolean blankeReseptfelter(){
         //Sjekker for blanke felter ved registrering av resept
-        return (fødselsnrresept.getText().matches("")||legensautnr.
-                matches("")||medisinnøkkel.getText().matches("")||
+        return (legensautnr.matches("")||medisinnøkkel.getText().matches("")||
                 mengde.getText().matches("")||defdøgndosering.getText().
                 matches(""));
     }
@@ -373,26 +388,21 @@ public class LegePanel extends JPanel{
             infofelt.setText("Et eller fler av feltene er tomme");
             return;
         }
-        String fødselsnrrregex = "\\d{11}";
         String pasientnøkkel = fødselsnr.getText();
         String fornavn = fornavnpasient.getText();
         String etternavn = etternavnpasient.getText();
-        if(!pasientnøkkel.matches(fødselsnrrregex)){
-            infofelt.setText("Fødselsnummeret du har skrevet \ninn er ikke et "
-                    + "gyldig fødselsnummer");
-            return;
-        }
-        else if(pasientliste.get(pasientnøkkel)==null){
-            Pasient ny = new Pasient(fornavn, etternavn, pasientnøkkel);
+        if(pasientliste.get(pasientnøkkel)==null){
+            Pasient ny = new Pasient(fornavn, etternavn, pasientnøkkel,
+                    legensautnr);
             pasientliste.put(pasientnøkkel,ny);
             lagreLegeListene(PASIENT);
-            infofelt.setText("Person registrert." + pasientliste.values());
+            infofelt.setText("Person registrert.");
+            filtrerPasientlisten();
             return;
         }
         else{
             infofelt.setText("Pasienten finnes\ni registeret fra før");
         }
-        return;
     }
     
     private void regResept(){
@@ -402,14 +412,17 @@ public class LegePanel extends JPanel{
             infofelt.setText("Et eller fler av feltene er tomme");
             return;
         }
+        int n = legenspasienter.getSelectedIndex();
+        String fullid = (String)legenspasienter.getItemAt(n);
+        String pasientnøkkel = fullid.substring(0, 11);
+        System.out.println(pasientnøkkel);
         String fødselsnrrregex = "\\d{11}";
-        String pasientnøkkel = fødselsnrresept.getText();
         String legenøkkel = legensautnr;
         String medisinnr = medisinnøkkel.getText();
         String medisinmengde = mengde.getText();
         String DDD = defdøgndosering.getText();
-        int n = reseptkategorier.getSelectedIndex();
-        String medisinkategori = (String)reseptkategorier.getItemAt(n);
+        int m = reseptkategorier.getSelectedIndex();
+        String medisinkategori = (String)reseptkategorier.getItemAt(m);
         String legensanvisning = anvisning.getText();
         if(!pasientnøkkel.matches(fødselsnrrregex)){
             infofelt.setText("Fødselsnummeret du har skrevet\ninn er ikke et "
@@ -435,45 +448,42 @@ public class LegePanel extends JPanel{
                 reseptnøkkel++;
                 lagreLegeListene(RESEPT);
                 filtrerReseptlisten();
+                senterpanelnyresept.remove(legenspasienter);
+                velgpasient.setVisible(true);
+                revalidate();
+                repaint();
             }
         }
     }
     
-    public void listeVelger(){
-        int n = reseptkategorier.getSelectedIndex();
-        String medisinkategori = (String)reseptkategorier.getItemAt(n);
-        char gruppe = medisinkategori.charAt(0);
-        //G,H,J,L,M,N,P,R,S,V;
-        switch(gruppe){
-                case 'A': kordinater[0]++;//Dato
-                    break;
-                case 'B': kordinater[1]++;//Reseptnr
-                    break;
-                case 'C': kordinater[2]++;//Lege autnr
-                    break;
-                case 'D': kordinater[3]++;//Pasient fnr
-                    break;
-                case 'G': kordinater[4]++;//Medisin(ACTnr)
-                    break;
-                case 'H': kordinater[5]++;//Mengde
-                    break;
-                case 'J': kordinater[6]++;//DDD
-                    break;
-                case 'L': kordinater[7]++;//Kategori
-                    break;
-                case 'M': kordinater[8]++;//Reseptgruppe
-                    break;
-                case 'N': kordinater[9]++;//Reseptgruppe
-                    break;
-                case 'P': kordinater[10]++;//Reseptgruppe
-                    break;
-                case 'R': kordinater[11]++;//Reseptgruppe
-                    break;
-                case 'S': kordinater[11]++;//Reseptgruppe
-                    break;
-                case 'V': kordinater[11]++;//Reseptgruppe
-                    break;
+    public String[] pasientListen(){
+        if(spesifikkpasientliste!=null){
+            Pasient løper;
+            pasienter = new String[spesifikkpasientliste.size()];
+            int i = 0;
+            for(Map.Entry<String,Pasient> entry:spesifikkpasientliste.entrySet()){
+                løper = entry.getValue();
+                pasienter[i]=løper.toString();
+                i++;
             }
+            return pasienter;
+        }
+        pasienter = new String[]{"Ingen pasienter opprettet"};
+        return pasienter;
+    }
+    
+    public void leggTilCombobox(){
+        velgpasient.setVisible(false);
+        c.gridx = 1;
+        c.gridy = 0;
+        legenspasienter = new JComboBox(pasientListen());
+        senterpanelnyresept.add(legenspasienter,c);
+    }
+    
+    public void finnRiktigMedisinArray(){
+        int m = reseptkategorier.getSelectedIndex();
+        String medisinkategori = (String)reseptkategorier.getItemAt(m);
+        System.out.println(medisinkategori);
     }
     
     public void lagreLegeListene(int n){
@@ -483,10 +493,12 @@ public class LegePanel extends JPanel{
                 utfil.writeObject(pasientliste);
             }
             catch(NotSerializableException ns){
-                JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
+                JOptionPane.showMessageDialog(null,"Objektet er ikke "
+                        + "serialisert");
             }
             catch(IOException ioe){
-                JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
+                JOptionPane.showMessageDialog(null,"Problem med utskrift til "
+                        + "fil");
             }
         }
         else if(n==RESEPT){
@@ -495,10 +507,12 @@ public class LegePanel extends JPanel{
                 utfil.writeObject(reseptliste);
             }
             catch(NotSerializableException ns){
-                JOptionPane.showMessageDialog(null,"Objektet er ikke serialisert");
+                JOptionPane.showMessageDialog(null,"Objektet er ikke "
+                        + "serialisert");
             }
             catch(IOException ioe){
-                JOptionPane.showMessageDialog(null,"Problem med utskrift til fil");
+                JOptionPane.showMessageDialog(null,"Problem med utskrift til "
+                        + "fil");
             }
         }
     }
@@ -538,8 +552,12 @@ public class LegePanel extends JPanel{
             else if(e.getSource()==regresept){
                 regResept();
             }
+            else if(e.getSource()==velgpasient){
+                filtrerPasientlisten();
+                leggTilCombobox();
+            }
             else if(e.getSource()==reseptkategorier){
-                listeVelger();
+                finnRiktigMedisinArray();
             }
         }
     }

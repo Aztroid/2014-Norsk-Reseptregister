@@ -1,5 +1,5 @@
-
 import java.awt.Color;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
@@ -18,6 +18,7 @@ public class Statistikkpanel extends JPanel{
     //Kordinatdata
     private int[] førstelinje;
     private int[] andrelinje;
+
             
     public Statistikkpanel(int[] førstekord){
         førstelinje = førstekord;
@@ -33,11 +34,11 @@ public class Statistikkpanel extends JPanel{
     public void genererPunkter(){
         //Gir statistikk grafen korrekte verdier for månedene sine resept utskrift.
        for(int i = 0; i<førstelinje.length; i++){
-                førstelinje[i] = førstelinje[i]*2;
+                førstelinje[i] = førstelinje[i]*4;
        }
        if(andrelinje!=null){
            for(int i = 0; i<andrelinje.length; i++){
-                andrelinje[i] = andrelinje[i]*2;
+                andrelinje[i] = andrelinje[i]*4;
            }
        }   
     }
@@ -47,100 +48,110 @@ public class Statistikkpanel extends JPanel{
         Graphics2D graph2 = (Graphics2D)g;
         graph2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                             RenderingHints.VALUE_ANTIALIAS_ON);
+        Graphics2D graph3 = (Graphics2D)g;
+        graph3.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                            RenderingHints.VALUE_ANTIALIAS_ON);
        
        this.setBackground(Color.WHITE);
                
-        Shape drawLine = new Line2D.Float(55, 25, 55 , 255);
-	Shape drawLine2 = new Line2D.Float(55, 255, 500, 255);
-	Shape jan = new Line2D.Float(55, 255 , 95, 255 - førstelinje[0]);
-	Shape feb = new Line2D.Float(95, 255 - førstelinje[0], 135, 255 - førstelinje[1]);
-	Shape mar = new Line2D.Float(135, 255 - førstelinje[1], 175, 255 - førstelinje[2]);
-	Shape apr = new Line2D.Float(175, 255 - førstelinje[2], 215, 255 - førstelinje[3]);
-	Shape may = new Line2D.Float(215, 255 - førstelinje[3], 255, 255 - førstelinje[4]);
-	Shape jun = new Line2D.Float(255, 255 - førstelinje[4], 295, 255 - førstelinje[5]);
-	Shape jul = new Line2D.Float(295, 255 - førstelinje[5], 335, 255 - førstelinje[6]);		
-	Shape aug = new Line2D.Float(335, 255 - førstelinje[6], 375, 255 - førstelinje[7]);
-	Shape sep = new Line2D.Float(375, 255 - førstelinje[7], 415, 255 - førstelinje[8]);
-	Shape oct = new Line2D.Float(415, 255 - førstelinje[8], 455, 255 - førstelinje[9]);	
-	Shape nov = new Line2D.Float(455, 255 - førstelinje[9], 495, 255 - førstelinje[10]);
-	Shape dec = new Line2D.Float(495, 255 - førstelinje[10], 535, 255 - førstelinje[11]);	
-        graph2.setPaint(Color.BLACK);
-	graph2.setPaint(Color.RED);
-	graph2.draw(jan);
-	graph2.setPaint(Color.BLACK);
-	graph2.draw(feb);
-	graph2.setPaint(Color.GREEN);
-	graph2.draw(mar);
-	graph2.setPaint(Color.RED);
-	graph2.draw(apr);
-	graph2.setPaint(Color.BLUE);
-	graph2.draw(may);	
-	graph2.setPaint(Color.GREEN);
-	graph2.draw(jun);	
-	graph2.setPaint(Color.BLACK);
-	graph2.draw(jul);
-	graph2.setPaint(Color.RED);
-	graph2.draw(aug);
-	graph2.setPaint(Color.GREEN);
-	graph2.draw(sep);
-	graph2.setPaint(Color.BLUE);
-	graph2.draw(oct);	
-	graph2.setPaint(Color.BLACK);
-	graph2.draw(nov);
-	graph2.setPaint(Color.GREEN);
-	graph2.draw(dec);
-	graph2.setPaint(Color.BLUE);
-        g.drawLine(55, 45, 55 , 255);
-	g.drawLine(55, 255, 523, 255);
-	g.setColor(Color.BLACK);
-	g.setColor(Color.RED);
-	/*
-        g.drawLine(55, 255 , 95, 255 - jan2);
-	
-	g.drawLine(95, 255 - feb1, 135, 255 - feb2);
-
-	g.drawLine(135, 255 - mar1, 175, 255 - mar2);
-	
-	g.drawLine(175, 255 - apr1, 215, 255 - apr2);
-
-	g.drawLine(215, 255 - may1, 255, 255 - may2);	
-	
-	g.drawLine(255, 255 - jun1, 270, 255 - jun2);	
-	
-	g.drawLine(295, 255 - jul1, 335, 255 - jul2);
-	
-	g.drawLine(335, 255 - aug1, 375, 255 - aug2);
-	
-	g.drawLine(375, 255 - sep1, 415, 255 - sep2);
-	
-	g.drawLine(415, 255 - oct1, 455, 255 - oct2);	
-	
-	g.drawLine(455, 255 - nov1, 495, 255 - nov2);
-	
-	g.drawLine(495, 255 - dec1, 535, 255 - dec2);
+        Shape drawLine = new Line2D.Float(55, 25, 55 , 455);
+	Shape drawLine2 = new Line2D.Float(55, 455, 1000, 455);
+        
+        //førstelinje
+	Shape jan = new Line2D.Float(55, 455, 135, 455 - førstelinje[0]);
+	Shape feb = new Line2D.Float(135, 455 - førstelinje[0], 215, 455 - førstelinje[1]);
+	Shape mar = new Line2D.Float(215, 455 - førstelinje[1], 295, 455 - førstelinje[2]);
+	Shape apr = new Line2D.Float(295, 455 - førstelinje[2], 375, 455 - førstelinje[3]);
+	Shape may = new Line2D.Float(375, 455 - førstelinje[3], 455, 455 - førstelinje[4]);
+	Shape jun = new Line2D.Float(455, 455 - førstelinje[4], 535, 455 - førstelinje[5]);
+	Shape jul = new Line2D.Float(535, 455 - førstelinje[5], 615, 455 - førstelinje[6]);		
+	Shape aug = new Line2D.Float(615, 455 - førstelinje[6], 695, 455 - førstelinje[7]);
+	Shape sep = new Line2D.Float(695, 455 - førstelinje[7], 775, 455 - førstelinje[8]);
+	Shape oct = new Line2D.Float(775, 455 - førstelinje[8], 855, 455 - førstelinje[9]);	
+	Shape nov = new Line2D.Float(855, 455 - førstelinje[9], 935, 455 - førstelinje[10]);
+	Shape dec = new Line2D.Float(935, 455 - førstelinje[10], 1015, 455 - førstelinje[11]);
+        
+        //andrelinje
+        
+        /*
+        Shape jan2 = new Line2D.Float(55, 455, 135, 455 - andrelinje[0]);
+	Shape feb2 = new Line2D.Float(135, 455 - andrelinje[0], 215, 455 - andrelinje[1]);
+	Shape mar2 = new Line2D.Float(215, 455 - andrelinje[1], 295, 455 - andrelinje[2]);
+	Shape apr2 = new Line2D.Float(295, 455 - andrelinje[2], 375, 455 - andrelinje[3]);
+	Shape may2 = new Line2D.Float(375, 455 - andrelinje[3], 455, 455 - andrelinje[4]);
+	Shape jun2 = new Line2D.Float(455, 455 - andrelinje[4], 535, 455 - andrelinje[5]);
+	Shape jul2 = new Line2D.Float(535, 455 - andrelinje[5], 615, 455 - andrelinje[6]);		
+	Shape aug2 = new Line2D.Float(615, 455 - andrelinje[6], 695, 455 - andrelinje[7]);
+	Shape sep2 = new Line2D.Float(695, 455 - andrelinje[7], 775, 455 - andrelinje[8]);
+	Shape oct2 = new Line2D.Float(775, 455 - andrelinje[8], 855, 455 - andrelinje[9]);	
+	Shape nov2 = new Line2D.Float(855, 455 - andrelinje[9], 935, 455 - andrelinje[10]);
+	Shape dec2 = new Line2D.Float(935, 455 - andrelinje[10], 1015, 455 - andrelinje[11]);	
         */
-	g.drawString("100-", 25, 55);
-	g.drawString("90  -", 25, 75);
-	g.drawString("80  -", 25, 95);
-	g.drawString("70  -", 25, 115);
-	g.drawString("60  -", 25, 135);
-	g.drawString("50  -", 25, 155);
-	g.drawString("40  -", 25, 175);
-	g.drawString("30  -", 25, 195);
-	g.drawString("20  -", 25, 215);
-	g.drawString("10  -", 25, 235);
-	g.drawString("0   ", 25, 255);
-	g.drawString("| jan ", 55, 265);
-	g.drawString("| feb ", 95, 265);
-	g.drawString("| mar ", 135, 265);
-	g.drawString("| apr ", 175, 265);
-	g.drawString("| mai ", 215, 265);
-	g.drawString("| jun ", 255, 265);
-	g.drawString("| jul ", 295, 265);
-	g.drawString("| aug ", 335, 265);
-	g.drawString("| sep ", 375, 265);
-	g.drawString("| okt ", 415, 265);
-	g.drawString("| nov ", 455, 265);
-	g.drawString("| des ", 495, 265);	
+        graph2.setPaint(Color.BLACK);
+	
+        //x og y linjen
+        graph2.draw(drawLine);
+        graph2.draw(drawLine2);
+        //førstelinje
+        graph2.setPaint(Color.RED);
+	graph2.draw(jan);
+	graph2.draw(feb);
+	graph2.draw(mar);
+	graph2.draw(apr);
+	graph2.draw(may);	
+	graph2.draw(jun);	
+	graph2.draw(jul);
+	graph2.draw(aug);
+	graph2.draw(sep);
+	graph2.draw(oct);	
+	graph2.draw(nov);
+	graph2.draw(dec);
+        
+        //andrelinje
+      /*  graph3.setPaint(Color.BLUE);
+	graph3.draw(dec2);
+        graph3.draw(jan2);
+        graph3.draw(feb2);
+	graph3.draw(mar2);
+	graph3.draw(apr2);
+	graph3.draw(may2);	
+	graph3.draw(jun2);
+	graph3.draw(jul2);
+        graph3.draw(aug2);
+	graph3.draw(sep2);
+	graph3.draw(oct2);
+        graph3.draw(nov2);
+	graph3.draw(dec2);
+        */
+        
+     
+	
+	
+        g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
+        g.setColor(Color.BLACK);
+	g.drawString("100 -", 10, 55);
+	g.drawString("90  -", 10, 95);
+	g.drawString("80  -", 10, 135);
+	g.drawString("70  -", 10, 175);
+	g.drawString("60  -", 10, 215);
+	g.drawString("50  -", 10, 255);
+	g.drawString("40  -", 10, 295);
+	g.drawString("30  -", 10, 335);
+	g.drawString("20  -", 10, 375);
+	g.drawString("10  -", 10, 415);
+	g.drawString("0   ", 10, 475);
+	g.drawString("  jan ", 55, 475);
+	g.drawString("| feb ", 135, 475);
+	g.drawString("| mar ", 215, 475);
+	g.drawString("| apr ", 295, 475);
+	g.drawString("| mai ", 375, 475);
+	g.drawString("| jun ", 455, 475);
+	g.drawString("| jul ", 535, 475);
+	g.drawString("| aug ", 615, 475);
+	g.drawString("| sep ", 695, 475);
+	g.drawString("| okt ", 775, 475);
+	g.drawString("| nov ", 855, 475);
+	g.drawString("| des ", 935, 475);	
     }
 }
+

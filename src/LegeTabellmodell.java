@@ -10,7 +10,7 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
-public class Tabellmodell extends AbstractTableModel{
+public class LegeTabellmodell extends AbstractTableModel{
     
     private TreeMap<Integer,Resept> listen;
     private final String[] kolonnenavn = {"Dato", "Reseptnr.", "Personnr.", 
@@ -20,7 +20,7 @@ public class Tabellmodell extends AbstractTableModel{
     private LinkedList<Resept> data;
     private static int linjeteller = 0;
     
-    public Tabellmodell(TreeMap<Integer,Resept> listen){
+    public LegeTabellmodell(TreeMap<Integer,Resept> listen){
         this.listen = listen;
         data = new LinkedList<>(listen.values());
     }

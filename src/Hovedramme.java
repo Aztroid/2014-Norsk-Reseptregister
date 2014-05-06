@@ -25,7 +25,6 @@ public class Hovedramme extends JFrame{
     private double skjermhøyde;
     private int bredde;
     private int høyde;
-    private AdminPanel adminpanel;
     private TreeMap<String,Pasient> pasientliste;
     private TreeMap<String,Lege> legeliste;
     private TreeMap<Integer,Resept> reseptliste;
@@ -88,6 +87,12 @@ public class Hovedramme extends JFrame{
     
     public void visFørsteLege(TreeMap<String,Pasient> nypasientliste,
             TreeMap<Integer,Resept> nyreseptliste){
+        if(nypasientliste.isEmpty()||nyreseptliste.isEmpty()||
+                nypasientliste==null||nyreseptliste==null){
+            CardLayout c = (CardLayout)super.getContentPane().getLayout();
+            c.first(super.getContentPane());
+            return;
+        }
         sisteresept = reseptliste.lastKey();
         pasientliste = nypasientliste;
         reseptliste = nyreseptliste;

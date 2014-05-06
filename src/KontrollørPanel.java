@@ -8,8 +8,6 @@
 
 import java.awt.*;
 import java.awt.event.*;
-import java.awt.geom.Line2D;
-import java.text.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
@@ -47,6 +45,8 @@ public class KontrollørPanel extends JPanel{
     private JTextField hentlegemiddelstatistikk, legestatistikk;
     private String[] items = { "2013", "2014", "2015", "2016", "2017", "2018" };
     private JComboBox cb;
+    private JScrollPane statistikkscroll;
+   
     private Statistikkpanel grafikk1;
     private Statistikkpanel grafikk;
     
@@ -128,10 +128,28 @@ public class KontrollørPanel extends JPanel{
         senterpanelvarsling = new JPanel(new FlowLayout());
         
         //SENTERPANEL VISSTATISTIKK
+        
         senterpanelstatistikk = new JPanel(new BorderLayout());
+        senterpanelstatistikk.setSize(300, 1500);
         statistikknorth = new JPanel(new FlowLayout());
         genererKordinatliste();
         grafikk = new Statistikkpanel(kordinater);
+        statistikkscroll = new JScrollPane(grafikk);
+        statistikkscroll.setVerticalScrollBarPolicy(JScrollPane. VERTICAL_SCROLLBAR_AS_NEEDED);
+        statistikkscroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        statistikkscroll.setVisible(true);
+        
+        ActionListener listener = new ActionListener() {
+                    int counter = 0;
+                    public void actionPerformed(ActionEvent ae) {
+                     
+                        grafikk.revalidate();
+                        int height = (int)grafikk.getPreferredSize().getHeight();
+                        statistikkscroll.getVerticalScrollBar().setValue(height);
+                    }
+                };
+        grafikk.setPreferredSize(new Dimension(1000,1000));
+  
         //grafikk1 = new Graphics1(b);
         
         hentlegemiddelstatistikk = new JTextField(15);
@@ -144,9 +162,9 @@ public class KontrollørPanel extends JPanel{
         
         cb = new JComboBox(items);
         statistikknorth.add(cb);
-        
+      
         senterpanelstatistikk.add(statistikknorth,BorderLayout.PAGE_START);
-        senterpanelstatistikk.add(grafikk,BorderLayout.CENTER);
+        senterpanelstatistikk.add(statistikkscroll,BorderLayout.CENTER);
         //senterpanelstatistikk.add(grafikk1,BorderLayout.LINE_END);
         
         //SENTERPANEL 
@@ -226,6 +244,7 @@ public class KontrollørPanel extends JPanel{
             }
         }
     }
+
     
     private class Lytter implements ActionListener{
         
