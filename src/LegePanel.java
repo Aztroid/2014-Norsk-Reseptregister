@@ -56,16 +56,12 @@ public class LegePanel extends JPanel{
     //Senterpanel "ny resept" datafelter
     private JPanel senterpanelnyresept;
     private static Integer reseptnøkkel; //Reseptnummeret
-    private RadioLytteren radiolytteren;
-    private JTextField medisinnøkkel, mengde, defdøgndosering;
+    private JTextField mengde, defdøgndosering, reseptgruppefelt;
     private JTextArea anvisning;
     private JButton regresept,velgpasient;
-    private String kontrollresept;
-    private JRadioButton gra, grb, grc;
-    private ButtonGroup resteptgruppealt;
-    private JComboBox reseptkategorier,legenspasienter;
+    private JComboBox legenspasienter, reseptkategorier, medisinnøkkeler;
     private String[] items,pasienter;
-    private char reseptensgruppe = 'C';
+    private char reseptgruppe;
     private MedisinBibliotek medisinbiblioteket;
     
     /*Konstruktøren får kun to lister da det ikke skal registreres annet av 
@@ -184,7 +180,6 @@ public class LegePanel extends JPanel{
 
         //Senterpanel "ny Resept"
         medisinbiblioteket = new MedisinBibliotek();
-        radiolytteren = new RadioLytteren();
         senterpanelnyresept = new JPanel(new GridBagLayout());
         c.gridx = 0;
         c.gridy = 0;
@@ -221,63 +216,48 @@ public class LegePanel extends JPanel{
         c.gridx = 0;
         
         c.gridy = 2;
-        senterpanelnyresept.add(new JLabel("Mengde(gr): "),c);
+        senterpanelnyresept.add(new JLabel("ATC-Nr: "),c);
         c.gridx = 1;
-        mengde = new JTextField(30);
-        mengde.addActionListener(lytteren);
-        senterpanelnyresept.add(mengde,c);
+        medisinnøkkeler = new JComboBox();
+        medisinnøkkeler.addActionListener(lytteren);
+        senterpanelnyresept.add(medisinnøkkeler,c);
         c.gridx = 0;
         
         c.gridy = 3;
-        senterpanelnyresept.add(new JLabel("Diag.Døgn: "),c);
+        senterpanelnyresept.add(new JLabel("Mengde(gr): "),c);
         c.gridx = 1;
-        defdøgndosering = new JTextField(30);
-        defdøgndosering.addActionListener(lytteren);
-        senterpanelnyresept.add(defdøgndosering,c);
+        mengde = new JTextField(30);
+        senterpanelnyresept.add(mengde,c);
         c.gridx = 0;
         
         c.gridy = 4;
-        senterpanelnyresept.add(new JLabel("ATC-Nr: "),c);
+        senterpanelnyresept.add(new JLabel("Diag.Døgn: "),c);
         c.gridx = 1;
-        medisinnøkkel = new JTextField(15);
-        medisinnøkkel.addActionListener(lytteren);
-        senterpanelnyresept.add(medisinnøkkel,c);
+        defdøgndosering = new JTextField(30);
+        senterpanelnyresept.add(defdøgndosering,c);
         c.gridx = 0;
+        
         
         c.gridy = 5;
         senterpanelnyresept.add(new JLabel("Reseptgruppe: "),c);
-        resteptgruppealt = new ButtonGroup();
-        gra = new JRadioButton("Gruppe A", false);
-        gra.addActionListener(radiolytteren);
-        grb = new JRadioButton("Gruppe B", false);
-        grb.addActionListener(radiolytteren);
-        grc = new JRadioButton("Gruppe C", true);
-        grc.addActionListener(radiolytteren);
-        resteptgruppealt.add(gra);
-        resteptgruppealt.add(grb);
-        resteptgruppealt.add(grc);
         c.gridx = 1;
-        c.gridy = 6;
-        senterpanelnyresept.add(gra,c);
-        c.gridy = 7;
-        senterpanelnyresept.add(grb,c);
-        c.gridy = 8;
-        senterpanelnyresept.add(grc,c);
+        reseptgruppefelt = new JTextField(5);
+        reseptgruppefelt.setEditable(false);
+        senterpanelnyresept.add(reseptgruppefelt,c);
         c.gridx = 0;
         
-        c.gridy = 9;
+        c.gridy = 6;
         senterpanelnyresept.add(new JLabel("Legens anv:"),c);
         c.gridx = 1;
         anvisning = new JTextArea(10, 30);
         anvisning.setEditable(true);
         senterpanelnyresept.add(new JScrollPane(anvisning),c);
         
-        c.gridy = 11;
+        c.gridy = 7;
         regresept = new JButton("Register Resept");
         c.gridx = 1;
         regresept.addActionListener(lytteren);
         senterpanelnyresept.add(regresept,c);
-        kontrollresept = "[ABC]|AB|BC|AC|ABC";
         
         //LEGGER ALLE PANELER TIL
         senterpanel.add(senterpanelvisdata, VISDATA);
@@ -344,6 +324,7 @@ public class LegePanel extends JPanel{
         if(legenspasienter!=null){
             senterpanelnyresept.remove(legenspasienter);
         }
+        finnRiktigMedisinArray();
         /*Denne metoden viser "ny resept" panelet som inneholder alle datafelter 
         for å registrere nye resepter for den innloggede legen*/
         velgpasient.setVisible(true);
@@ -376,8 +357,7 @@ public class LegePanel extends JPanel{
     
     private boolean blankeReseptfelter(){
         //Sjekker for blanke felter ved registrering av resept
-        return (legensautnr.matches("")||medisinnøkkel.getText().matches("")||
-                mengde.getText().matches("")||defdøgndosering.getText().
+        return (mengde.getText().matches("")||defdøgndosering.getText().
                 matches(""));
     }
     
@@ -412,17 +392,18 @@ public class LegePanel extends JPanel{
             infofelt.setText("Et eller fler av feltene er tomme");
             return;
         }
-        int n = legenspasienter.getSelectedIndex();
-        String fullid = (String)legenspasienter.getItemAt(n);
+        int m = legenspasienter.getSelectedIndex();
+        String fullid = (String)legenspasienter.getItemAt(m);
         String pasientnøkkel = fullid.substring(0, 11);
-        System.out.println(pasientnøkkel);
         String fødselsnrrregex = "\\d{11}";
         String legenøkkel = legensautnr;
-        String medisinnr = medisinnøkkel.getText();
+        int n = medisinnøkkeler.getSelectedIndex();
+        String medisinnøkkel = (String)medisinnøkkeler.getItemAt(n);
+        medisinnøkkel = medisinnøkkel.substring(0,8);
         String medisinmengde = mengde.getText();
         String DDD = defdøgndosering.getText();
-        int m = reseptkategorier.getSelectedIndex();
-        String medisinkategori = (String)reseptkategorier.getItemAt(m);
+        int o = reseptkategorier.getSelectedIndex();
+        String medisinkategori = (String)reseptkategorier.getItemAt(o);
         String legensanvisning = anvisning.getText();
         if(!pasientnøkkel.matches(fødselsnrrregex)){
             infofelt.setText("Fødselsnummeret du har skrevet\ninn er ikke et "
@@ -434,15 +415,15 @@ public class LegePanel extends JPanel{
             return;
         }
         else{
-            int testen = reseptbevilgning.indexOf(reseptensgruppe);
+            int testen = reseptbevilgning.indexOf(reseptgruppe);
             if(testen==-1){
                 infofelt.setText("Legen er ikke godkjet for denne\nresepten");
                 return;
             }
             else{
                 Resept ny = new Resept(reseptnøkkel, pasientnøkkel,legenøkkel,
-                        medisinnr, medisinmengde,DDD,medisinkategori,
-                        reseptensgruppe,legensanvisning);
+                        medisinnøkkel, medisinmengde,DDD,medisinkategori,
+                        reseptgruppe,legensanvisning);
                 reseptliste.put(ny.getReseptnr(),ny);
                 infofelt.setText("Resept registrert.");
                 reseptnøkkel++;
@@ -481,9 +462,33 @@ public class LegePanel extends JPanel{
     }
     
     public void finnRiktigMedisinArray(){
+        senterpanelnyresept.remove(medisinnøkkeler);
+        revalidate();
+        repaint();
         int m = reseptkategorier.getSelectedIndex();
         String medisinkategori = (String)reseptkategorier.getItemAt(m);
-        System.out.println(medisinkategori);
+        char sorteringsbokstav = medisinkategori.charAt(0);
+        c.gridy = 2;
+        c.gridx = 1;
+        String[] lista = medisinbiblioteket.getKodearray(sorteringsbokstav);
+        medisinnøkkeler = new JComboBox(lista);
+        medisinnøkkeler.addActionListener(lytteren);
+        senterpanelnyresept.add(medisinnøkkeler,c);
+        finnReseptgruppen();
+        revalidate();
+        repaint();
+    }
+    
+    public void finnReseptgruppen(){
+        int m = medisinnøkkeler.getSelectedIndex();
+        String medisinnøkkelen = (String)medisinnøkkeler.getItemAt(m);
+        medisinnøkkelen = medisinnøkkelen.substring(0,8);
+        TreeMap<String,String> liste = medisinbiblioteket.getBibliotek();
+        String medisin = liste.get(medisinnøkkelen);
+        m = medisin.length()-1;
+        reseptgruppe = medisin.charAt(m);
+        System.out.println(medisin);
+        reseptgruppefelt.setText(""+reseptgruppe);
     }
     
     public void lagreLegeListene(int n){
@@ -559,21 +564,9 @@ public class LegePanel extends JPanel{
             else if(e.getSource()==reseptkategorier){
                 finnRiktigMedisinArray();
             }
+            else if(e.getSource()==medisinnøkkeler){
+                finnReseptgruppen();
+            }
         }
-    }
-    
-    private class RadioLytteren implements ActionListener{
-         public void actionPerformed(ActionEvent e) {
-         //Metode for å endre reseptgruppen preparatet befinner seg i
-            if(gra.isSelected()){
-                reseptensgruppe = 'A';
-            }
-            else if(grb.isSelected()){
-                reseptensgruppe = 'B';
-            }
-            else{
-                reseptensgruppe = 'C';
-            }
-         }
     }
 }//End of Class LegePanel

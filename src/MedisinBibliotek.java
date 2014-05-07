@@ -1927,17 +1927,20 @@ public class MedisinBibliotek {
         String løper;
         String løpernøkkel;
         int i = 0;
+        int p = 1;
         for (Map.Entry<String, String> entry : medisinliste.entrySet()) {
             løper = entry.getValue();
             løpernøkkel = entry.getKey();
-            if (løper.charAt(0) == medisinkategori) {
+            if (løpernøkkel.charAt(0) == medisinkategori) {
                 redigertliste.put(løpernøkkel, løper);
             }
         }
         lista = new String[redigertliste.size()];
         for (Map.Entry<String, String> entry : redigertliste.entrySet()) {
             løper = entry.getValue();
-            lista[i] = løper;
+            løper = løper.substring(0,løper.length()-p);
+            løpernøkkel = entry.getKey();
+            lista[i] = løpernøkkel + ", " + løper;
             i++;
         }
         return lista;

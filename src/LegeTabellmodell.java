@@ -10,19 +10,14 @@ import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
-public class LegeTabellmodell extends AbstractTableModel{
+public class LegeTabellmodell extends FellesTabellmodell{
     
     private TreeMap<Integer,Resept> listen;
-    private final String[] kolonnenavn = {"Dato", "Reseptnr.", "Personnr.", 
-        "Lege(Autnr.)", "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", 
-        "Reseptgruppe"};
-    
     private LinkedList<Resept> data;
-    private static int linjeteller = 0;
     
-    public LegeTabellmodell(TreeMap<Integer,Resept> listen){
-        this.listen = listen;
-        data = new LinkedList<>(listen.values());
+    public LegeTabellmodell(String[] kol, TreeMap<Integer,Resept> listen){
+        super(kol);
+        data = new LinkedList<Resept>(listen.values());
     }
     
     public void nyInnData(TreeMap<Integer,Resept> nyliste){
@@ -31,15 +26,15 @@ public class LegeTabellmodell extends AbstractTableModel{
     }
     
     public String getColonName(int kol){
-        return kolonnenavn[kol];
+        return super.getColonName(kol);
     }
     
-    public Resept getRow(int red){
-        return data.get(red);
+    public Resept getRow(int rad){
+        return data.get(rad);
     }
     
     public int getColumnCount(){
-        return kolonnenavn.length;
+        return super.getColumnCount();
     }
     
     public int getRowCount(){

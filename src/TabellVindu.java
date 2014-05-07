@@ -11,13 +11,20 @@ import javax.swing.table.*;
 
 public class TabellVindu extends JPanel{
     private TreeMap<Integer,Resept> reseptliste;
+    private TreeMap<String,String> medisinliste;
     private LegeTabellmodell modellen;
     final JTable tabellen;
+    private final String[] kolonnenavnlege = {"Dato", "Reseptnr.", "Personnr.", 
+        "Lege(Autnr.)", "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", 
+        "Reseptgruppe"};
+    private final String[] kolonnenavnmedisin = {"Dato", "Reseptnr.", "Personnr.", 
+        "Lege(Autnr.)", "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", 
+        "Reseptgruppe"};
     
     public TabellVindu(TreeMap<Integer,Resept> reseptliste){
         super(new GridLayout(0,1));
         this.reseptliste = reseptliste;
-        modellen = new LegeTabellmodell(reseptliste);
+        modellen = new LegeTabellmodell(kolonnenavnlege,this.reseptliste);
         tabellen = new JTable(modellen);
         tabellen.setPreferredScrollableViewportSize(new Dimension(500, 70));
         tabellen.setFillsViewportHeight(true);
