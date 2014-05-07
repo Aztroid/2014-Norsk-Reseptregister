@@ -29,7 +29,6 @@ public class Hovedramme extends JFrame{
     private TreeMap<String,Lege> legeliste;
     private TreeMap<Integer,Resept> reseptliste;
     private TreeMap<Integer,Kontrollør> kontrollørliste;
-    private static Integer sisteresept;
     private static Integer sistekontrollør;
     
     public Hovedramme(){
@@ -60,7 +59,7 @@ public class Hovedramme extends JFrame{
         lesListene(RESEPT);
         setTitle("Norsk Reseptregister");
         super.getContentPane().setLayout(new CardLayout());
-        super.add(new LogginnPanel(sisteresept, pasientliste, legeliste, 
+        super.add(new LogginnPanel(pasientliste, legeliste, 
                 reseptliste, kontrollørliste),LOGG_INN);
         super.add(new AdminPanel(sistekontrollør,legeliste,kontrollørliste),
                 ADMIN);
@@ -93,7 +92,6 @@ public class Hovedramme extends JFrame{
             c.first(super.getContentPane());
             return;
         }
-        sisteresept = reseptliste.lastKey();
         pasientliste = nypasientliste;
         reseptliste = nyreseptliste;
         //Metode som viser hovedrammens første vindu, dvs, logginnvindu
@@ -191,25 +189,21 @@ public class Hovedramme extends JFrame{
             try(ObjectInputStream innfil = new ObjectInputStream(
                 new FileInputStream("src/reseptliste.data"))){
             reseptliste = (TreeMap<Integer,Resept>) innfil.readObject();
-            sisteresept = reseptliste.lastKey();
             }
             catch(ClassNotFoundException cnfe){
                 JOptionPane.showMessageDialog(null,cnfe.getMessage() + 
                     "\nOppretter en tom liste\n");
                 reseptliste = new TreeMap<>();
-                sisteresept = 0;
             }
             catch(FileNotFoundException fnfe){
                 JOptionPane.showMessageDialog(null,
                         "Finner ikke datafil. Oppretter tom Reseptliste");
                 reseptliste = new TreeMap<>();
-                sisteresept = 0;
             }
             catch(IOException ioe){
                 JOptionPane.showMessageDialog(null,
                         "Innlesningsfeil. Oppretter tom Reseptliste");
                 reseptliste = new TreeMap<>();
-                sisteresept = 0;
             }
         }
     }

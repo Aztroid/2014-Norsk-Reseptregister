@@ -66,8 +66,7 @@ public class LegePanel extends JPanel{
     
     /*Konstruktøren får kun to lister da det ikke skal registreres annet av 
     legen*/
-    public LegePanel(String autnr,String reseptgodkjennelse, 
-            Integer sisteresept, 
+    public LegePanel(String autnr,String reseptgodkjennelse,  
             TreeMap<String,Pasient> pasientliste, 
             TreeMap<Integer,Resept> reseptliste){
         
@@ -79,7 +78,6 @@ public class LegePanel extends JPanel{
         spesifikkreseptliste = new TreeMap<>();
         spesifikkpasientliste = new TreeMap<>();
         reseptbevilgning = reseptgodkjennelse;
-        reseptnøkkel = ++sisteresept;
         
         //SIDEPANEL
         sidepanel = new JPanel();
@@ -267,13 +265,6 @@ public class LegePanel extends JPanel{
         super.add(senterpanel, BorderLayout.CENTER);       
     }
     
-    public void visFørste(){
-        /*Metode som viser det første panelet i lagt til i senterpanelet
-        dette er visdatapanelet før tabellen er generert*/
-        CardLayout c = (CardLayout)senterpanel.getLayout();
-        c.first(senterpanel);
-    }
-    
     public void filtrerReseptlisten(){
         /*Denne metoden finner alle resepter den innloggede legen har skrevet
         ut, og legger de til i den spesifike reseptlisten, denne lages på nytt
@@ -405,6 +396,12 @@ public class LegePanel extends JPanel{
         int o = reseptkategorier.getSelectedIndex();
         String medisinkategori = (String)reseptkategorier.getItemAt(o);
         String legensanvisning = anvisning.getText();
+        if(reseptliste.isEmpty()){
+            reseptnøkkel = 1;
+        }
+        else{
+            reseptnøkkel = 1+reseptliste.lastKey();
+        }
         if(!pasientnøkkel.matches(fødselsnrrregex)){
             infofelt.setText("Fødselsnummeret du har skrevet\ninn er ikke et "
                     + "gyldig fødselsnummer");
@@ -485,10 +482,14 @@ public class LegePanel extends JPanel{
         medisinnøkkelen = medisinnøkkelen.substring(0,8);
         TreeMap<String,String> liste = medisinbiblioteket.getBibliotek();
         String medisin = liste.get(medisinnøkkelen);
+        try{
         m = medisin.length()-1;
         reseptgruppe = medisin.charAt(m);
-        System.out.println(medisin);
         reseptgruppefelt.setText(""+reseptgruppe);
+        }
+        catch(NullPointerException no){
+            
+        }
     }
     
     public void lagreLegeListene(int n){

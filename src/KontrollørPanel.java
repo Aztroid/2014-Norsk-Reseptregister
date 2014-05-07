@@ -4,7 +4,9 @@
  Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
-//Dette panelet er vinduet der kontrolløren kan se/registrere ny data.
+/*Dette panelet er vinduet der kontrolløren kan få en oversikt over resepter
+som er skrevet ut, og mer data relatert til dette med statistisk verdi. 
+Kontrolløren skal også ha muligheten til å endre en leges reseptbevilgning*/
 
 import java.awt.*;
 import java.awt.event.*;
@@ -46,12 +48,13 @@ public class KontrollørPanel extends JPanel{
     private String[] items = { "2013", "2014", "2015", "2016", "2017", "2018" };
     private JComboBox cb;
     private JScrollPane statistikkscroll;
-   
-    private Statistikkpanel grafikk1;
     private Statistikkpanel grafikk;
     
     //Senterpanel varsling
     private JPanel senterpanelvarsling;
+    private JPanel varslingnorth;
+    private MedisinBibliotek medisinbiblioteket;
+    private JButton knapp1,knapp2,knapp3;
     
     public KontrollørPanel(TreeMap<String,Pasient> pasientliste,
             TreeMap<String,Lege> legeliste,
@@ -99,7 +102,7 @@ public class KontrollørPanel extends JPanel{
         senterpanelgrense = BorderFactory.createTitledBorder("Reseptoversikt");
         senterpanel.setBorder(senterpanelgrense);
         
-        //Senterpanel Visdata
+        //Senterpanel VisReseptdata
         senterpanelvisdata = new JPanel(new BorderLayout());
         visdatanorth = new JPanel(new FlowLayout());
         
@@ -119,38 +122,24 @@ public class KontrollørPanel extends JPanel{
         søk.addActionListener(lytteren);
         visdatanorth.add(søk);
         
-        //Tabellen
+        //Visdata Tabell
         tabellen = new TabellVindu(this.reseptliste);
         tabellen.setOpaque(true);
         senterpanelvisdata.add(tabellen,BorderLayout.CENTER);
-         
-        //SENTERPANEL varsling:
-        senterpanelvarsling = new JPanel(new FlowLayout());
         
         //SENTERPANEL VISSTATISTIKK
-        
         senterpanelstatistikk = new JPanel(new BorderLayout());
         senterpanelstatistikk.setSize(300, 1500);
         statistikknorth = new JPanel(new FlowLayout());
         genererKordinatliste();
         grafikk = new Statistikkpanel(kordinater);
         statistikkscroll = new JScrollPane(grafikk);
-        statistikkscroll.setVerticalScrollBarPolicy(JScrollPane. VERTICAL_SCROLLBAR_AS_NEEDED);
-        statistikkscroll.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-        statistikkscroll.setVisible(true);
-        
-        ActionListener listener = new ActionListener() {
-                    int counter = 0;
-                    public void actionPerformed(ActionEvent ae) {
-                     
-                        grafikk.revalidate();
-                        int height = (int)grafikk.getPreferredSize().getHeight();
-                        statistikkscroll.getVerticalScrollBar().setValue(height);
-                    }
-                };
+        statistikkscroll.setVerticalScrollBarPolicy(
+                JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        statistikkscroll.setHorizontalScrollBarPolicy(
+                JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
+        statistikkscroll.setVisible(true);        
         grafikk.setPreferredSize(new Dimension(1000,1000));
-  
-        //grafikk1 = new Graphics1(b);
         
         hentlegemiddelstatistikk = new JTextField(15);
         statistikknorth.add(new JLabel("Legemiddel"));
@@ -165,9 +154,28 @@ public class KontrollørPanel extends JPanel{
       
         senterpanelstatistikk.add(statistikknorth,BorderLayout.PAGE_START);
         senterpanelstatistikk.add(statistikkscroll,BorderLayout.CENTER);
-        //senterpanelstatistikk.add(grafikk1,BorderLayout.LINE_END);
         
-        //SENTERPANEL 
+        //SENTERPANEL varsling:
+        senterpanelvarsling = new JPanel(new BorderLayout());
+        varslingnorth = new JPanel(new FlowLayout());
+        medisinbiblioteket = new MedisinBibliotek();
+        
+        knapp1 = new JButton("Søk");
+        knapp1.addActionListener(lytteren);
+        varslingnorth.add(knapp1);
+        
+        knapp2 = new JButton("Søk");
+        knapp2.addActionListener(lytteren);
+        varslingnorth.add(knapp2);
+        
+        knapp3 = new JButton("Søk");
+        knapp3.addActionListener(lytteren);
+        varslingnorth.add(knapp3);
+        
+        senterpanelvarsling.add(varslingnorth,BorderLayout.PAGE_START);
+        //senterpanelvarsling.add(statistikkscroll,BorderLayout.CENTER);
+        
+        //LEGGER ALLE PANELER TIL
         senterpanelvisdata.add(visdatanorth,BorderLayout.PAGE_START);
         senterpanel.add(senterpanelvisdata,VISDATA);
         senterpanel.add(senterpanelstatistikk, VISSTATISTIKK);
@@ -178,6 +186,8 @@ public class KontrollørPanel extends JPanel{
     }
     
     public void tilbakeTilMeny(){
+        /*Sender kontrollør tilbake til startmenyen med en oppdatert liste over
+        legene i tilfelle kontrolløren har endret reseptgodkjennelsen*/
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
         hovedrammekopi.visFørsteKontrollør(legeliste);
     }
@@ -249,15 +259,18 @@ public class KontrollørPanel extends JPanel{
     private class Lytter implements ActionListener{
         
         public void actionPerformed(ActionEvent e) {
-            if (e.getSource()==visdata){
-                visData();
-            }
-            else if(e.getSource()==gåtilbake){
+            if(e.getSource()==gåtilbake){
                 tilbakeTilMeny();
             }
-              else if(e.getSource()==statistikk){
+            else if (e.getSource()==visdata){
+                visData();
+            }
+            else if(e.getSource()==statistikk){
                  visStatistikk();
-              }
+            }
+            else if(e.getSource()==varsling){
+                visVarsling();
+            }
         }
  
     }
