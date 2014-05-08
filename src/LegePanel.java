@@ -11,7 +11,7 @@ import java.awt.event.*;
 import java.io.*;
 import java.util.*;
 import javax.swing.*;
-import javax.swing.border.Border;
+import javax.swing.border.*;
 
 public class LegePanel extends JPanel{
     
@@ -39,12 +39,12 @@ public class LegePanel extends JPanel{
     
     //Senterpanel datafelter
     private JPanel senterpanel;
-    private Border senterpanelgrense;
+    private TitledBorder senterpanelgrense;
     
     //Senterpanel "visdata" datafelter
     private JPanel senterpanelvisdata, senterpaneltop;
-    private JTextField søkpasientid,søkreseptid;
-    private JButton søk;
+    private JButton visalle, visdatapasienter;
+    private JComboBox vislegenspasienter;
     private TabellVindu tabell;
     
     //Senterpanel "ny pasient" datafelter
@@ -88,7 +88,8 @@ public class LegePanel extends JPanel{
         //SIDEPANEL infofelt
         infofelt = new JTextArea(4,18);
         infoscroll = new JScrollPane(infofelt);
-        infofelt.setText("Oversikt over dine resepter");
+        infofelt.setText("Oversikt over resepter for:\n" + "Lege: " +
+                legensautnr);
         infofelt.setEditable(false);
         sidepanel.add(infoscroll);
         
@@ -111,24 +112,21 @@ public class LegePanel extends JPanel{
         
         //Senterpanel hovedramme
         senterpanel = new JPanel(new CardLayout());
-        senterpanelgrense = BorderFactory.createTitledBorder("Reseptoversikt");
+        senterpanelgrense = BorderFactory.createTitledBorder("Dine Resepter");
         senterpanel.setBorder(senterpanelgrense);
          
         //Senterpanel "visdata"
         senterpanelvisdata = new JPanel(new BorderLayout());
-        
         senterpaneltop = new JPanel(new FlowLayout());
-        søkpasientid = new JTextField(15);
-        senterpaneltop.add(new JLabel("Søk Pasient"));
-        senterpaneltop.add(søkpasientid);
         
-        søkreseptid = new JTextField(15);
-        senterpaneltop.add(new JLabel("Søk Resept"));
-        senterpaneltop.add(søkreseptid);
-        
-        søk = new JButton("Søk");
-        søk.addActionListener(lytteren);
-        senterpaneltop.add(søk);
+        visalle = new JButton("Vis Alle");
+        visalle.addActionListener(lytteren);
+        senterpaneltop.add(visalle);
+           
+        senterpaneltop.add(new JLabel("Pasient: "));
+        visdatapasienter = new JButton("Velg Pasient");
+        visdatapasienter.addActionListener(lytteren);
+        senterpaneltop.add(visdatapasienter);
         senterpanelvisdata.add(senterpaneltop,BorderLayout.PAGE_START);
         
         //Tabellvinduet
@@ -301,6 +299,8 @@ public class LegePanel extends JPanel{
     }
     
     public void nyPasient(){
+        senterpanelgrense.setTitle("Ny Pasient");
+        repaint();
         /*Denne metoden viser "ny pasient" panelet som inneholder alle datafelter 
         for å registrere nye pasienter for den innloggede legen*/
         if(legenspasienter!=null){
@@ -312,6 +312,8 @@ public class LegePanel extends JPanel{
     }
     
     public void nyResept(){
+        senterpanelgrense.setTitle("Ny Resept");
+        repaint();
         if(legenspasienter!=null){
             senterpanelnyresept.remove(legenspasienter);
         }
@@ -324,13 +326,19 @@ public class LegePanel extends JPanel{
     }
     
     public void visData(){
+        senterpanelgrense.setTitle("Dine Resepter");
+        repaint();
         /*Denne metoden viser "vis data" panelet som inneholder tabellen og
         søkefeltene for tabellen*/
-        oppDaterTabelen();
+        if(vislegenspasienter!=null){
+            senterpaneltop.remove(vislegenspasienter);
+            repaint();
+        }
+        visdatapasienter.setVisible(true);
         CardLayout c = (CardLayout)senterpanel.getLayout();
-        tabell.repaint();
-        senterpanelvisdata.revalidate();
-        super.revalidate();
+        //tabell.repaint();
+        //senterpanelvisdata.revalidate();
+        //super.revalidate();
         c.show(senterpanel,VISDATA);
     }
     
@@ -338,6 +346,23 @@ public class LegePanel extends JPanel{
         /*Denne metoden generer en ny tabell bassert på den innloggede legens 
         utskrevende resepter, og legger tabellen til i "vis data" panelet*/
         tabell.nyInnData(spesifikkreseptliste);
+    }
+    
+    private void oppDaterTabelenPasient(){
+        /*Denne metoden generer en ny tabell bassert på den innloggede legens 
+        utskrevende resepter, og legger tabellen til i "vis data" panelet*/
+        TreeMap<Integer,Resept> spesifikkpasientreseptliste = new TreeMap<>();
+        int n = vislegenspasienter.getSelectedIndex();
+        String fullid = (String)vislegenspasienter.getItemAt(n);
+        String pasientnøkkel = fullid.substring(0, 11);
+        Resept løper;
+        for(Map.Entry<Integer,Resept> entry:spesifikkreseptliste.entrySet()){
+            løper = entry.getValue();
+            if(pasientnøkkel.equalsIgnoreCase(løper.getPasient())){
+                spesifikkpasientreseptliste.put(løper.getReseptnr(),løper);
+            }
+        }
+        tabell.nyInnData(spesifikkpasientreseptliste);
     }
     
     private boolean blankePersonfelter(){
@@ -427,9 +452,9 @@ public class LegePanel extends JPanel{
                 lagreLegeListene(RESEPT);
                 filtrerReseptlisten();
                 senterpanelnyresept.remove(legenspasienter);
+                senterpaneltop.remove(vislegenspasienter);
                 velgpasient.setVisible(true);
-                revalidate();
-                repaint();
+                senterpanel.repaint();
             }
         }
     }
@@ -451,11 +476,20 @@ public class LegePanel extends JPanel{
     }
     
     public void leggTilCombobox(){
+        filtrerPasientlisten();
         velgpasient.setVisible(false);
         c.gridx = 1;
         c.gridy = 0;
         legenspasienter = new JComboBox(pasientListen());
         senterpanelnyresept.add(legenspasienter,c);
+    }
+    
+    public void leggTilComboboxvisdata(){
+        filtrerPasientlisten();
+        visdatapasienter.setVisible(false);
+        vislegenspasienter = new JComboBox(pasientListen());
+        vislegenspasienter.addActionListener(lytteren);
+        senterpaneltop.add(vislegenspasienter);
     }
     
     public void finnRiktigMedisinArray(){
@@ -559,7 +593,6 @@ public class LegePanel extends JPanel{
                 regResept();
             }
             else if(e.getSource()==velgpasient){
-                filtrerPasientlisten();
                 leggTilCombobox();
             }
             else if(e.getSource()==reseptkategorier){
@@ -567,6 +600,15 @@ public class LegePanel extends JPanel{
             }
             else if(e.getSource()==medisinnøkkeler){
                 finnReseptgruppen();
+            }
+            else if(e.getSource()==visdatapasienter){
+                leggTilComboboxvisdata();
+            }
+            else if(e.getSource()==vislegenspasienter){
+                oppDaterTabelenPasient();
+            }
+            else if(e.getSource()==visalle){
+                oppDaterTabelen();
             }
         }
     }

@@ -37,6 +37,8 @@ public class AdminPanel extends JPanel{
     private JPanel senterpanelbakgrunn;
     
     //Senterpanel reglege
+    private JTextArea infolege;
+    private JScrollPane infoscrolllege;
     private JPanel senterpanelreglege;
     private GridBagConstraints c;
     private JTextField fornavnlege, etternavnlege, autorisasjonsnummer, 
@@ -51,9 +53,11 @@ public class AdminPanel extends JPanel{
     private boolean gruppeC;
     
     //Senterpanel regKont
+    private JTextArea infokont;
+    private JScrollPane infoscrollkont;
     private static Integer kontnøkkel;
     private JPanel senterpanelregkont;
-    private JTextField fornavnkont, etternavnkont, brukernavn, arbeidsstedkont;
+    private JTextField fornavnkont, etternavnkont, arbeidsstedkont;
     private JButton regkont;
     
     public AdminPanel(Integer sistekontrollør,TreeMap<String,Lege> legeliste,
@@ -107,6 +111,14 @@ public class AdminPanel extends JPanel{
         c.ipadx = 5;
         c.ipady = 5;
         
+        c.gridx = 1;
+        infolege = new JTextArea(10,30);
+        infoscrolllege = new JScrollPane(infolege);
+        infolege.setText("Leger i registeret:\n" + skrivUtlisten(LEGE));
+        senterpanelreglege.add(infoscrolllege,c);
+        infolege.setEditable(false);
+        
+        c.gridy = 1;
         senterpanelreglege.add(new JLabel("Autorisasjonsnr: "),c);
         c.gridx = 1;
         autorisasjonsnummer = new JTextField(30);
@@ -114,7 +126,7 @@ public class AdminPanel extends JPanel{
         senterpanelreglege.add(autorisasjonsnummer,c);
         c.gridx = 0;
 
-        c.gridy = 1;
+        c.gridy = 2;
         senterpanelreglege.add(new JLabel("Fornavn Lege: "),c);
         c.gridx = 1;
         fornavnlege = new JTextField(30);
@@ -122,7 +134,7 @@ public class AdminPanel extends JPanel{
         senterpanelreglege.add(fornavnlege,c);
         c.gridx = 0;
 
-        c.gridy = 2;
+        c.gridy = 3;
         senterpanelreglege.add(new JLabel("Etternavn Lege: "),c);
         c.gridx = 1;
         etternavnlege = new JTextField(30);
@@ -130,7 +142,7 @@ public class AdminPanel extends JPanel{
         senterpanelreglege.add(etternavnlege,c);
         c.gridx = 0;
         
-        c.gridy = 3;
+        c.gridy = 4;
         senterpanelreglege.add(new JLabel("Arbeidssted: "),c);
         c.gridx = 1;
         arbeidssted = new JTextField(30);
@@ -138,23 +150,23 @@ public class AdminPanel extends JPanel{
         senterpanelreglege.add(arbeidssted,c);
         c.gridx = 0;
         
-        c.gridy = 4;
+        c.gridy = 5;
         senterpanelreglege.add(new JLabel("Godkjent Reseptbevilkning:"),c);
         c.gridx = 1;
-        c.gridy = 5;
+        c.gridy = 6;
         Abox = new JCheckBox("Gruppe A");
         Abox.addItemListener(tegnlytteren);
         senterpanelreglege.add(Abox,c);
-        c.gridy = 6;
+        c.gridy = 7;
         Bbox = new JCheckBox("Gruppe B");
         Bbox.addItemListener(tegnlytteren);
         senterpanelreglege.add(Bbox,c);
-        c.gridy = 7;
+        c.gridy = 8;
         Cbox = new JCheckBox("Gruppe C");
         Cbox.addItemListener(tegnlytteren);
         senterpanelreglege.add(Cbox,c);
         
-        c.gridy = 8;
+        c.gridy = 9;
         reglege = new JButton("Register Lege");
         reglege.addActionListener(lytteren);
         senterpanelreglege.add(reglege,c);
@@ -166,7 +178,15 @@ public class AdminPanel extends JPanel{
         c.ipadx = 5;
         c.ipady = 5;
         
-        c.gridy = 0;
+        c.gridx = 1;
+        infokont = new JTextArea(10,30);
+        infokont.setEditable(false);
+        infoscrollkont = new JScrollPane(infokont);
+        infokont.setText("Leger i registeret:\n" + skrivUtlisten(KONTROLLØR));
+        senterpanelregkont.add(infoscrollkont,c);
+        c.gridx = 0;
+        
+        c.gridy = 1;
         senterpanelregkont.add(new JLabel("Fornavn Kontrollør: "),c);
         c.gridx = 1;
         fornavnkont = new JTextField(30);
@@ -212,7 +232,6 @@ public class AdminPanel extends JPanel{
     public void visNylege(){
         //Viser Logginn Panelet
         infofelt.setText("Registrer ny lege");
-        skrivUtlisten(LEGE);
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,NYLEGE);
     }
@@ -220,7 +239,6 @@ public class AdminPanel extends JPanel{
     public void visNyKont(){
         //Viser Logginn Panelet
         infofelt.setText("Registrer ny Kontrollør");
-        skrivUtlisten(KONTROLLØR);
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,NYKONTROLLØR);
     }
@@ -354,20 +372,21 @@ public class AdminPanel extends JPanel{
         }
     }
     
-    public void skrivUtlisten(int n){
+    public String skrivUtlisten(int n){
+        String tekst = "";
         if(n==KONTROLLØR){
             for(Map.Entry<Integer,Kontrollør> entry:kontrollørliste.entrySet()){
                     Kontrollør løper = entry.getValue();
-                    infofelt.append("\nNøkkel : " + løper.getKontnøkkel()+"\n");
+                    tekst+= "Nøkkel : " + løper.getKontnøkkel()+"\n";
             }
         }
         else if(n==LEGE){
             for(Map.Entry<String,Lege> entry:legeliste.entrySet()){
                     Lege løper = entry.getValue();
-                    infofelt.append("\nNøkkel : " 
-                            + løper.getAutorisasjonsnr()+"\n");
+                    tekst+= "Nøkkel : " + løper.getAutorisasjonsnr()+"\n";
             }
         }
+        return tekst;
     }
     
     private class Tegnlytter implements ItemListener{

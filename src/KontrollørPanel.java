@@ -34,13 +34,16 @@ public class KontrollørPanel extends JPanel{
     private JScrollPane infoscroll;
     private JButton gåtilbake,visdata,statistikk,varsling;
     
+    //Semterpanel datafelter
+    private JPanel senterpanel;
+    private TitledBorder senterpanelgrense;
+    
     //Senterpanel visdata
-    private JPanel senterpanel,senterpanelvisdata, visdatanorth;
+    private JPanel senterpanelvisdata, visdatanorth;
     private TabellVindu tabellen;
-    private Border senterpanelgrense;
-    private JButton søk;
-    private JTextField søkpasientid,søkreseptid,søklegeid;
-    int[] kordinater;
+    private JComboBox velglege, velgReseptKat;
+    private JButton visalle;
+    private String[] leger;
     
    //Sennterpanel Statistikk  
     private JPanel senterpanelstatistikk, statistikknorth;
@@ -49,6 +52,7 @@ public class KontrollørPanel extends JPanel{
     private JComboBox cb;
     private JScrollPane statistikkscroll;
     private Statistikkpanel grafikk;
+    int[] kordinater;
     
     //Senterpanel varsling
     private JPanel senterpanelvarsling;
@@ -75,7 +79,7 @@ public class KontrollørPanel extends JPanel{
         //SIDEPANEL infofelt
         infofelt = new JTextArea(4,18);
         infoscroll = new JScrollPane(infofelt);
-        infofelt.setText("Oversikt over alle resepter");
+        infofelt.setText("Innlogget som kontrollør");
         
         infofelt.setEditable(false);
         sidepanel.add(infoscroll);
@@ -99,28 +103,28 @@ public class KontrollørPanel extends JPanel{
         
         //SENTERPANEL ramme
         senterpanel = new JPanel(new CardLayout());
-        senterpanelgrense = BorderFactory.createTitledBorder("Reseptoversikt");
+        senterpanelgrense = BorderFactory.createTitledBorder
+            ("Vis Reseptregister");
         senterpanel.setBorder(senterpanelgrense);
         
         //Senterpanel VisReseptdata
         senterpanelvisdata = new JPanel(new BorderLayout());
         visdatanorth = new JPanel(new FlowLayout());
         
-        søkpasientid = new JTextField(15);
-        visdatanorth.add(new JLabel("Søk Pasient"));
-        visdatanorth.add(søkpasientid);
+        visalle = new JButton("Vis Alle");
+        visalle.addActionListener(lytteren);
+        visdatanorth.add(visalle);
         
-        søklegeid = new JTextField(15);
-        visdatanorth.add(new JLabel("Søk Lege"));
-        visdatanorth.add(søklegeid);
+        velglege = new JComboBox(legelisten());
+        visdatanorth.add(new JLabel("Finn Lege"));
+        velglege.addActionListener(lytteren);
+        visdatanorth.add(velglege);
         
-        søkreseptid = new JTextField(15);
-        visdatanorth.add(new JLabel("Søk Resept"));
-        visdatanorth.add(søkreseptid);
-        
-        søk = new JButton("Søk");
-        søk.addActionListener(lytteren);
-        visdatanorth.add(søk);
+        velgReseptKat = new JComboBox(new String[]{"Reseptgruppe A",
+            "Reseptgruppe B","Reseptgruppe C"});
+        visdatanorth.add(new JLabel("Finn Resept"));
+        velgReseptKat.addActionListener(lytteren);
+        visdatanorth.add(velgReseptKat);
         
         //Visdata Tabell
         tabellen = new TabellVindu(this.reseptliste);
@@ -131,7 +135,7 @@ public class KontrollørPanel extends JPanel{
         senterpanelstatistikk = new JPanel(new BorderLayout());
         senterpanelstatistikk.setSize(300, 1500);
         statistikknorth = new JPanel(new FlowLayout());
-        genererKordinatliste();
+        genererKordinatliste(reseptliste);
         grafikk = new Statistikkpanel(kordinater);
         statistikkscroll = new JScrollPane(grafikk);
         statistikkscroll.setVerticalScrollBarPolicy(
@@ -193,6 +197,8 @@ public class KontrollørPanel extends JPanel{
     }
     
     public void visData(){
+        senterpanelgrense.setTitle("Vis Reseptregister");
+        repaint();
         /*Denne metoden viser "vis data" panelet som inneholder tabellen og
         søkefeltene for tabellen*/
         oppDaterTabelen();
@@ -203,26 +209,91 @@ public class KontrollørPanel extends JPanel{
         c.show(senterpanel,VISDATA);
     }
     
+    public String[] legelisten(){
+        if(legeliste!=null){
+            Lege løper;
+            leger = new String[legeliste.size()];
+            int i = 0;
+            for(Map.Entry<String,Lege> entry:legeliste.entrySet()){
+                løper = entry.getValue();
+                leger[i]=løper.toString();
+                i++;
+            }
+            return leger;
+        }
+        leger = new String[]{"Ingen pasienter opprettet"};
+        return leger;
+    }
+    
     private void oppDaterTabelen(){
-        /*Denne metoden generer en ny tabell bassert på den innloggede legens 
-        utskrevende resepter, og legger tabellen til i "vis data" panelet*/
+        /*Denne metoden generer en ny tabell bassert på utskrevende resepter, 
+        og legger tabellen til i "vis data" panelet*/
         tabellen.nyInnData(reseptliste);
     }
     
+    private void oppDaterTabelenLege(){
+        /*Denne metoden generer en ny tabell bassert på legen som blir valgt i
+        comboboxen, og legger tabellen til i "vis data" panelet*/
+        TreeMap<Integer,Resept> spesifikklegereseptliste = new TreeMap<>();
+        int n = velglege.getSelectedIndex();
+        String fullid = (String)velglege.getItemAt(n);
+        String legenøkkel = fullid.substring(0, 9);
+        Resept løper;
+        for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+            løper = entry.getValue();
+            if(legenøkkel.equalsIgnoreCase(løper.getLege())){
+                spesifikklegereseptliste.put(løper.getReseptnr(),løper);
+            }
+        }
+        tabellen.nyInnData(spesifikklegereseptliste);
+    }
+ 
+    private void oppDaterTabelenKategori(){
+        /*Denne metoden generer en ny tabell bassert på legen som blir valgt i
+        comboboxen, og legger tabellen til i "vis data" panelet*/
+        TreeMap<Integer,Resept> spesifikklegereseptliste = new TreeMap<>();
+        TreeMap<Integer,Resept> spesifikkReseptgruppreseptliste = new TreeMap<>();
+        int m = velglege.getSelectedIndex();
+        String fullid = (String)velglege.getItemAt(m);
+        String legenøkkel = fullid.substring(0, 9);
+        Resept løper;
+        for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+            løper = entry.getValue();
+            if(legenøkkel.equalsIgnoreCase(løper.getLege())){
+                spesifikklegereseptliste.put(løper.getReseptnr(),løper);
+            }
+        }
+        int n = velgReseptKat.getSelectedIndex();
+        String reseptgruppeid = (String)velgReseptKat.getItemAt(n);
+        char reseptgruppe = reseptgruppeid.charAt(13);
+        System.out.println(reseptgruppe);
+        for(Map.Entry<Integer,Resept> entry:spesifikklegereseptliste.entrySet()){
+            løper = entry.getValue();
+            if(reseptgruppe==(løper.getReseptgruppe())){
+                spesifikkReseptgruppreseptliste.put(løper.getReseptnr(),løper);
+            }
+        }
+        tabellen.nyInnData(spesifikkReseptgruppreseptliste);
+    }
+    
     public void visStatistikk(){
+        senterpanelgrense.setTitle("Vis Statistikk");
+        repaint();
             CardLayout c = (CardLayout)senterpanel.getLayout();
             c.show(senterpanel,VISSTATISTIKK);
     }
     
     public void visVarsling(){
+        senterpanelgrense.setTitle("Vis Varsling");
+        repaint();
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,VISVARSLING);
     }
     
-    public void genererKordinatliste(){
+    public void genererKordinatliste(TreeMap<Integer,Resept> liste){
         kordinater = new int[12];
         Resept løper;
-        for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+        for(Map.Entry<Integer,Resept> entry:liste.entrySet()){
             løper = entry.getValue();
             Calendar reseptkalenderformat = løper.getKalenderformat();
             int mnd = reseptkalenderformat.get(Calendar.MONTH);
@@ -270,6 +341,15 @@ public class KontrollørPanel extends JPanel{
             }
             else if(e.getSource()==varsling){
                 visVarsling();
+            }
+            else if(e.getSource()==velglege){
+                oppDaterTabelenLege();
+            }
+            else if(e.getSource()==visalle){
+                oppDaterTabelen();
+            }
+            else if(e.getSource()==velgReseptKat){
+                oppDaterTabelenKategori();
             }
         }
  

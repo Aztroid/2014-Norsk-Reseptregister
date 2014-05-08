@@ -42,7 +42,6 @@ public class Lege extends Person{
     }
     
     public String toString(){
-        return super.toString() + "Arbeidssted: " + arbeidssted
-                + "\nReseptbevilkning: " + reseptbevilgning;
+        return autorisasjonsnr + ", " + super.toString();
     }
 }

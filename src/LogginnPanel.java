@@ -67,7 +67,7 @@ public class LogginnPanel extends JPanel{
         
         infofelt = new JTextArea(4,18);
         infoscroll = new JScrollPane(infofelt);
-        infofelt.setText("Logg inn");
+        infofelt.setText("Velkommen, klikk på en av\nknappene");
         
         infofelt.setEditable(false);
         sidepanel.add(infoscroll);
@@ -188,6 +188,7 @@ public class LogginnPanel extends JPanel{
     
     public void sjekkAdmin(){
         /*Må skrive inn adminnøkkelen i logginn for å komme inn*/
+        infofelt.setText("Tast inn administratornøkkel\n for å komme inn");
         String adminnøkkel = "guest";
         
         try{
