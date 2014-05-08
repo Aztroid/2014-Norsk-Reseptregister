@@ -19,6 +19,7 @@ public class KontrollørPanel extends JPanel{
     private final String VISDATA = "9";
     private final String VISSTATISTIKK = "10";
     private final String VISVARSLING = "11";
+    private int VALG = 1;
     
     private Hovedramme hovedrammekopi;
     private Lytter lytteren;
@@ -41,9 +42,9 @@ public class KontrollørPanel extends JPanel{
     //Senterpanel visdata
     private JPanel senterpanelvisdata, visdatanorth;
     private TabellVindu tabellen;
-    private JComboBox velglege, velgReseptKat;
-    private JButton visalle;
-    private String[] leger;
+    private JComboBox velglege, velgpasient, velgReseptKat, velgmedisin;
+    private JButton visalle, vispasient,vislege;
+    private String[] leger,pasienter;
     
    //Sennterpanel Statistikk  
     private JPanel senterpanelstatistikk, statistikknorth;
@@ -116,15 +117,29 @@ public class KontrollørPanel extends JPanel{
         visdatanorth.add(visalle);
         
         velglege = new JComboBox(legelisten());
-        visdatanorth.add(new JLabel("Finn Lege"));
+        visdatanorth.add(new JLabel("Søk i Listen"));
         velglege.addActionListener(lytteren);
         visdatanorth.add(velglege);
         
+        velgpasient = new JComboBox(pasientlisten());
+        velgpasient.addActionListener(lytteren);
+        visdatanorth.add(velgpasient);
+        velgpasient.setVisible(false);
+        
         velgReseptKat = new JComboBox(new String[]{"Reseptgruppe A",
             "Reseptgruppe B","Reseptgruppe C"});
-        visdatanorth.add(new JLabel("Finn Resept"));
         velgReseptKat.addActionListener(lytteren);
         visdatanorth.add(velgReseptKat);
+        senterpanelvisdata.add(visdatanorth,BorderLayout.PAGE_START);
+        
+        vispasient = new JButton("Vis Pasientsøk");
+        vispasient.addActionListener(lytteren);
+        visdatanorth.add(vispasient);
+        
+        vislege = new JButton("Vis Legesøk");
+        vislege.addActionListener(lytteren);
+        visdatanorth.add(vislege);
+        vislege.setVisible(false);
         
         //Visdata Tabell
         tabellen = new TabellVindu(this.reseptliste);
@@ -180,7 +195,6 @@ public class KontrollørPanel extends JPanel{
         //senterpanelvarsling.add(statistikkscroll,BorderLayout.CENTER);
         
         //LEGGER ALLE PANELER TIL
-        senterpanelvisdata.add(visdatanorth,BorderLayout.PAGE_START);
         senterpanel.add(senterpanelvisdata,VISDATA);
         senterpanel.add(senterpanelstatistikk, VISSTATISTIKK);
         senterpanel.add(senterpanelvarsling, VISVARSLING);
@@ -224,6 +238,38 @@ public class KontrollørPanel extends JPanel{
         leger = new String[]{"Ingen pasienter opprettet"};
         return leger;
     }
+            
+    public String[] pasientlisten(){
+        if(pasientliste!=null){
+            Pasient løper;
+            pasienter = new String[pasientliste.size()];
+            int i = 0;
+            for(Map.Entry<String,Pasient> entry:pasientliste.entrySet()){
+                løper = entry.getValue();
+                pasienter[i]=løper.toString();
+                i++;
+            }
+            return pasienter;
+        }
+        leger = new String[]{"Ingen pasienter opprettet"};
+        return pasienter;
+    }
+    
+    public void visPasientCombo(){
+        velglege.setVisible(false); 
+        velgpasient.setVisible(true);
+        vislege.setVisible(true);
+        vispasient.setVisible(false);
+        VALG=2;
+    }
+            
+    public void visLegeCombo(){
+        velgpasient.setVisible(false); 
+        velglege.setVisible(true);
+        vislege.setVisible(false);
+        vispasient.setVisible(true);
+        VALG=1;
+    }
     
     private void oppDaterTabelen(){
         /*Denne metoden generer en ny tabell bassert på utskrevende resepter, 
@@ -248,32 +294,75 @@ public class KontrollørPanel extends JPanel{
         tabellen.nyInnData(spesifikklegereseptliste);
     }
  
-    private void oppDaterTabelenKategori(){
+    private void oppDaterTabelenKategori(int id){
         /*Denne metoden generer en ny tabell bassert på legen som blir valgt i
         comboboxen, og legger tabellen til i "vis data" panelet*/
         TreeMap<Integer,Resept> spesifikklegereseptliste = new TreeMap<>();
         TreeMap<Integer,Resept> spesifikkReseptgruppreseptliste = new TreeMap<>();
-        int m = velglege.getSelectedIndex();
-        String fullid = (String)velglege.getItemAt(m);
-        String legenøkkel = fullid.substring(0, 9);
+        if(id==1){
+            int m = velglege.getSelectedIndex();
+            String fullid = (String)velglege.getItemAt(m);
+            String legenøkkel = fullid.substring(0, 9);
+            Resept løper;
+            for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+                løper = entry.getValue();
+                if(legenøkkel.equalsIgnoreCase(løper.getLege())){
+                    spesifikklegereseptliste.put(løper.getReseptnr(),løper);
+                }
+            }
+            int n = velgReseptKat.getSelectedIndex();
+            String reseptgruppeid = (String)velgReseptKat.getItemAt(n);
+            char reseptgruppe = reseptgruppeid.charAt(13);
+            System.out.println(reseptgruppe);
+            for(Map.Entry<Integer,Resept> entry:spesifikklegereseptliste.entrySet()){
+                løper = entry.getValue();
+                if(reseptgruppe==(løper.getReseptgruppe())){
+                    spesifikkReseptgruppreseptliste.put(løper.getReseptnr(),løper);
+                }
+            }
+            tabellen.nyInnData(spesifikkReseptgruppreseptliste);
+            return;
+        }
+        else{
+            int n = velgpasient.getSelectedIndex();
+            String fullid = (String)velgpasient.getItemAt(n);
+            String pasientnøkkel = fullid.substring(0, 11);
+            Resept løper;
+            for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
+                løper = entry.getValue();
+                if(pasientnøkkel.equalsIgnoreCase(løper.getPasient())){
+                    spesifikklegereseptliste.put(løper.getReseptnr(),løper);
+                }
+            }
+            int m = velgReseptKat.getSelectedIndex();
+            String reseptgruppeid = (String)velgReseptKat.getItemAt(m);
+            char reseptgruppe = reseptgruppeid.charAt(13);
+            System.out.println(reseptgruppe);
+            for(Map.Entry<Integer,Resept> entry:spesifikklegereseptliste.entrySet()){
+                løper = entry.getValue();
+                if(reseptgruppe==(løper.getReseptgruppe())){
+                    spesifikkReseptgruppreseptliste.put(løper.getReseptnr(),løper);
+                }
+            }
+            tabellen.nyInnData(spesifikkReseptgruppreseptliste);
+        }
+    }
+    
+    private void oppDaterTabelenPasient(){
+        /*Denne metoden generer en ny tabell bassert på den innloggede legens 
+        utskrevende resepter, og legger tabellen til i "vis data" panelet*/
+        TreeMap<Integer,Resept> spesifikkpasientreseptliste = new TreeMap<>();
+        int n = velgpasient.getSelectedIndex();
+        String fullid = (String)velgpasient.getItemAt(n);
+        String pasientnøkkel = fullid.substring(0, 11);
         Resept løper;
         for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
             løper = entry.getValue();
-            if(legenøkkel.equalsIgnoreCase(løper.getLege())){
-                spesifikklegereseptliste.put(løper.getReseptnr(),løper);
+            if(pasientnøkkel.equalsIgnoreCase(løper.getPasient())){
+                spesifikkpasientreseptliste.put(løper.getReseptnr(),løper);
             }
         }
-        int n = velgReseptKat.getSelectedIndex();
-        String reseptgruppeid = (String)velgReseptKat.getItemAt(n);
-        char reseptgruppe = reseptgruppeid.charAt(13);
-        System.out.println(reseptgruppe);
-        for(Map.Entry<Integer,Resept> entry:spesifikklegereseptliste.entrySet()){
-            løper = entry.getValue();
-            if(reseptgruppe==(løper.getReseptgruppe())){
-                spesifikkReseptgruppreseptliste.put(løper.getReseptnr(),løper);
-            }
-        }
-        tabellen.nyInnData(spesifikkReseptgruppreseptliste);
+        tabellen.nyInnData(spesifikkpasientreseptliste);
     }
     
     public void visStatistikk(){
@@ -345,11 +434,20 @@ public class KontrollørPanel extends JPanel{
             else if(e.getSource()==velglege){
                 oppDaterTabelenLege();
             }
+            else if(e.getSource()==velgpasient){
+                oppDaterTabelenPasient();
+            }
             else if(e.getSource()==visalle){
                 oppDaterTabelen();
             }
             else if(e.getSource()==velgReseptKat){
-                oppDaterTabelenKategori();
+                oppDaterTabelenKategori(VALG);
+            }
+            else if(e.getSource()==vispasient){
+                visPasientCombo();
+            }
+            else if(e.getSource()==vislege){
+                visLegeCombo();
             }
         }
  
