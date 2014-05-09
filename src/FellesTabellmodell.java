@@ -13,10 +13,14 @@ public abstract class FellesTabellmodell extends AbstractTableModel{
     private static final int linjeteller = 0;
     
     public FellesTabellmodell(String[] kol){
-        this.kolonnenavn = kol;
+        kolonnenavn = kol;
     }
     
-    public String getColonName(int kol){
+    public void setKolonnetittler(String[] nykol){
+        kolonnenavn = nykol;
+    }
+    
+    public String getColumnName(int kol){
         return kolonnenavn[kol];
     }
     

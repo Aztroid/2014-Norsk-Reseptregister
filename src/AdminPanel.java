@@ -117,6 +117,7 @@ public class AdminPanel extends JPanel{
         infolege.setText("Leger i registeret:\n" + skrivUtlisten(LEGE));
         senterpanelreglege.add(infoscrolllege,c);
         infolege.setEditable(false);
+        c.gridx = 0;
         
         c.gridy = 1;
         senterpanelreglege.add(new JLabel("Autorisasjonsnr: "),c);
@@ -182,7 +183,8 @@ public class AdminPanel extends JPanel{
         infokont = new JTextArea(10,30);
         infokont.setEditable(false);
         infoscrollkont = new JScrollPane(infokont);
-        infokont.setText("Leger i registeret:\n" + skrivUtlisten(KONTROLLØR));
+        infokont.setText("Kontrollører i registeret:\n" + 
+                skrivUtlisten(KONTROLLØR));
         senterpanelregkont.add(infoscrollkont,c);
         c.gridx = 0;
         
@@ -284,6 +286,7 @@ public class AdminPanel extends JPanel{
             lagreAdminListene(LEGE);
             JOptionPane.showMessageDialog(null, "Autnr: " + legenøkkel + 
                     "\nPassord: " + passord );
+            infolege.setText("Leger i registeret:\n" + skrivUtlisten(LEGE));
         }
         else{
             infofelt.setText("Legen finnes i registeret fra før");
@@ -315,6 +318,8 @@ public class AdminPanel extends JPanel{
             lagreAdminListene(KONTROLLØR);
             JOptionPane.showMessageDialog(null, "KontNr: " + bruker + "\n" + 
                     passord );
+            infokont.setText("Kontrollører i registeret:\n" + 
+                skrivUtlisten(KONTROLLØR));
         }
         else{
             infofelt.setText("Kontrollør finnes i registeret fra før");

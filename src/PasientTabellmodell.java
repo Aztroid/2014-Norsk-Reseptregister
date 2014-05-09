@@ -4,18 +4,18 @@
  Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
-//Tabellmodell for Legetinformasjon
+//Tabellmodell for Pasientinformasjon
 
 import java.util.*;
 import javax.swing.table.*;
 
-public class LegeTabellmodell extends AbstractTableModel{
-    private String[] kolonnenavnresept = {"Autnr", "Navn", 
-        "Resept.Bev.", "Adr"};
-    private TreeMap<String,Lege> listen;
-    private LinkedList<Lege> data;
+public class PasientTabellmodell extends AbstractTableModel{
+    private final String[] kolonnenavnresept = {"Fnr", "Navn", 
+        "Lege"};
+    private TreeMap<String,Pasient> listen;
+    private LinkedList<Pasient> data;
     
-    public LegeTabellmodell(TreeMap<String,Lege> listen){
+    public PasientTabellmodell(TreeMap<String,Pasient> listen){
         this.listen=listen;
         data = new LinkedList<>(listen.values());
     }
@@ -41,16 +41,14 @@ public class LegeTabellmodell extends AbstractTableModel{
     
     @Override
     public Object getValueAt(int rad, int kol) {
-        Lege legen = data.get(rad);
-        Object[] linjen = legen.getTabelllinje();
+        Pasient pasienten = data.get(rad);
+        Object[] linjen = pasienten.getTabelllinje();
         switch(kol){
-            case 0: return linjen[0];//Autnr
+            case 0: return linjen[0];//Fnr
             case 1: return linjen[1];//Navn
-            case 2: return linjen[2];//Reseptbevilgning
-            case 3: return linjen[3];//Arbeidsstedr
+            case 2: return linjen[2];//Lege
             default: return null;
         }  
     }
 }
-
 

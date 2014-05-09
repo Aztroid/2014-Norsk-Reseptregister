@@ -11,30 +11,35 @@ import javax.swing.table.*;
 
 public class TabellVindu extends JPanel{
     private TreeMap<Integer,Resept> reseptliste;
+    private TreeMap<String,Pasient> personliste;
+    private TreeMap<String,Lege> legeliste;
     private TreeMap<String,String> medisinliste;
-    private LegeTabellmodell modellen;
-    final JTable tabellen;
-    private final String[] kolonnenavnlege = {"Dato", "Reseptnr.", "Personnr.", 
-        "Lege(Autnr.)", "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", 
-        "Reseptgruppe"};
-    private final String[] kolonnenavnmedisin = {"Dato", "Reseptnr.", "Personnr.", 
-        "Lege(Autnr.)", "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", 
-        "Reseptgruppe"};
+    private JTable tabellen;
     
-    public TabellVindu(TreeMap<Integer,Resept> reseptliste){
+    public TabellVindu(){
         super(new GridLayout(0,1));
-        this.reseptliste = reseptliste;
-        modellen = new LegeTabellmodell(kolonnenavnlege,this.reseptliste);
-        tabellen = new JTable(modellen);
+        tabellen = new JTable();
         tabellen.setPreferredScrollableViewportSize(new Dimension(500, 70));
         tabellen.setFillsViewportHeight(true);
-        
         JScrollPane skrollefeltet = new JScrollPane(tabellen);
         add(skrollefeltet);
     }
     
-    public void nyInnData(TreeMap<Integer,Resept> nyliste){
-        modellen.nyInnData(nyliste);
-        modellen.fireTableDataChanged();
+    public void nyInnDataResept(TreeMap<Integer,Resept> nyliste){
+        reseptliste = nyliste;
+        ReseptTabellModell nymodell = new ReseptTabellModell(reseptliste);
+        tabellen.setModel(nymodell);
+    }
+    
+    public void nyInnDataPasient(TreeMap<String,Pasient> nyliste){
+        personliste = nyliste;
+        PasientTabellmodell nymodell = new PasientTabellmodell(personliste);
+        tabellen.setModel(nymodell);
+    }
+    
+    public void nyInnDataLege(TreeMap<String,Lege> nyliste){
+        legeliste = nyliste;
+        LegeTabellmodell nymodell = new LegeTabellmodell(legeliste);
+        tabellen.setModel(nymodell);
     }
 }

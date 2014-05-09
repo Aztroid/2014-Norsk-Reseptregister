@@ -178,9 +178,9 @@ public class LogginnPanel extends JPanel{
             }
         }
         }
-        catch(NullPointerException NPE){
+        /*catch(NullPointerException NPE){
             infofelt.setText("Feil innlogginsdata, prøv igjen");
-        }
+        }*/
         catch(NumberFormatException nfe){
             infofelt.setText("Feil innlogginsdata, prøv igjen");
         }

@@ -24,6 +24,14 @@ public class Pasient extends Person{
         return lege;
     }
     
+    public Object[] getTabelllinje(){
+    /*"Dato", "Reseptnr.", "Personnr.", "Lege(Autnr.)", 
+    "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", "Reseptgruppe"*/
+        Object [] linjen = {
+            fødselsnr, super.toString(), lege};
+        return linjen;
+    }
+    
     public String toString(){
         return fødselsnr + ", " + super.toString();
     }

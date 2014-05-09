@@ -41,6 +41,14 @@ public class Lege extends Person{
         return;
     }
     
+    public Object[] getTabelllinje(){
+    /*"Dato", "Reseptnr.", "Personnr.", "Lege(Autnr.)", 
+    "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", "Reseptgruppe"*/
+        Object [] linjen = {
+            autorisasjonsnr, super.toString(), reseptbevilgning, arbeidssted};
+        return linjen;
+    }
+    
     public String toString(){
         return autorisasjonsnr + ", " + super.toString();
     }

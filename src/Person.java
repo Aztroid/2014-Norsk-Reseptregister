@@ -28,6 +28,14 @@ public class Person implements Serializable{
         return fornavn;
     }
     
+    public Object[] getTabelllinje(){
+    /*"Dato", "Reseptnr.", "Personnr.", "Lege(Autnr.)", 
+    "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", "Reseptgruppe"*/
+        Object [] linjen = {
+            "", toString(), "", ""};
+        return linjen;
+    }
+    
     public String toString(){
         //Metode som gir f.eks "Hansen, Ola
         return etternavn + ", " + fornavn;

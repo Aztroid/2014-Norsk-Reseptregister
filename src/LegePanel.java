@@ -12,6 +12,7 @@ import java.io.*;
 import java.util.*;
 import javax.swing.*;
 import javax.swing.border.*;
+import javax.swing.table.*;
 
 public class LegePanel extends JPanel{
     
@@ -42,10 +43,10 @@ public class LegePanel extends JPanel{
     private TitledBorder senterpanelgrense;
     
     //Senterpanel "visdata" datafelter
-    private JPanel senterpanelvisdata, senterpaneltop;
-    private JButton visalle, visdatapasienter;
+    private JPanel senterpanelvisdata, senterpaneltop, tabellpanel;
+    private JButton visalle, velgpasienter;
     private JComboBox vislegenspasienter;
-    private TabellVindu tabell;
+    private TabellVindu resepttabell;
     
     //Senterpanel "ny pasient" datafelter
     private JPanel senterpanelnypasient;
@@ -78,6 +79,8 @@ public class LegePanel extends JPanel{
         spesifikkreseptliste = new TreeMap<>();
         spesifikkpasientliste = new TreeMap<>();
         reseptbevilgning = reseptgodkjennelse;
+        filtrerReseptlisten();
+        filtrerPasientlisten();
         
         //SIDEPANEL
         sidepanel = new JPanel();
@@ -124,17 +127,14 @@ public class LegePanel extends JPanel{
         senterpaneltop.add(visalle);
            
         senterpaneltop.add(new JLabel("Pasient: "));
-        visdatapasienter = new JButton("Velg Pasient");
-        visdatapasienter.addActionListener(lytteren);
-        senterpaneltop.add(visdatapasienter);
+        velgpasienter = new JButton("Velg Pasient");
+        velgpasienter.addActionListener(lytteren);
+        senterpaneltop.add(velgpasienter);
         senterpanelvisdata.add(senterpaneltop,BorderLayout.PAGE_START);
         
         //Tabellvinduet
-        filtrerReseptlisten();
-        filtrerPasientlisten();
-        tabell = new TabellVindu(spesifikkreseptliste);
-        tabell.setOpaque(true);
-        senterpanelvisdata.add(tabell,BorderLayout.CENTER);
+        resepttabell = new TabellVindu();
+        senterpanelvisdata.add(resepttabell,BorderLayout.CENTER);
         
         //Senterpanel "ny Pasient"
         senterpanelnypasient = new JPanel(new GridBagLayout());
@@ -183,12 +183,8 @@ public class LegePanel extends JPanel{
         c.ipady = 5;
         
         senterpanelnyresept.add(new JLabel("Pasient(Fnr): "),c);
-        c.gridx = 1;
-        velgpasient = new JButton("Velg Pasient");
-        velgpasient.addActionListener(lytteren);
-        senterpanelnyresept.add(velgpasient,c);
         c.gridx = 0;
-
+        
         c.gridy = 1;
         senterpanelnyresept.add(new JLabel("Kategori: "),c);
         c.gridx = 1;
@@ -260,7 +256,8 @@ public class LegePanel extends JPanel{
         senterpanel.add(senterpanelnypasient, NY_PASIENT);
         senterpanel.add(senterpanelnyresept, NY_RESEPT);
         super.add(sidepanel, BorderLayout.LINE_START);
-        super.add(senterpanel, BorderLayout.CENTER);       
+        super.add(senterpanel, BorderLayout.CENTER);
+        oppDaterTabelen();
     }
     
     public void filtrerReseptlisten(){
@@ -301,32 +298,28 @@ public class LegePanel extends JPanel{
     public void nyPasient(){
         senterpanelgrense.setTitle("Ny Pasient");
         repaint();
-        /*Denne metoden viser "ny pasient" panelet som inneholder alle datafelter 
-        for å registrere nye pasienter for den innloggede legen*/
+        /*Denne metoden viser "ny pasient" panelet som inneholder alle 
+        datafelter for å registrere nye pasienter for den innloggede legen*/
         if(legenspasienter!=null){
             senterpanelnyresept.remove(legenspasienter);
         }
-        velgpasient.setVisible(true);
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,NY_PASIENT);
     }
     
     public void nyResept(){
         senterpanelgrense.setTitle("Ny Resept");
-        repaint();
-        if(legenspasienter!=null){
-            senterpanelnyresept.remove(legenspasienter);
-        }
+        leggTilCombobox();
         finnRiktigMedisinArray();
         /*Denne metoden viser "ny resept" panelet som inneholder alle datafelter 
         for å registrere nye resepter for den innloggede legen*/
-        velgpasient.setVisible(true);
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,NY_RESEPT);
     }
     
     public void visData(){
         senterpanelgrense.setTitle("Dine Resepter");
+        oppDaterTabelen();
         repaint();
         /*Denne metoden viser "vis data" panelet som inneholder tabellen og
         søkefeltene for tabellen*/
@@ -334,7 +327,7 @@ public class LegePanel extends JPanel{
             senterpaneltop.remove(vislegenspasienter);
             repaint();
         }
-        visdatapasienter.setVisible(true);
+        velgpasienter.setVisible(true);
         CardLayout c = (CardLayout)senterpanel.getLayout();
         //tabell.repaint();
         //senterpanelvisdata.revalidate();
@@ -345,7 +338,12 @@ public class LegePanel extends JPanel{
     private void oppDaterTabelen(){
         /*Denne metoden generer en ny tabell bassert på den innloggede legens 
         utskrevende resepter, og legger tabellen til i "vis data" panelet*/
-        tabell.nyInnData(spesifikkreseptliste);
+        try{
+            resepttabell.nyInnDataResept(spesifikkreseptliste);
+        }
+        catch(NullPointerException np){
+            System.out.println("Nullpointer");
+        }
     }
     
     private void oppDaterTabelenPasient(){
@@ -362,7 +360,7 @@ public class LegePanel extends JPanel{
                 spesifikkpasientreseptliste.put(løper.getReseptnr(),løper);
             }
         }
-        tabell.nyInnData(spesifikkpasientreseptliste);
+        resepttabell.nyInnDataResept(spesifikkpasientreseptliste);
     }
     
     private boolean blankePersonfelter(){
@@ -384,17 +382,23 @@ public class LegePanel extends JPanel{
             infofelt.setText("Et eller fler av feltene er tomme");
             return;
         }
+        String fødselsnrrregex = "\\d{11}";
         String pasientnøkkel = fødselsnr.getText();
         String fornavn = fornavnpasient.getText();
         String etternavn = etternavnpasient.getText();
         if(pasientliste.get(pasientnøkkel)==null){
-            Pasient ny = new Pasient(fornavn, etternavn, pasientnøkkel,
-                    legensautnr);
-            pasientliste.put(pasientnøkkel,ny);
-            lagreLegeListene(PASIENT);
-            infofelt.setText("Person registrert.");
-            filtrerPasientlisten();
-            return;
+            if(pasientnøkkel.matches(fødselsnrrregex)){
+                Pasient ny = new Pasient(fornavn, etternavn, pasientnøkkel,
+                        legensautnr);
+                pasientliste.put(pasientnøkkel,ny);
+                lagreLegeListene(PASIENT);
+                infofelt.setText("Person registrert.");
+                filtrerPasientlisten();
+            }
+            else{
+                infofelt.setText("Fødselsnummeret du har skrevet\ninn er ikke "
+                        + "et gyldig fødselsnummer");
+            }
         }
         else{
             infofelt.setText("Pasienten finnes\ni registeret fra før");
@@ -408,10 +412,10 @@ public class LegePanel extends JPanel{
             infofelt.setText("Et eller fler av feltene er tomme");
             return;
         }
+        String fødselsnrrregex = "\\d{11}";
         int m = legenspasienter.getSelectedIndex();
         String fullid = (String)legenspasienter.getItemAt(m);
         String pasientnøkkel = fullid.substring(0, 11);
-        String fødselsnrrregex = "\\d{11}";
         String legenøkkel = legensautnr;
         int n = medisinnøkkeler.getSelectedIndex();
         String medisinnøkkel = (String)medisinnøkkeler.getItemAt(n);
@@ -452,19 +456,24 @@ public class LegePanel extends JPanel{
                 lagreLegeListene(RESEPT);
                 filtrerReseptlisten();
                 senterpanelnyresept.remove(legenspasienter);
-                senterpaneltop.remove(vislegenspasienter);
-                velgpasient.setVisible(true);
-                senterpanel.repaint();
+                revalidate();
+                repaint();
+                nyResept();
             }
         }
     }
     
+    public void fåPasient(){
+        
+    }
+    
     public String[] pasientListen(){
-        if(spesifikkpasientliste!=null){
+        if(!spesifikkpasientliste.isEmpty()){
             Pasient løper;
             pasienter = new String[spesifikkpasientliste.size()];
             int i = 0;
-            for(Map.Entry<String,Pasient> entry:spesifikkpasientliste.entrySet()){
+            for(Map.Entry<String,Pasient> entry:spesifikkpasientliste.
+                    entrySet()){
                 løper = entry.getValue();
                 pasienter[i]=løper.toString();
                 i++;
@@ -477,16 +486,16 @@ public class LegePanel extends JPanel{
     
     public void leggTilCombobox(){
         filtrerPasientlisten();
-        velgpasient.setVisible(false);
         c.gridx = 1;
         c.gridy = 0;
         legenspasienter = new JComboBox(pasientListen());
+        legenspasienter.addActionListener(lytteren);
         senterpanelnyresept.add(legenspasienter,c);
     }
     
     public void leggTilComboboxvisdata(){
         filtrerPasientlisten();
-        visdatapasienter.setVisible(false);
+        velgpasienter.setVisible(false);
         vislegenspasienter = new JComboBox(pasientListen());
         vislegenspasienter.addActionListener(lytteren);
         senterpaneltop.add(vislegenspasienter);
@@ -592,16 +601,13 @@ public class LegePanel extends JPanel{
             else if(e.getSource()==regresept){
                 regResept();
             }
-            else if(e.getSource()==velgpasient){
-                leggTilCombobox();
-            }
             else if(e.getSource()==reseptkategorier){
                 finnRiktigMedisinArray();
             }
             else if(e.getSource()==medisinnøkkeler){
                 finnReseptgruppen();
             }
-            else if(e.getSource()==visdatapasienter){
+            else if(e.getSource()==velgpasienter){
                 leggTilComboboxvisdata();
             }
             else if(e.getSource()==vislegenspasienter){
