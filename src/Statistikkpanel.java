@@ -33,14 +33,14 @@ public class Statistikkpanel extends JPanel{
     
     public void genererPunkter(){
         //Gir statistikk grafen korrekte verdier for månedene sine resept utskrift.
-       for(int i = 0; i<førstelinje.length; i++){
-                førstelinje[i] = førstelinje[i]*4;
-       }
-       if(andrelinje!=null){
-           for(int i = 0; i<andrelinje.length; i++){
-                andrelinje[i] = andrelinje[i]*4;
-           }
-       }   
+        for(int i = 0; i<førstelinje.length; i++){
+            førstelinje[i] = førstelinje[i]*4;
+        }
+        if(andrelinje!=null){
+            for(int i = 0; i<andrelinje.length; i++){
+                    andrelinje[i] = andrelinje[i]*4;
+            }
+        }
     }
     
     public void paintComponent(Graphics g){

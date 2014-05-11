@@ -1658,7 +1658,6 @@ public class MedisinBibliotek {
         for (Map.Entry<String, String> entry : medisinliste.entrySet()) {
             løper = entry.getValue();
             løpernøkkel = entry.getKey();
-            System.out.println(løper.length()-p);
             if (løper.charAt(løper.length()-p) == medisinkategori) {
                 redigertliste.put(løpernøkkel, løper.substring
                     (0,løper.length()-p));
