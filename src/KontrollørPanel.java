@@ -47,14 +47,17 @@ public class KontrollørPanel extends JPanel{
     private TabellVindu visdatatabell;
     private JComboBox velglege, velgpasient, velgReseptKat;
     private JButton visalle, vispasient,vislege;
-
     
     //Senterpanel vispersonreg
-    private JPanel senterpanelvispersonreg, vispersonregnorth;
+    private JPanel senterpanelvispersonreg, vispersonregnorth, visendreresept;
+    private GridBagConstraints c;
     private TabellVindu vispersonregtabell;
     private JComboBox velglegepreg, velgpasientpreg, velgmedisinA, velgmedisinB,
             velgmedisinC;
-    private JButton visalleleger, visallepasienter;
+    private JButton endreresept, visallepasienter, setbc, setc, setingen, 
+            ferdig;
+    private EndreReseptLytter endrereseptlytter;
+    private Lege legennyresept;
     
    //Sennterpanel Statistikk  
     private JPanel senterpanelstatistikk, statistikknorth;
@@ -80,6 +83,7 @@ public class KontrollørPanel extends JPanel{
         this.legeliste = legeliste;
         this.reseptliste = reseptliste;
         medisinbiblioteket = new MedisinBibliotek();
+        endrereseptlytter = new EndreReseptLytter();
         
         //SIDEPANEL ramme
         sidepanel = new JPanel();
@@ -163,41 +167,92 @@ public class KontrollørPanel extends JPanel{
         
         //Personregisteret
         senterpanelvispersonreg = new JPanel(new BorderLayout());
-        vispersonregnorth = new JPanel(new FlowLayout());
+        vispersonregnorth = new JPanel(new GridBagLayout());
+        c = new GridBagConstraints();
+        c.fill = GridBagConstraints.BOTH;
+        c.gridx = 0;
+        c.gridy = 0;
+        c.ipadx = 5;
+        c.ipady = 5;
         
-        /*visalleleger = new JButton("Vis alle leger");
-        visalleleger.addActionListener(lytteren);
-        vispersonregnorth.add(visalleleger);
+        endreresept = new JButton("Endre Reseptbevilgning");
+        endreresept.addActionListener(lytteren);
+        vispersonregnorth.add(endreresept,c);
         
+        c.gridx = 1;
+        velglegepreg = new JComboBox(legelisten());
+        velglegepreg.addActionListener(lytteren);
+        vispersonregnorth.add(velglegepreg,c);
+        
+        c.gridx = 0;
+        c.gridy = 1;
         visallepasienter = new JButton("Vis alle pasienter");
         visallepasienter.addActionListener(lytteren);
-        vispersonregnorth.add(visallepasienter);*/
+        vispersonregnorth.add(visallepasienter,c);
         
-        velglegepreg = new JComboBox(legelisten());
-        visdatanorth.add(new JLabel("Søk i Listen"));
-        velglegepreg.addActionListener(lytteren);
-        vispersonregnorth.add(velglegepreg);
-        
+        c.gridx = 1;
         velgpasientpreg = new JComboBox(pasientlisten());
         velgpasientpreg.addActionListener(lytteren);
-        vispersonregnorth.add(velgpasientpreg);
+        vispersonregnorth.add(velgpasientpreg,c);
         
+        c.gridy = 2;
+        c.gridx = 0;
+        vispersonregnorth.add(new JLabel("Reseptgruppe A:"),c);
+        c.gridx = 1;
         velgmedisinA = new JComboBox(medisinlisten('A'));
         velgmedisinA.addActionListener(lytteren);
-        vispersonregnorth.add(velgmedisinA);
+        vispersonregnorth.add(velgmedisinA,c);
         
+        c.gridy = 3;
+        c.gridx = 0;
+        vispersonregnorth.add(new JLabel("Reseptgruppe B:"),c);
+        c.gridx = 1;
         velgmedisinB = new JComboBox(medisinlisten('B'));
         velgmedisinB.addActionListener(lytteren);
-        vispersonregnorth.add(velgmedisinB);
+        vispersonregnorth.add(velgmedisinB,c);
         
+        c.gridy = 4;
+        c.gridx = 0;
+        vispersonregnorth.add(new JLabel("Reseptgruppe C:"),c);
+        c.gridx = 1;
         velgmedisinC = new JComboBox(medisinlisten('C'));
         velgmedisinC.addActionListener(lytteren);
-        vispersonregnorth.add(velgmedisinC);
+        vispersonregnorth.add(velgmedisinC,c);
         
         //Visdata Tabell
         vispersonregtabell = new TabellVindu();
         senterpanelvispersonreg.add(vispersonregnorth,BorderLayout.PAGE_START);
         senterpanelvispersonreg.add(vispersonregtabell,BorderLayout.CENTER);
+        
+        //EndreResept 
+        visendreresept = new JPanel(new GridBagLayout());
+        c.gridx = 0;
+        c.gridy = 0;
+        c.ipadx = 5;
+        c.ipady = 5;
+        
+        setbc = new JButton("Reseptbev BC");
+        setbc.addActionListener(lytteren);
+        visendreresept.add(setbc,c);
+        //setbc.setVisible(false);
+        
+        c.gridy = 1;
+        setc = new JButton("Fjern B");
+        setc.addActionListener(lytteren);
+        visendreresept.add(setc,c);
+        //setc.setVisible(false);
+        
+        c.gridy = 2;
+        setingen = new JButton("Fjern C");
+        setingen.addActionListener(lytteren);
+        visendreresept.add(setingen,c);
+        //setingen.setVisible(false);
+        
+        c.gridy = 3;
+        ferdig = new JButton("Ferdig Med registering");
+        ferdig.addActionListener(lytteren);
+        visendreresept.add(ferdig,c);
+        senterpanelvispersonreg.add(visendreresept,BorderLayout.PAGE_END);
         
         //SENTERPANEL VISSTATISTIKK
         senterpanelstatistikk = new JPanel(new BorderLayout());
@@ -430,6 +485,7 @@ public class KontrollørPanel extends JPanel{
         /*Denne metoden viser "vis data" panelet som inneholder tabellen og
         søkefeltene for tabellen*/
         senterpanelgrense.setTitle("Personregister");
+        visendreresept.setVisible(false);
         repaint();
         oppDaterLegeTabelen();
         CardLayout c = (CardLayout)senterpanel.getLayout();
@@ -449,6 +505,28 @@ public class KontrollørPanel extends JPanel{
         /*Denne metoden generer en ny tabell bassert på utskrevende resepter, 
         og legger tabellen til i "vis data" panelet*/
         vispersonregtabell.nyInnDataPasient(pasientliste);
+    }
+    
+    public void visEndreReseptBev(){
+        try{
+            visendreresept.setVisible(true);
+            int n = velglege.getSelectedIndex();
+            String fullid = (String)velglege.getItemAt(n);
+            String legenøkkel = fullid.substring(0, 9);
+            legennyresept = legeliste.get(legenøkkel);
+            infofelt.setText("Reseptendring for lege:\n" + 
+                    legennyresept.toString() + 
+                    "\nKlikk på knappene for å endre resept");
+        }
+        catch(NullPointerException np){
+            System.out.println("Ingen lege funnet");
+        }
+        
+    }
+    
+    public void endreReseptBev(String bev){
+        legennyresept.setBevilgning(bev);
+        legeliste.put(legennyresept.getAutorisasjonsnr(),legennyresept);
     }
     
     public void visStatistikk(){
@@ -500,6 +578,25 @@ public class KontrollørPanel extends JPanel{
             }
         }
     }
+    
+    private class EndreReseptLytter implements ActionListener{
+        
+        public void actionPerformed(ActionEvent e) {
+            if(e.getSource()==ferdig){
+                visPersonReg();
+            }
+            else if (e.getSource()==setbc){
+                endreReseptBev("BC");
+            }
+            else if (e.getSource()==setc){
+                endreReseptBev("C");
+            }
+            else if (e.getSource()==setingen){
+                endreReseptBev("");
+            }
+        }   
+ 
+    }
 
     
     private class Lytter implements ActionListener{
@@ -538,7 +635,10 @@ public class KontrollørPanel extends JPanel{
             else if(e.getSource()==vispersonreg){
                 visPersonReg();
             }
-        }
+            else if(e.getSource()==endreresept){
+                visEndreReseptBev();
+            }
+        }   
  
     }
 }
