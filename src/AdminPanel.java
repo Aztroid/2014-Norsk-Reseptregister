@@ -4,6 +4,8 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
+//Sist redigert: 12.05.2014
+
 /*Dette er et sikkerhetspanel der leger og kontrollører kan opprettes.
 det er kun i dette panelet du kan opprette disse*/
 
@@ -32,6 +34,8 @@ public class AdminPanel extends JPanel{
     //Senterpanel datafelter
     private JPanel senterpanel;
     private Border senterpanelgrense;
+    
+    //CardLayout identifikatorer
     private final String BAKGRUNN = "6";
     private final String NYLEGE= "7";
     private final String NYKONTROLLØR = "8";

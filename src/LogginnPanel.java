@@ -4,9 +4,10 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
+//Sist redigert: 12.05.2014
+
 /*Denne klassen definerer panelet som dukker opp i hovedrammen
-by default
-*/
+som det første*/
 
 import java.awt.*;
 import java.awt.event.*;
@@ -15,10 +16,14 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class LogginnPanel extends JPanel{
+    //Felles datafelter
+    
+    //CardLayout identifikatorer
     private final String BAKGRUNN = "2";
     private final String LEGE_DATA = "3";
     private final String KONTROLL_DATA = "4";
     private final String LOGG_INN = "5";
+    
     private Lytter lytteren;
     private Hovedramme hovedrammekopi;
     private TreeMap<String,Pasient> pasientliste;
@@ -53,14 +58,13 @@ public class LogginnPanel extends JPanel{
             TreeMap<Integer,Resept> reseptliste,
             TreeMap<Integer,Kontrollør> kontrollørliste){
         super(new BorderLayout());
-        lytteren = new Lytter();
-        
         this.pasientliste = pasientliste;
         this.legeliste = legeliste;
         this.reseptliste = reseptliste;
         this.kontrollørliste = kontrollørliste;
+        lytteren = new Lytter();
         
-        //SIDEPANEL
+        //Sidepanel
         sidepanel = new JPanel();
         sidepanel.setLayout(new GridLayout(8,1,3,3));
         sidepanelgrense = BorderFactory.createTitledBorder("Navigering");
@@ -83,7 +87,7 @@ public class LogginnPanel extends JPanel{
         admin.addActionListener(lytteren);
         sidepanel.add(admin);
 
-        //SENTERPANEL ramme
+        //Senterpanel ramme
         senterpanel = new JPanel(new CardLayout());
         senterpanelgrense = BorderFactory.createTitledBorder("Logg inn");
         senterpanel.setBorder(senterpanelgrense);
@@ -211,19 +215,14 @@ public class LogginnPanel extends JPanel{
         }
     }
     
-    public void visFørste(){
-        /*Metode som viser det første panelet i lagt til i senterpanelet
-        dette er visdatapanelet før tabellen er generert*/
-        CardLayout c = (CardLayout)senterpanel.getLayout();
-        c.first(senterpanel);
-    }
-    
     public void visAdminPanel(){
+        //Viser administrasjonspanelet
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
         hovedrammekopi.visAdmin();
     }
     
     public void visLegeVindu(String autnr, String reseptbev){
+        //Viser Legepanelet
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
         hovedrammekopi.add(new LegePanel(autnr,reseptbev,
                 pasientliste,reseptliste),LEGE_DATA);
@@ -231,6 +230,7 @@ public class LogginnPanel extends JPanel{
     }
     
     public void visKontrollørLogginn(){
+        //Viser Kontrollørpanelet
         hovedrammekopi = (Hovedramme) SwingUtilities.getWindowAncestor(this);
         hovedrammekopi.add(new KontrollørPanel(pasientliste,legeliste,
                 reseptliste),KONTROLL_DATA);
@@ -238,6 +238,7 @@ public class LogginnPanel extends JPanel{
     }
     
     private void blankelogginnfelter(){
+        //Sjekker om logginnfelter er blanke
         username.setText("");
         password.setText("");    
     }

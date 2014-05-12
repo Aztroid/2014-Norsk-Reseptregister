@@ -4,7 +4,9 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
-//Tabellmodell for Medisininformasjon 
+//Sist redigert: 12.05.2014
+
+//Tabellmodell for Medisininformasjon
 
 import java.util.*;
 import javax.swing.table.*;
@@ -39,4 +41,4 @@ public class MedisinTabellModell extends AbstractTableModel{
     public Object getValueAt(int rad, int kol) {
         return data[ rad][ kol];
     }    
-}
+}//End of class MedisinTabellModell

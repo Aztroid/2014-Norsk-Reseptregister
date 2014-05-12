@@ -4,8 +4,10 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
+//Sist redigert: 12.05.2014
+
 /*Dette er superklassen person som skal gi sine datafelter/metoder til
-Lege og Pasient
+Lege, Pasient, og Kontrollør
 */
 
 import java.io.Serializable;
@@ -30,8 +32,6 @@ public class Person implements Serializable{
     }
     
     public Object[] getTabelllinje(){
-    /*"Dato", "Reseptnr.", "Personnr.", "Lege(Autnr.)", 
-    "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", "Reseptgruppe"*/
         Object [] linjen = {
             "", toString(), "", ""};
         return linjen;
@@ -41,4 +41,4 @@ public class Person implements Serializable{
         //Metode som gir f.eks "Hansen, Ola
         return etternavn + ", " + fornavn;
     }
-}
+}//End of class Person

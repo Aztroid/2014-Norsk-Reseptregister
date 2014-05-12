@@ -4,6 +4,10 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
+//Sist redigert: 12.05.2014
+
+//Denne klassen definerer hvordan 
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;

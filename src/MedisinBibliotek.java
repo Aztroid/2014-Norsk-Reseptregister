@@ -4,6 +4,12 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
+//Sist redigert: 12.05.2014
+
+/*Denne klassen repressenterer en medisinbibliotek hvor man kan hente 
+infomasjon om alle medisinene vi har med i registeret*/
+
+
 import java.util.*;
 
 public class MedisinBibliotek {
@@ -12,12 +18,12 @@ public class MedisinBibliotek {
 
     public MedisinBibliotek() {
         medisinliste = new TreeMap<>();
-        fyllListen();
+        fyllListen(); //Se metoden for nærmere beskrivelse
     }
 
     public void fyllListen() {
-        /*Fyller listen med verdier fra txt fil med oversikt over medisinkoder og
-         reseptgrupper hentet fra felleskatalogen*/
+        /*Fyller listen med innskrevne verdier med oversikt over medisinkoder
+         informasjonen er hentet fra felleskatalogen*/
         medisinliste.put("J01F A01", "Abboticin C");
         medisinliste.put("J02A A01", "Abelcet C");
         medisinliste.put("N05A X12", "Abilify C");
@@ -1620,10 +1626,12 @@ public class MedisinBibliotek {
     }
 
     public TreeMap<String, String> getBibliotek() {
+        //Returnnerer medisinlisten tilbake til kallstedet
         return medisinliste;
     }
 
     public String[] getKodearray(char medisinkategori) {
+        //Gir en array over alle preparater innenfor en gitt medisinkategori
         TreeMap<String, String> redigertliste = new TreeMap<>();
         String[] lista;
         String løper;
@@ -1648,7 +1656,8 @@ public class MedisinBibliotek {
         return lista;
     }
     
-    public String[] getReseptArray(char medisinkategori) {
+    public String[] getReseptArray(char reseptkategori) {
+        //Gir en array over alle preparater innenfor en gitt reseptkategori
         TreeMap<String, String> redigertliste = new TreeMap<>();
         String[] lista;
         String løper;
@@ -1658,7 +1667,7 @@ public class MedisinBibliotek {
         for (Map.Entry<String, String> entry : medisinliste.entrySet()) {
             løper = entry.getValue();
             løpernøkkel = entry.getKey();
-            if (løper.charAt(løper.length()-p) == medisinkategori) {
+            if (løper.charAt(løper.length()-p) == reseptkategori) {
                 redigertliste.put(løpernøkkel, løper.substring
                     (0,løper.length()-p));
             }
@@ -1672,6 +1681,6 @@ public class MedisinBibliotek {
         }
         return lista;
     }
-}
+}//End of class MedisinBibliotek
 
 

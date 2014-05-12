@@ -4,6 +4,8 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
+//Sist redigert: 12.05.2014
+
 /*Dette panelet er vinduet hvor den innloggede legen får oversikt/kan registrere
   nye resepter, det er kun her resepter kan registreres*/
 
@@ -37,14 +39,17 @@ public class LegePanel extends JPanel{
     private JButton nypasient,nyresept,gåtilbake,visdata;
     
     //Senterpanel datafelter
+    
+    //CardLayout identifikatorer
     private final String VISDATA = "1";
     private final String NY_PASIENT = "2";
     private final String NY_RESEPT = "3";
+    
     private JPanel senterpanel;
     private TitledBorder senterpanelgrense;
     
     //Senterpanel "visdata" datafelter
-    private JPanel senterpanelvisdata, senterpaneltop, tabellpanel;
+    private JPanel senterpanelvisdata, senterpaneltop;
     private JButton visalle, velgpasienter;
     private JComboBox vislegenspasienter;
     private TabellVindu resepttabell;
@@ -298,6 +303,7 @@ public class LegePanel extends JPanel{
     public void nyPasient(){
         /*Denne metoden viser "ny pasient" panelet som inneholder alle 
         datafelter for å registrere nye pasienter for den innloggede legen*/
+        infofelt.setText("Registrer en ny pasient");
         senterpanelgrense.setTitle("Ny Pasient");
         repaint();
         if(legenspasienter!=null){
@@ -310,6 +316,7 @@ public class LegePanel extends JPanel{
     public void nyResept(){
         /*Denne metoden viser "ny resept" panelet som inneholder alle datafelter 
         for å registrere nye resepter for den innloggede legen*/
+        infofelt.setText("Registrer en ny resept på en\nav dine pasienter");
         senterpanelgrense.setTitle("Ny Resept");
         leggTilCombobox();
         finnRiktigMedisinArray();
@@ -429,8 +436,8 @@ public class LegePanel extends JPanel{
             reseptnøkkel = 1+reseptliste.lastKey();
         }
         if(!pasientnøkkel.matches(fødselsnrrregex)){
-            infofelt.setText("Fødselsnummeret du har skrevet\ninn er ikke et "
-                    + "gyldig fødselsnummer");
+            infofelt.setText("Velg en pasient eller opprett en ny\npasient"
+                    + " ved å klikke på \"Ny Pasient\"\n-knappen");
             return;
         }
         else if(pasientliste.get(pasientnøkkel)==null){

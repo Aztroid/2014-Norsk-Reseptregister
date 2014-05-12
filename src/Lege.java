@@ -4,6 +4,8 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
+//Sist redigert: 12.05.2014
+
 //Denne klassen definerer objektet Lege
 
 public class Lege extends Person{
@@ -21,23 +23,27 @@ public class Lege extends Person{
     }
 
     public String getArbeidssted(){
+        //Returnerer arbeidsstedet
         return arbeidssted;
     }
 
     public String getAutorisasjonsnr() {
+        //Returnerer legens autorisasjonsnr
         return autorisasjonsnr;
     }
     
     public String getPword() {
+        //Returnerer legens passord
         return pword;
     }
     
     public String getBevilgning(){
-        
+        //Returnerer legens reseptbevilgning
         return reseptbevilgning;
     }
     
     public void setBevilgning(String s){
+        //Setter legens reseptbevilgning til innkommende String
         reseptbevilgning = s;
         return;
     }
@@ -51,6 +57,7 @@ public class Lege extends Person{
     }
     
     public String toString(){
+        //Returnerer en String med autnr + navn
         return autorisasjonsnr + ", " + super.toString();
     }
 }//End of class Lege

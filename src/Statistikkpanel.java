@@ -4,6 +4,10 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
+//Sist redigert: 12.05.2014
+
+/*Dette panelet tegener graframmen, og legger til grafer i det*/
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
@@ -16,17 +20,16 @@ import javax.swing.JPanel;
 
 public class Statistikkpanel extends JPanel{
     
-    //Kordinatdata
+    //Koordinatdata
     private int[] førstelinje = new int[12];
     private int[] andrelinje = new int[12];
     
     public void genererPunkter(){
         /*Gir statistikk grafen korrekte verdier for månedene sine resept 
-        utskrift.*/
+        utskrifter. De multipliseres slik at de passer den opptegnede tabellen*/
         int multipliserer = 4;
         for(int i = 0; i<førstelinje.length; i++){
                 førstelinje[i] = førstelinje[i]*multipliserer;
-                System.out.println(førstelinje[i]);
         }
         if(andrelinje!=null){
             for(int i = 0; i<andrelinje.length; i++){
@@ -36,32 +39,35 @@ public class Statistikkpanel extends JPanel{
     }
     
     public void setNyeKordinaterFørste(int[] linjen){
+        //Setter nye kordinater for førte bargraf til panelet
         førstelinje = linjen;
     }
     
     public void setNyeKordinaterAndre(int[] linjen){
+        //Setter nye kordinater for andre bargraf til panelet
         andrelinje = linjen;
     }
     
     public void paintComponent(Graphics g){
+        //Oppretter en en grafisk component
         super.paintComponent(g);
-        Graphics2D graph2 = (Graphics2D)g;
+        Graphics2D graph2 = (Graphics2D)g; //Oppretter ett 2d grafisk objekt for tegning av grafen
         graph2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                             RenderingHints.VALUE_ANTIALIAS_ON);
         
-      
-       this.setBackground(Color.WHITE);
-               
+       //Setter bakgrunnsfargen til hvit
+        this.setBackground(Color.WHITE);
+        //oppretter x og y linjene       
         Shape drawLine = new Line2D.Float(55, 25, 55 , 455);
 	Shape drawLine2 = new Line2D.Float(55, 455, 1000, 455);
         
         graph2.setPaint(Color.BLACK);
 	
-        //x og y linjen
+        //tegner x og y linjen
         graph2.draw(drawLine);
         graph2.draw(drawLine2);      
         
-        //Rektangelgraph 1
+        //Her opprettes rektangel objekter og med koordinater for fremstilling av korrekte verdier for den første bar-grafen
         graph2.fillRect( 55, 455 - førstelinje[0], 40, førstelinje[0]);
 	graph2.setPaint(Color.BLACK);
 	graph2.draw3DRect(55, 455 - førstelinje[0], 40, førstelinje[0], true);
@@ -126,8 +132,9 @@ public class Statistikkpanel extends JPanel{
 	graph2.setPaint(Color.RED);
 
         
-        //Andrelinje rektangel
+        //Her opprettes rektangel objekter og med koordinater for fremstilling av korrekte verdier for den andre bar-grafen
         if(andrelinje!=null){
+        //if test for å sørge for at det er verdier i andrelinje arrayen
         graph2.fillRect( 95, 455 - andrelinje[0], 40, andrelinje[0]);
 	graph2.setPaint(Color.BLACK);
 	graph2.draw3DRect(95, 455 - andrelinje[0], 40, andrelinje[0], true);
@@ -191,7 +198,7 @@ public class Statistikkpanel extends JPanel{
 	graph2.draw3DRect(965, 455 - andrelinje[11], 40, andrelinje[11], true);
 	graph2.setPaint(Color.BLUE);
         }
-	
+	//Her settes fonten og det numeriske og mnds verdiene langs x og y linjen
         g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
         g.setColor(Color.BLACK);
 	g.drawString("100 -", 10, 55);
@@ -218,5 +225,5 @@ public class Statistikkpanel extends JPanel{
 	g.drawString("| nov ", 855, 475);
 	g.drawString("| des ", 935, 475);	
     }
-}
+}//End of class Statistikkpanel
 

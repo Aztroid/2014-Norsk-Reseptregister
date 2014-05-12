@@ -4,6 +4,8 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
+//Sist redigert: 12.05.2014
+
 import java.awt.*;
 import java.awt.event.*;
 import java.io.*;
@@ -16,9 +18,13 @@ import javax.swing.border.*;
 
 public class Hovedramme extends JFrame{
     
-//Hovedrammens datafelter
+    //Hovedrammens datafelter
+    
+    //CardLayout identifikatorer
     private final String LOGG_INN = "0";
     private final String ADMIN = "1";
+    
+    
     private final int KONTROLLØR = 1;
     private final int LEGE = 2;
     private final int PASIENT = 3;

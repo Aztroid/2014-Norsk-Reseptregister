@@ -4,6 +4,8 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
+//Sist redigert: 12.05.2014
+
 //Tabellmodell for Reseptinformasjon
 
 import java.util.*;
@@ -42,6 +44,7 @@ public class ReseptTabellModell extends AbstractTableModel{
     
     @Override
     public Object getValueAt(int rad, int kol) {
+        //Demme metdoden mater tabellen med linjer i form av object-arrays
         Resept resepten = data.get(rad);
         Object[] linjen = resepten.getTabelllinje();
         switch(kol){
@@ -57,4 +60,4 @@ public class ReseptTabellModell extends AbstractTableModel{
             default: return null;
         }  
     }
-}
+}//End of class ReseptTabellModell
