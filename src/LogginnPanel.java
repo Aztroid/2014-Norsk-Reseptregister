@@ -1,7 +1,8 @@
 /*Hovedprosjekt Dats-1600
- William B. Wold, s183670, HIINGDATA13H1AA
- Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
- Vegar Nygård, s193362, HIINGDATA13H1AA*/
+GRUPPE 6
+William B. Wold, s183670, HIINGDATA13H1AA
+Vegar Nygård, s193362, HIINGDATA13H1AA
+ */
 
 /*Denne klassen definerer panelet som dukker opp i hovedrammen
 by default
@@ -242,7 +243,7 @@ public class LogginnPanel extends JPanel{
     }
     
     private class Lytter implements ActionListener{
-
+        //Denne lytteren finner ut hva brukeren klikker på av knapper i panelet
         public void actionPerformed(ActionEvent e) {
             if(e.getSource()==logginn){
                 visLogginn();  

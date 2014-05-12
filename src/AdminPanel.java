@@ -1,8 +1,11 @@
 /*Hovedprosjekt Dats-1600
+GRUPPE 6
 William B. Wold, s183670, HIINGDATA13H1AA
-Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
+
+/*Dette er et sikkerhetspanel der leger og kontrollører kan opprettes.
+det er kun i dette panelet du kan opprette disse*/
 
 import java.awt.*;
 import java.awt.event.*;
@@ -12,11 +15,8 @@ import javax.swing.*;
 import javax.swing.border.*;
 
 public class AdminPanel extends JPanel{
-    private final String BAKGRUNN = "6";
-    private final String NYLEGE= "7";
-    private final String NYKONTROLLØR = "8";
-    private final int KONTROLLØR = 1;
-    private final int LEGE = 2;
+    
+    //Felles Datafelter
     private Lytter lytteren;
     private Hovedramme hovedrammekopi;
     private TreeMap<String,Lege> legeliste;
@@ -32,11 +32,16 @@ public class AdminPanel extends JPanel{
     //Senterpanel datafelter
     private JPanel senterpanel;
     private Border senterpanelgrense;
+    private final String BAKGRUNN = "6";
+    private final String NYLEGE= "7";
+    private final String NYKONTROLLØR = "8";
+    private final int KONTROLLØR = 1;
+    private final int LEGE = 2;
     
     //Senterpanel Bakgrunn
     private JPanel senterpanelbakgrunn;
     
-    //Senterpanel reglege
+    //Senterpanelreglege
     private JTextArea infolege;
     private JScrollPane infoscrolllege;
     private JPanel senterpanelreglege;
@@ -52,7 +57,7 @@ public class AdminPanel extends JPanel{
     private boolean gruppeB;
     private boolean gruppeC;
     
-    //Senterpanel regKont
+    //SenterpanelregKontøllør
     private JTextArea infokont;
     private JScrollPane infoscrollkont;
     private static Integer kontnøkkel;
@@ -62,6 +67,7 @@ public class AdminPanel extends JPanel{
     
     public AdminPanel(Integer sistekontrollør,TreeMap<String,Lege> legeliste,
             TreeMap<Integer,Kontrollør> kontrollørliste){
+        //Initialiserer felles datafelter
         super(new BorderLayout());
         lytteren = new Lytter();
         kontnøkkel = ++sistekontrollør;
@@ -93,7 +99,7 @@ public class AdminPanel extends JPanel{
         nykontrollør.addActionListener(lytteren);
         sidepanel.add(nykontrollør);
         
-        //SENTERPANEL ramme
+        //Senterpanel ramme
         senterpanel = new JPanel(new CardLayout());
         senterpanelgrense = BorderFactory.createTitledBorder("ADMINISTRATOR");
         senterpanel.setBorder(senterpanelgrense);
@@ -101,7 +107,7 @@ public class AdminPanel extends JPanel{
         //Senterpanel Bakgrunn
         senterpanelbakgrunn = new JPanel();
         
-        //SENTERPANEL Reglege:
+        //Senterpanel Reglege:
         tegnlytteren = new Tegnlytter();
         senterpanelreglege = new JPanel(new GridBagLayout());
         c = new GridBagConstraints();
@@ -232,14 +238,14 @@ public class AdminPanel extends JPanel{
     }
     
     public void visNylege(){
-        //Viser Logginn Panelet
+        //Viser Panelet for registrering av lege
         infofelt.setText("Registrer ny lege");
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,NYLEGE);
     }
     
     public void visNyKont(){
-        //Viser Logginn Panelet
+        //Viser Panelet for registrering av Kontrollør
         infofelt.setText("Registrer ny Kontrollør");
         CardLayout c = (CardLayout)senterpanel.getLayout();
         c.show(senterpanel,NYKONTROLLØR);
@@ -253,6 +259,8 @@ public class AdminPanel extends JPanel{
     }
     
     private void regNyLege(){
+        /*Registerer en ny lege i systemet om bruker innskrevende informasjon
+        er korrekt*/
         if(blankeLegefelter()){
             infofelt.setText("Et eller fler av feltene er tomme");
             return;
@@ -294,12 +302,14 @@ public class AdminPanel extends JPanel{
     }
     
     private boolean blankekontfelter(){
-        //Sjekker for blanke felter ved registrering av lege
+        //Sjekker for blanke felter ved registrering av kontrollør
         return (fornavnkont.getText().matches("")||etternavnkont.getText().
                 matches("")||arbeidsstedkont.getText().matches(""));
     }
     
     private void regNyKont(){
+        /*Registerer en ny kontrollør i systemet om bruker innskrevende 
+        informasjon er korrekt*/
         if(blankekontfelter()){
             infofelt.setText("Et eller fler av feltene er tomme");
             return;
@@ -327,6 +337,8 @@ public class AdminPanel extends JPanel{
     }
     
    private String tilfeldiString(){
+       /*Denne klassen generer et høysikkerhets passord for innlogging som en
+       lege eller kontrollør.*/
        /*
        StringBuilder passordGenerator = new StringBuilder();
        int n = 7;
@@ -347,6 +359,8 @@ public class AdminPanel extends JPanel{
    }
     
     public void lagreAdminListene(int n){
+        /*Denne metoden lagrer legelisten og kontrollørlisten slik de er på 
+        tidspunktet for metodekallet*/
         if(n==LEGE){
             try(ObjectOutputStream utfil = new ObjectOutputStream(
                     new FileOutputStream("src/legeliste.data"))){
@@ -378,6 +392,8 @@ public class AdminPanel extends JPanel{
     }
     
     public String skrivUtlisten(int n){
+        /*Denne metoden skriver ut listen på leger og kontrollører slik at 
+        administrator kan ha kontroll på hva som er i listene fra før*/
         String tekst = "";
         if(n==KONTROLLØR){
             for(Map.Entry<Integer,Kontrollør> entry:kontrollørliste.entrySet()){
@@ -395,6 +411,9 @@ public class AdminPanel extends JPanel{
     }
     
     private class Tegnlytter implements ItemListener{
+        /*Denne lytteren sjekker til en hver tid hva bruker velger av checkboxer
+        og setter riktige boolske verdier til hjelpefeltene for å sette riktig
+        reseptbevilgning på leger som skal registreres*/
         public void itemStateChanged(ItemEvent e){
             gruppeA = Abox.isSelected();
             gruppeB = Bbox.isSelected();
@@ -403,7 +422,7 @@ public class AdminPanel extends JPanel{
     }
     
     private class Lytter implements ActionListener{
-
+        //Denne lytteren finner ut hva brukeren klikker på av knapper i panelet
         public void actionPerformed(ActionEvent e) {
             if(e.getSource()==tilbake){
                 tilbakeTilMeny();
@@ -423,5 +442,5 @@ public class AdminPanel extends JPanel{
             }
         }
     }
-}
+}//End of class AdminPanel
 

@@ -1,8 +1,10 @@
 /*Hovedprosjekt Dats-1600
+GRUPPE 6
 William B. Wold, s183670, HIINGDATA13H1AA
-Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
-Vegar Nyg�rd, s193362, HIINGDATA13H1AA
+Vegar Nygård, s193362, HIINGDATA13H1AA
  */
+
+//Denne klassen definerer objektet Kontrollør
 
 public class Kontrollør extends Person{
     private String pword;
@@ -29,7 +31,8 @@ public class Kontrollør extends Person{
     }
     
     public String toString(){
+        //Viser all data registrert om kontrolløren
         return super.toString() + "Arbeidssted: " + arbeidssted
                 + "\nKontrollørnr: " + kontrollørnr;
     }
-}
+}//End of class Kontrollør

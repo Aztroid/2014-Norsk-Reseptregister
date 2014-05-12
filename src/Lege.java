@@ -1,9 +1,10 @@
 /*Hovedprosjekt Dats-1600
- William B. Wold, s183670, HIINGDATA13H1AA
- Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
- Vegar Nygård, s193362, HIINGDATA13H1AA*/
+GRUPPE 6
+William B. Wold, s183670, HIINGDATA13H1AA
+Vegar Nygård, s193362, HIINGDATA13H1AA
+ */
 
-//Denne klassen beskriver resepter
+//Denne klassen definerer objektet Lege
 
 public class Lege extends Person{
     private String pword;
@@ -42,8 +43,8 @@ public class Lege extends Person{
     }
     
     public Object[] getTabelllinje(){
-    /*"Dato", "Reseptnr.", "Personnr.", "Lege(Autnr.)", 
-    "Medisin(ACTnr.)", "Mengde", "DDD", "Kategori", "Reseptgruppe"*/
+    /*Denne metoden returnerer en linje med all lege informasjon 
+        til en JTabel med modellen LegeTabellModell*/
         Object [] linjen = {
             autorisasjonsnr, super.toString(), reseptbevilgning, arbeidssted};
         return linjen;
@@ -52,4 +53,4 @@ public class Lege extends Person{
     public String toString(){
         return autorisasjonsnr + ", " + super.toString();
     }
-}
+}//End of class Lege

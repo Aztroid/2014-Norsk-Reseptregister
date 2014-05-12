@@ -1,46 +1,46 @@
+/*Hovedprosjekt Dats-1600
+GRUPPE 6
+William B. Wold, s183670, HIINGDATA13H1AA
+Vegar Nygård, s193362, HIINGDATA13H1AA
+ */
+
 import java.awt.Color;
 import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
+import static java.awt.PageAttributes.ColorType.COLOR;
 import java.awt.RenderingHints;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
 import javax.swing.JPanel;
 
-/*Hovedprosjekt Dats-1600
- William B. Wold, s183670, HIINGDATA13H1AA
- Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
- Vegar Nygård, s193362, HIINGDATA13H1AA
- */
-
 public class Statistikkpanel extends JPanel{
     
     //Kordinatdata
-    private int[] førstelinje;
-    private int[] andrelinje;
-
-            
-    public Statistikkpanel(int[] førstekord){
-        førstelinje = førstekord;
-        genererPunkter();
-    }
-    
-    public Statistikkpanel(int[] førstekord, int[] andrekord ){
-        førstelinje = førstekord;
-        andrelinje = andrekord;
-        genererPunkter();
-    }
+    private int[] førstelinje = new int[12];
+    private int[] andrelinje = new int[12];
     
     public void genererPunkter(){
-        //Gir statistikk grafen korrekte verdier for månedene sine resept utskrift.
+        /*Gir statistikk grafen korrekte verdier for månedene sine resept 
+        utskrift.*/
+        int multipliserer = 4;
         for(int i = 0; i<førstelinje.length; i++){
-            førstelinje[i] = førstelinje[i]*4;
+                førstelinje[i] = førstelinje[i]*multipliserer;
+                System.out.println(førstelinje[i]);
         }
         if(andrelinje!=null){
             for(int i = 0; i<andrelinje.length; i++){
-                    andrelinje[i] = andrelinje[i]*4;
+                  andrelinje[i] = andrelinje[i]*multipliserer;
             }
-        }
+        }   
+    }
+    
+    public void setNyeKordinaterFørste(int[] linjen){
+        førstelinje = linjen;
+    }
+    
+    public void setNyeKordinaterAndre(int[] linjen){
+        andrelinje = linjen;
     }
     
     public void paintComponent(Graphics g){
@@ -48,84 +48,149 @@ public class Statistikkpanel extends JPanel{
         Graphics2D graph2 = (Graphics2D)g;
         graph2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
                             RenderingHints.VALUE_ANTIALIAS_ON);
-        Graphics2D graph3 = (Graphics2D)g;
-        graph3.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
-                            RenderingHints.VALUE_ANTIALIAS_ON);
-       
+        
+      
        this.setBackground(Color.WHITE);
                
         Shape drawLine = new Line2D.Float(55, 25, 55 , 455);
 	Shape drawLine2 = new Line2D.Float(55, 455, 1000, 455);
         
-        //førstelinje
-	Shape jan = new Line2D.Float(55, 455, 135, 455 - førstelinje[0]);
-	Shape feb = new Line2D.Float(135, 455 - førstelinje[0], 215, 455 - førstelinje[1]);
-	Shape mar = new Line2D.Float(215, 455 - førstelinje[1], 295, 455 - førstelinje[2]);
-	Shape apr = new Line2D.Float(295, 455 - førstelinje[2], 375, 455 - førstelinje[3]);
-	Shape may = new Line2D.Float(375, 455 - førstelinje[3], 455, 455 - førstelinje[4]);
-	Shape jun = new Line2D.Float(455, 455 - førstelinje[4], 535, 455 - førstelinje[5]);
-	Shape jul = new Line2D.Float(535, 455 - førstelinje[5], 615, 455 - førstelinje[6]);		
-	Shape aug = new Line2D.Float(615, 455 - førstelinje[6], 695, 455 - førstelinje[7]);
-	Shape sep = new Line2D.Float(695, 455 - førstelinje[7], 775, 455 - førstelinje[8]);
-	Shape oct = new Line2D.Float(775, 455 - førstelinje[8], 855, 455 - førstelinje[9]);	
-	Shape nov = new Line2D.Float(855, 455 - førstelinje[9], 935, 455 - førstelinje[10]);
-	Shape dec = new Line2D.Float(935, 455 - førstelinje[10], 1015, 455 - førstelinje[11]);
-        
-        //andrelinje
-        
-        /*
-        Shape jan2 = new Line2D.Float(55, 455, 135, 455 - andrelinje[0]);
-	Shape feb2 = new Line2D.Float(135, 455 - andrelinje[0], 215, 455 - andrelinje[1]);
-	Shape mar2 = new Line2D.Float(215, 455 - andrelinje[1], 295, 455 - andrelinje[2]);
-	Shape apr2 = new Line2D.Float(295, 455 - andrelinje[2], 375, 455 - andrelinje[3]);
-	Shape may2 = new Line2D.Float(375, 455 - andrelinje[3], 455, 455 - andrelinje[4]);
-	Shape jun2 = new Line2D.Float(455, 455 - andrelinje[4], 535, 455 - andrelinje[5]);
-	Shape jul2 = new Line2D.Float(535, 455 - andrelinje[5], 615, 455 - andrelinje[6]);		
-	Shape aug2 = new Line2D.Float(615, 455 - andrelinje[6], 695, 455 - andrelinje[7]);
-	Shape sep2 = new Line2D.Float(695, 455 - andrelinje[7], 775, 455 - andrelinje[8]);
-	Shape oct2 = new Line2D.Float(775, 455 - andrelinje[8], 855, 455 - andrelinje[9]);	
-	Shape nov2 = new Line2D.Float(855, 455 - andrelinje[9], 935, 455 - andrelinje[10]);
-	Shape dec2 = new Line2D.Float(935, 455 - andrelinje[10], 1015, 455 - andrelinje[11]);	
-        */
         graph2.setPaint(Color.BLACK);
 	
         //x og y linjen
         graph2.draw(drawLine);
-        graph2.draw(drawLine2);
-        //førstelinje
-        graph2.setPaint(Color.RED);
-	graph2.draw(jan);
-	graph2.draw(feb);
-	graph2.draw(mar);
-	graph2.draw(apr);
-	graph2.draw(may);	
-	graph2.draw(jun);	
-	graph2.draw(jul);
-	graph2.draw(aug);
-	graph2.draw(sep);
-	graph2.draw(oct);	
-	graph2.draw(nov);
-	graph2.draw(dec);
+        graph2.draw(drawLine2);      
         
-        //andrelinje
-      /*  graph3.setPaint(Color.BLUE);
-	graph3.draw(dec2);
-        graph3.draw(jan2);
-        graph3.draw(feb2);
-	graph3.draw(mar2);
-	graph3.draw(apr2);
-	graph3.draw(may2);	
-	graph3.draw(jun2);
-	graph3.draw(jul2);
-        graph3.draw(aug2);
-	graph3.draw(sep2);
-	graph3.draw(oct2);
-        graph3.draw(nov2);
-	graph3.draw(dec2);
-        */
-        
-     
+        //Rektangelgraph 1
+        graph2.fillRect( 55, 455 - førstelinje[0], 40, førstelinje[0]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(55, 455 - førstelinje[0], 40, førstelinje[0], true);
+	graph2.setPaint(Color.RED);
 	
+
+	graph2.fillRect( 135, 455 - førstelinje[1], 40, førstelinje[1]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(135, 455 - førstelinje[1], 40, førstelinje[1], true);
+	graph2.setPaint(Color.RED);
+        
+       
+        graph2.fillRect( 215, 455 - førstelinje[2], 40, førstelinje[2]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(215, 455 - førstelinje[2], 40, førstelinje[2], true);
+	graph2.setPaint(Color.RED);
+        
+        graph2.fillRect(295, 455 - førstelinje[3], 40, førstelinje[3]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(295, 455 - førstelinje[3], 40, førstelinje[3], true);
+	graph2.setPaint(Color.RED);
+        
+        graph2.fillRect( 375, 455 - førstelinje[4], 40, førstelinje[4]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(375, 455 - førstelinje[4], 40, førstelinje[4], true);
+	graph2.setPaint(Color.RED);
+
+        graph2.fillRect( 455, 455 - førstelinje[5], 40, førstelinje[5]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(455, 455 - førstelinje[5], 40, førstelinje[5], true);
+	graph2.setPaint(Color.RED);
+        
+        graph2.fillRect( 535, 455 - førstelinje[6], 40, førstelinje[6]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(535, 455 - førstelinje[6], 40, førstelinje[6], true);
+	graph2.setPaint(Color.RED);
+
+        graph2.fillRect( 605, 455 - førstelinje[7], 40, førstelinje[7]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(605, 455 - førstelinje[7], 40, førstelinje[7], true);
+	graph2.setPaint(Color.RED);
+
+        graph2.fillRect( 685, 455 - førstelinje[8], 40, førstelinje[8]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(685, 455 - førstelinje[8], 40, førstelinje[8], true);
+	graph2.setPaint(Color.RED);
+        
+        graph2.fillRect( 765, 455 - førstelinje[9], 40, førstelinje[9]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(765, 455 - førstelinje[9], 40, førstelinje[9], true);
+	graph2.setPaint(Color.RED);
+
+        graph2.fillRect( 845, 455 - førstelinje[10], 40, førstelinje[10]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(845, 455 - førstelinje[10], 40, førstelinje[10], true);
+	graph2.setPaint(Color.RED);
+
+
+        graph2.fillRect( 935, 455 - førstelinje[11], 40, førstelinje[11]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(935, 455 - førstelinje[11], 40, førstelinje[11], true);
+	graph2.setPaint(Color.RED);
+
+        
+        //Andrelinje rektangel
+        if(andrelinje!=null){
+        graph2.fillRect( 95, 455 - andrelinje[0], 40, andrelinje[0]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(95, 455 - andrelinje[0], 40, andrelinje[0], true);
+	graph2.setPaint(Color.BLUE);
+	
+
+	graph2.fillRect( 175, 455 - andrelinje[1], 40, andrelinje[1]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(175, 455 - andrelinje[1], 40, andrelinje[1], true);
+	graph2.setPaint(Color.BLUE);
+        
+       
+        graph2.fillRect( 255, 455 - andrelinje[2], 40, andrelinje[2]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(255, 455 - andrelinje[2], 40, andrelinje[2], true);
+	graph2.setPaint(Color.BLUE);
+        
+        graph2.fillRect(335, 455 - andrelinje[3], 40, andrelinje[3]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(335, 455 - andrelinje[3], 40, andrelinje[3], true);
+	graph2.setPaint(Color.BLUE);
+        
+        graph2.fillRect( 405, 455 - andrelinje[4], 40, andrelinje[4]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(405, 455 - andrelinje[4], 40, andrelinje[4], true);
+	graph2.setPaint(Color.BLUE);
+
+        graph2.fillRect( 495, 455 - andrelinje[5], 40, andrelinje[5]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(495, 455 - andrelinje[5], 40, andrelinje[5], true);
+	graph2.setPaint(Color.BLUE);
+        
+        graph2.fillRect( 575, 455 - andrelinje[6], 40, andrelinje[6]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(575, 455 - andrelinje[6], 40, andrelinje[6], true);
+	graph2.setPaint(Color.BLUE);
+
+        graph2.fillRect( 645, 455 - andrelinje[7], 40, andrelinje[7]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(645, 455 - andrelinje[7], 40, andrelinje[7], true);
+	graph2.setPaint(Color.BLUE);
+
+        graph2.fillRect( 725, 455 - andrelinje[8], 40, andrelinje[8]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(725, 455 - andrelinje[8], 40, andrelinje[8], true);
+	graph2.setPaint(Color.BLUE);
+        
+        graph2.fillRect( 805, 455 - andrelinje[9], 40, andrelinje[9]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(805, 455 - andrelinje[9], 40, andrelinje[9], true);
+	graph2.setPaint(Color.BLUE);
+
+        graph2.fillRect( 885, 455 - andrelinje[10], 40, andrelinje[10]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(885, 455 - andrelinje[10], 40, andrelinje[10], true);
+	graph2.setPaint(Color.BLUE);
+
+
+        graph2.fillRect( 965, 455 - andrelinje[11], 40, andrelinje[11]);
+	graph2.setPaint(Color.BLACK);
+	graph2.draw3DRect(965, 455 - andrelinje[11], 40, andrelinje[11], true);
+	graph2.setPaint(Color.BLUE);
+        }
 	
         g.setFont(new Font("TimesRoman", Font.PLAIN, 20));
         g.setColor(Color.BLACK);

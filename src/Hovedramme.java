@@ -1,7 +1,8 @@
 /*Hovedprosjekt Dats-1600
- William B. Wold, s183670, HIINGDATA13H1AA
- Tom-Andre Tostrup, s193083, HIINGDATA13H1AA
- Vegar Nygård, s193362, HIINGDATA13H1AA*/
+GRUPPE 6
+William B. Wold, s183670, HIINGDATA13H1AA
+Vegar Nygård, s193362, HIINGDATA13H1AA
+ */
 
 import java.awt.*;
 import java.awt.event.*;
@@ -14,7 +15,8 @@ import javax.swing.border.*;
 //Denne klassen er hovedrammen, det er her alle paneler blir lagt til
 
 public class Hovedramme extends JFrame{
-    //Hovedrammens datafelter
+    
+//Hovedrammens datafelter
     private final String LOGG_INN = "0";
     private final String ADMIN = "1";
     private final int KONTROLLØR = 1;
@@ -73,19 +75,22 @@ public class Hovedramme extends JFrame{
     }
     
     public void visAdmin(){
-        //Metode som kan be hovedrammen om å vise et ønskelig panel
+        //Metode som kan be hovedrammen om å vise administrasjons panelet
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.show(super.getContentPane(),ADMIN);
     }
     
     public void visFørsteKontrollør(TreeMap<String,Lege> nylegeliste){
-        //Metode som viser hovedrammens første vindu, dvs, logginnvindu
+        /*Metode som viser hovedrammens første vindu, dvs, logginnvindu
+        fra kontrollørpanelet (Ingen lister trenger å sendes tilbake)*/
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.first(super.getContentPane());
     }
     
     public void visFørsteLege(TreeMap<String,Pasient> nypasientliste,
             TreeMap<Integer,Resept> nyreseptliste){
+        /*Metode som viser hovedrammens første vindu, dvs, logginnvindu
+        fra Legepanelet (pasientliste og reseptliste sendes tilbake)*/
         if(nypasientliste.isEmpty()||nyreseptliste.isEmpty()||
                 nypasientliste==null||nyreseptliste==null){
             CardLayout c = (CardLayout)super.getContentPane().getLayout();
@@ -94,22 +99,16 @@ public class Hovedramme extends JFrame{
         }
         pasientliste = nypasientliste;
         reseptliste = nyreseptliste;
-        //Metode som viser hovedrammens første vindu, dvs, logginnvindu
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.first(super.getContentPane());
     }
     
     public void visFørsteAdmin(TreeMap<String,Lege> nylegeliste,
             TreeMap<Integer,Kontrollør> nykontrollørliste){
+        /*Metode som viser hovedrammens første vindu, dvs, logginnvindu
+        fra adminvindu (lelgeliste og kontrollørliste sendes tilbake)*/
         legeliste = nylegeliste;
         kontrollørliste = nykontrollørliste;
-        //Metode som viser hovedrammens første vindu, dvs, logginnvindu
-        CardLayout c = (CardLayout)super.getContentPane().getLayout();
-        c.first(super.getContentPane());
-    }
-    
-    public void visFørsteKont(){
-        //Metode som viser hovedrammens første vindu, dvs, logginnvindu
         CardLayout c = (CardLayout)super.getContentPane().getLayout();
         c.first(super.getContentPane());
     }
@@ -117,7 +116,7 @@ public class Hovedramme extends JFrame{
     private void lesListene(int n){
         /*Metode som Leser lister og static konstantene som blir brukt for
         å opprette objekter i listene, misslykkes lesningen opprettes nye 
-        lister*/
+        lister, int-parameteren bestemmer hvilk lister som leses*/
         if(n==KONTROLLØR){
             try(ObjectInputStream innfil = new ObjectInputStream(
                 new FileInputStream("src/kontrollørliste.data"))){
@@ -206,18 +205,5 @@ public class Hovedramme extends JFrame{
                 reseptliste = new TreeMap<>();
             }
         }
-    }
-    
-    
-    public TreeMap<String,Pasient> getPasientliste(){
-        return pasientliste;
-    }
-    
-    public TreeMap<String,Lege> getLegeliste(){
-        return legeliste;
-    }
-    
-    public TreeMap<Integer,Resept> getReseptliste(){
-        return reseptliste;
     }
 }//End of Class Hovedramme
