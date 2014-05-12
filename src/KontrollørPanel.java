@@ -714,13 +714,14 @@ public class KontrollørPanel extends JPanel{
             for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
                 løper = entry.getValue();
                 Calendar reseptkalenderformat = løper.getKalenderformat();
-                int år = reseptkalenderformat.get(Calendar.YEAR);
+                Integer år = reseptkalenderformat.get(Calendar.YEAR);
                 årsliste.put(år, "");
             }//End of for-løkke
             aktuelleår = new String[årsliste.size()];
             for(Map.Entry<Integer,String> entry:årsliste.entrySet()){
                 årsløper = "" + entry.getKey();
                 aktuelleår[i]= årsløper;
+                i++;
             }//End of for-løkke
         }
         return aktuelleår;
@@ -797,7 +798,7 @@ public class KontrollørPanel extends JPanel{
             int n = årførste.getSelectedIndex();
             int år = Integer.parseInt((String)årførste.getItemAt(n));
             int m = årandre.getSelectedIndex();
-            int årto = Integer.parseInt((String)årandre.getItemAt(n));
+            int årto = Integer.parseInt((String)årandre.getItemAt(m));
             for(Map.Entry<Integer,Resept> entry:reseptliste.entrySet()){
                 løper = entry.getValue();
                 Calendar reseptkalenderformat = løper.getKalenderformat();
@@ -882,7 +883,7 @@ public class KontrollørPanel extends JPanel{
     
     public void visMedisinoversikten(){
         //Denne metoden viser med
-        senterpanelgrense.setTitle("Varsling");
+        senterpanelgrense.setTitle("Medisinoversikt");
         repaint();
         oppDaterTabelenMedisin();
         CardLayout c = (CardLayout)senterpanel.getLayout();

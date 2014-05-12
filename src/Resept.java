@@ -4,8 +4,6 @@ William B. Wold, s183670, HIINGDATA13H1AA
 Vegar Nygård, s193362, HIINGDATA13H1AA
  */
 
-//Sist redigert: 12.05.2014
-
 //Denne klassen beskriver resepter
 
 import java.text.*;
@@ -89,6 +87,10 @@ public class Resept implements Serializable{
     public char getReseptgruppe(){
         //Metode som returnerer reseptgruppen (A,B eller C)
         return reseptgruppe;
+    }
+    public void setCalendar(Calendar nydato){
+        dato = nydato;
+        
     }
     
     public Object[] getTabelllinje(){

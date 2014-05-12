@@ -1681,6 +1681,31 @@ public class MedisinBibliotek {
         }
         return lista;
     }
+    
+    public String[] getKodearrays(){
+        //Metode som gir hele medisinliste i et arrayformat, denne er til for å 
+        TreeMap<String, String> redigertliste = new TreeMap<>();
+        String[] lista;
+        String løper;
+        String løpernøkkel;
+        int i = 0;
+        int p = 1;
+        for (Map.Entry<String, String> entry : medisinliste.entrySet()) {
+            løper = entry.getValue();
+            løpernøkkel = entry.getKey();
+            redigertliste.put(løpernøkkel, løper);
+            
+        }
+        lista = new String[redigertliste.size()];
+        for (Map.Entry<String, String> entry : redigertliste.entrySet()) {
+            løper = entry.getValue();
+           
+            løpernøkkel = entry.getKey();
+            lista[i] = løpernøkkel + ", " + løper;
+            i++;
+        }
+        return lista;
+    }
 }//End of class MedisinBibliotek
 
 

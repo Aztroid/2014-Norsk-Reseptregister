@@ -314,6 +314,7 @@ public class LegePanel extends JPanel{
     }
     
     public void nyResept(){
+        regResepter();
         /*Denne metoden viser "ny resept" panelet som inneholder alle datafelter 
         for å registrere nye resepter for den innloggede legen*/
         infofelt.setText("Registrer en ny resept på en\nav dine pasienter");
@@ -465,6 +466,58 @@ public class LegePanel extends JPanel{
                 nyResept();
             }
         }
+    }
+    
+    public void regResepter(){
+        /*Metoden registerer en resept gitt at alle parametere er riktig
+        utfyllt, at legen har riktig reseptbevilgning for preparatet*/
+        /*  (Integer n, String f, String a, String med, String m, String d,
+        String k, char rg, String an)
+         */
+        int år = 2010;
+        Integer reseptnr = 1;
+        String fnr;
+        String autnr;
+        String medisinnøkkel;
+        String mengde = "1g";
+        String DDD = "2g";
+        String medisinkategori = "";
+        char reseptkategori;
+        String legensanv = "Etter behov.";
+        String [] medliste = medisinbiblioteket.getKodearrays();
+        Calendar dato;
+        Pasient løper;
+        Resept nyresept;
+        for(Map.Entry<String,Pasient> entry:pasientliste.entrySet()){
+            int tilfeldig2 = (int) (Math.random() * 4);
+            int tilfeldig1 = (int) (Math.random() * 12);            
+            int tilfeldig = (int) (Math.random() * medliste.length);
+            String fullid = medliste[tilfeldig];
+            System.out.println(fullid);
+            løper = entry.getValue();
+            fnr = løper.getFødselsnr();
+            autnr = løper.getLege();
+            medisinnøkkel = fullid.substring(0, 8);
+            int q = fullid.length() -1;
+            reseptkategori = fullid.charAt(q);
+            
+            for(int i = 0; i < items.length; i++){
+                char sammenligner = fullid.charAt(0);
+                if(sammenligner == items[i].charAt(0))
+                    medisinkategori = items[i];
+            }
+
+            nyresept = new Resept(reseptnr,  fnr,  autnr,  medisinnøkkel,  mengde,  DDD,  medisinkategori, reseptkategori,  legensanv);
+            dato = nyresept.getKalenderformat();
+            dato.set(Calendar.YEAR, (år + tilfeldig2));
+            dato.set(Calendar.MONTH,(tilfeldig1));
+            nyresept.setCalendar(dato);
+            reseptnr++;
+            reseptliste.put(nyresept.getReseptnr(),nyresept);
+            infofelt.setText("Resept registrert.");
+            lagreLegeListene(RESEPT);
+            filtrerReseptlisten();
+            }           
     }
     
     public String[] pasientListen(){
