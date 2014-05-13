@@ -25,11 +25,13 @@ public class LegePanel extends JPanel{
     private TreeMap<Integer,Resept> spesifikkreseptliste;
     private TreeMap<String,Pasient> pasientliste;
     private TreeMap<String,Pasient> spesifikkpasientliste;
+    private TreeMap<String,Lege> legeliste; //FJERN
     private String legensautnr; //Identifiserer legen som er logget inn
     private String reseptbevilgning; //Identifiserer legen reseptbevilgning
     private Hovedramme hovedrammekopi;
     private final int PASIENT = 1;
     private final int RESEPT = 2;
+    private final int LEGE = 3;
     
     //Sidepanel datafelter
     private JPanel sidepanel;
@@ -82,6 +84,7 @@ public class LegePanel extends JPanel{
         this.reseptliste = reseptliste;
         spesifikkreseptliste = new TreeMap<>();
         spesifikkpasientliste = new TreeMap<>();
+        legeliste = new TreeMap<>(); //FJERN
         reseptbevilgning = reseptgodkjennelse;
         filtrerReseptlisten();//se i metode for beskrivelse
         filtrerPasientlisten();//se i metode for beskrivelse
@@ -301,6 +304,8 @@ public class LegePanel extends JPanel{
     }
     
     public void nyPasient(){
+        nyePasienter();//FJERN
+        nyeLeger();//FJERN
         /*Denne metoden viser "ny pasient" panelet som inneholder alle 
         datafelter for å registrere nye pasienter for den innloggede legen*/
         infofelt.setText("Registrer en ny pasient");
@@ -314,7 +319,7 @@ public class LegePanel extends JPanel{
     }
     
     public void nyResept(){
-        regResepter();
+        regResepter();//FJERN
         /*Denne metoden viser "ny resept" panelet som inneholder alle datafelter 
         for å registrere nye resepter for den innloggede legen*/
         infofelt.setText("Registrer en ny resept på en\nav dine pasienter");
@@ -467,7 +472,7 @@ public class LegePanel extends JPanel{
             }
         }
     }
-    
+    //FJERN
     public void regResepter(){
         /*Metoden registerer en resept gitt at alle parametere er riktig
         utfyllt, at legen har riktig reseptbevilgning for preparatet*/
@@ -475,7 +480,6 @@ public class LegePanel extends JPanel{
         String k, char rg, String an)
          */
         int år = 2010;
-        Integer reseptnr = 1;
         String fnr;
         String autnr;
         String medisinnøkkel;
@@ -489,6 +493,12 @@ public class LegePanel extends JPanel{
         Pasient løper;
         Resept nyresept;
         for(Map.Entry<String,Pasient> entry:pasientliste.entrySet()){
+            if(reseptliste.isEmpty()){
+            reseptnøkkel = 1;
+            }
+            else{
+            reseptnøkkel = 1+reseptliste.lastKey();
+            }
             int tilfeldig2 = (int) (Math.random() * 4);
             int tilfeldig1 = (int) (Math.random() * 12);            
             int tilfeldig = (int) (Math.random() * medliste.length);
@@ -507,17 +517,72 @@ public class LegePanel extends JPanel{
                     medisinkategori = items[i];
             }
 
-            nyresept = new Resept(reseptnr,  fnr,  autnr,  medisinnøkkel,  mengde,  DDD,  medisinkategori, reseptkategori,  legensanv);
+            nyresept = new Resept(reseptnøkkel,  fnr,  autnr,  medisinnøkkel,  mengde,  DDD,  medisinkategori, reseptkategori,  legensanv);
             dato = nyresept.getKalenderformat();
             dato.set(Calendar.YEAR, (år + tilfeldig2));
             dato.set(Calendar.MONTH,(tilfeldig1));
             nyresept.setCalendar(dato);
-            reseptnr++;
             reseptliste.put(nyresept.getReseptnr(),nyresept);
             infofelt.setText("Resept registrert.");
             lagreLegeListene(RESEPT);
             filtrerReseptlisten();
             }           
+    }
+    //FJERN
+    public void nyePasienter(){
+        Pasient ny;
+        long f = new Long ("11111111111");
+        long l = new Long ("111111110");
+        String autnr = "";
+        String fnr = "";
+        for(int i=0; i<1000; i++){
+            String fornavn = fornavnGenerator();
+            String etternavn = etternavnGenerator();
+            f += 1;
+            if(i%10==0){
+                l += 1;
+            }
+            autnr = ""+l;
+            fnr = ""+f;
+            ny = new Pasient(fornavn, etternavn, fnr, autnr);
+            pasientliste.put(fnr,ny);
+        }
+        lagreLegeListene(PASIENT);
+    }
+    //FJERN
+    public void nyeLeger(){
+        Lege ny;
+        Pasient løper;
+        String pword = "a";
+        String autnr = "";
+        String arbeidsted = "Volda";
+        String rbev = "ABC";
+        for(Map.Entry<String,Pasient> entry:pasientliste.entrySet()){
+            String fornavn = fornavnGenerator();
+            String etternavn = etternavnGenerator();
+            løper = entry.getValue();
+            autnr = løper.getLege();
+            ny = new Lege(fornavn, etternavn, pword, autnr,arbeidsted, rbev);
+            legeliste.put(autnr,ny);
+        }
+        lagreLegeListene(LEGE);
+    }
+    
+    private String fornavnGenerator(){
+        String fornavnGenerator;
+        String[] fornavn = {"Dag", "Einar", "Iqbal", "Ronny", "Roy", "Tommy", "Runar", "Sofie", "Marie", "Sunniva", "Ragnhild", "Ricco", "Else", "Helga", "Karl", "Karoline", "Otto", "Bjarne", "Daniel"};
+        int tilfeldig = (int) (Math.random() * 19);
+        fornavnGenerator = fornavn[tilfeldig];
+        return fornavnGenerator;
+    }
+    
+    private String etternavnGenerator(){
+        String etternavnGenerator;
+        String[] etternavn = {"Hansen", "Johnsen", "Åkesson", "Khan", "Wold", "Lokrheim", "Stenersen", "Møretrø", "Robertsen", "Johansen"};
+        int tilfeldig = (int) (Math.random() * 10);
+
+        etternavnGenerator = etternavn[tilfeldig];
+        return etternavnGenerator;
     }
     
     public String[] pasientListen(){
@@ -627,6 +692,20 @@ public class LegePanel extends JPanel{
             catch(IOException ioe){
                 JOptionPane.showMessageDialog(null,"Problem med utskrift til "
                         + "fil");
+            }
+        }
+        else if(n==LEGE){
+            try(ObjectOutputStream utfil = new ObjectOutputStream(
+                    new FileOutputStream("src/legeliste.data"))){
+                utfil.writeObject(legeliste);
+            }
+            catch(NotSerializableException ns){
+                JOptionPane.showMessageDialog(null,"Objektet er ikke "
+                        + "serialisert");
+            }
+            catch(IOException ioe){
+                JOptionPane.showMessageDialog(null,"Problem med utskrift "
+                        + "til fil");
             }
         }
     }

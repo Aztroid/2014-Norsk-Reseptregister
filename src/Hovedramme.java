@@ -54,7 +54,7 @@ public class Hovedramme extends JFrame{
         setLocationRelativeTo(null);//Midstiling
         
         //Legger til logoen i venstre hjørnet
-        String bildefil = "bildefiler/logo.gif";
+        String bildefil = "bildefiler/logoen.gif";
         URL kilde = Hovedramme.class.getResource(bildefil);
         if(kilde != null){
             ImageIcon bilde = new ImageIcon(kilde);
